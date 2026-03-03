@@ -1,265 +1,303 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Royal Bet</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
-  <style>
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    :root{
-      --gold:#c9a84c;--gold-light:#f0d060;--gold-dark:#8a6a1f;
-      --felt:#0d3b1e;--felt-dark:#061509;--cream:#fdf6e3;
-      --green:#27ae60;--red:#e74c3c;
-    }
-    body{font-family:'Lato',sans-serif;background:var(--felt-dark);min-height:100vh;overflow-x:hidden;}
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Royal Bet</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#c9a84c;--gold-light:#f0d060;--gold-dark:#8a6a1f;
+  --felt:#0d3b1e;--felt-dark:#061509;--cream:#fdf6e3;
+  --green:#27ae60;--red:#e74c3c;
+}
+body{font-family:'Lato',sans-serif;background:var(--felt-dark);min-height:100vh;overflow-x:hidden;}
+.felt-bg{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 80% 60% at 50% 50%,#1a5c30 0%,#0d3b1e 45%,#061509 100%);}
+.felt-bg::before{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg width='4' height='4' viewBox='0 0 4 4' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 3h1v1H1V3zm2-2h1v1H3V1z' fill='%23ffffff' fill-opacity='0.015'/%3E%3C/svg%3E");background-size:4px 4px;}
+.table-rim{position:fixed;width:110vw;height:90vh;border-radius:50%;box-shadow:0 0 0 4px #8a6a1f,0 0 0 10px #c9a84c,0 0 0 14px #8a6a1f,0 0 60px rgba(201,168,76,0.15),inset 0 0 60px rgba(0,0,0,0.5);top:50%;left:50%;transform:translate(-50%,-50%);z-index:1;pointer-events:none;}
+.suits-bg{position:fixed;inset:0;z-index:2;pointer-events:none;overflow:hidden;}
+.suit{position:absolute;font-size:3rem;opacity:0.04;animation:floatSuit 15s ease-in-out infinite;user-select:none;}
+.suit:nth-child(1){top:10%;left:5%;animation-delay:0s;font-size:4rem;}
+.suit:nth-child(2){top:20%;right:8%;animation-delay:3s;font-size:2.5rem;}
+.suit:nth-child(3){bottom:15%;left:10%;animation-delay:6s;font-size:3.5rem;}
+.suit:nth-child(4){bottom:25%;right:5%;animation-delay:9s;}
+.suit:nth-child(5){top:45%;left:2%;animation-delay:2s;}
+.suit:nth-child(6){top:55%;right:3%;animation-delay:7s;}
+@keyframes floatSuit{0%,100%{transform:translateY(0) rotate(0deg)}33%{transform:translateY(-20px) rotate(5deg)}66%{transform:translateY(10px) rotate(-3deg)}}
 
-    /* ======== BACKGROUNDS ======== */
-    .felt-bg{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 80% 60% at 50% 50%,#1a5c30 0%,#0d3b1e 45%,#061509 100%);}
-    .felt-bg::before{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg width='4' height='4' viewBox='0 0 4 4' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 3h1v1H1V3zm2-2h1v1H3V1z' fill='%23ffffff' fill-opacity='0.015'/%3E%3C/svg%3E");background-size:4px 4px;}
-    .table-rim{position:fixed;width:110vw;height:90vh;border-radius:50%;box-shadow:0 0 0 4px #8a6a1f,0 0 0 10px #c9a84c,0 0 0 14px #8a6a1f,0 0 60px rgba(201,168,76,0.15),inset 0 0 60px rgba(0,0,0,0.5);top:50%;left:50%;transform:translate(-50%,-50%);z-index:1;pointer-events:none;}
-    .suits-bg{position:fixed;inset:0;z-index:2;pointer-events:none;overflow:hidden;}
-    .suit{position:absolute;font-size:3rem;opacity:0.04;animation:floatSuit 15s ease-in-out infinite;user-select:none;}
-    .suit:nth-child(1){top:10%;left:5%;animation-delay:0s;font-size:4rem;}
-    .suit:nth-child(2){top:20%;right:8%;animation-delay:3s;font-size:2.5rem;}
-    .suit:nth-child(3){bottom:15%;left:10%;animation-delay:6s;font-size:3.5rem;}
-    .suit:nth-child(4){bottom:25%;right:5%;animation-delay:9s;}
-    .suit:nth-child(5){top:45%;left:2%;animation-delay:2s;}
-    .suit:nth-child(6){top:55%;right:3%;animation-delay:7s;}
-    @keyframes floatSuit{0%,100%{transform:translateY(0) rotate(0deg)}33%{transform:translateY(-20px) rotate(5deg)}66%{transform:translateY(10px) rotate(-3deg)}}
+.page{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.4s ease;overflow-y:auto;}
+.page.active{opacity:1;pointer-events:all;}
 
-    /* ======== PAGE SYSTEM ======== */
-    .page{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.4s ease;overflow-y:auto;}
-    .page.active{opacity:1;pointer-events:all;}
+/* LOGIN */
+.login-card{width:400px;background:linear-gradient(160deg,#1c0e02 0%,#120900 60%,#0a0500 100%);border-radius:12px;overflow:hidden;box-shadow:0 0 0 1px #8a6a1f,0 0 0 3px #c9a84c,0 0 0 4px #8a6a1f,0 30px 80px rgba(0,0,0,0.8);animation:cardIn 0.7s cubic-bezier(.16,1,.3,1) both;}
+@keyframes cardIn{from{opacity:0;transform:translateY(40px) scale(0.95)}to{opacity:1;transform:translateY(0) scale(1)}}
+.card-header{background:linear-gradient(135deg,#8a6a1f 0%,#c9a84c 30%,#f0d060 50%,#c9a84c 70%,#8a6a1f 100%);padding:22px 30px 18px;text-align:center;position:relative;overflow:hidden;}
+.card-header::before{content:'';position:absolute;top:0;left:-100%;width:200%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent);animation:sheen 4s ease-in-out infinite;}
+@keyframes sheen{0%,100%{left:-100%}50%{left:0%}}
+.header-suits{display:flex;justify-content:center;gap:10px;font-size:1.1rem;margin-bottom:6px;color:rgba(12,6,0,0.6);}
+.logo-title{font-family:'Cinzel',serif;font-size:26px;font-weight:900;color:#0d0500;letter-spacing:4px;text-transform:uppercase;}
+.logo-sub{font-size:10px;letter-spacing:4px;color:rgba(12,6,0,0.55);text-transform:uppercase;margin-top:2px;font-weight:700;}
+.login-body{padding:28px 32px 24px;}
+.chips-row{display:flex;justify-content:center;gap:8px;margin-bottom:20px;}
+.chip{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;border:2px dashed;font-family:'Cinzel',serif;}
+.chip-r{background:rgba(192,57,43,0.15);border-color:rgba(192,57,43,0.4);color:rgba(192,57,43,0.7);}
+.chip-b{background:rgba(52,152,219,0.12);border-color:rgba(52,152,219,0.3);color:rgba(52,152,219,0.6);}
+.chip-g{background:rgba(39,174,96,0.12);border-color:rgba(39,174,96,0.3);color:rgba(39,174,96,0.6);}
+.chip-w{background:rgba(253,246,227,0.06);border-color:rgba(253,246,227,0.2);color:rgba(253,246,227,0.4);}
+.chip-k{background:rgba(0,0,0,0.3);border-color:rgba(201,168,76,0.25);color:rgba(201,168,76,0.5);}
+.status-msg{display:none;font-size:12px;padding:10px 14px;border-radius:6px;margin-bottom:16px;font-weight:700;letter-spacing:0.5px;text-align:center;}
+.status-msg.error{display:block;background:rgba(192,57,43,0.15);border:1px solid rgba(192,57,43,0.4);color:#e74c3c;}
+.status-msg.success{display:block;background:rgba(39,174,96,0.1);border:1px solid rgba(39,174,96,0.3);color:#2ecc71;}
+.btn-google{width:100%;padding:14px 16px;background:linear-gradient(135deg,#1e1008,#2a1a08);border:1px solid #8a6a1f;border-radius:8px;color:var(--gold-light);font-family:'Lato',sans-serif;font-size:14px;font-weight:700;letter-spacing:1px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all 0.25s;box-shadow:0 2px 8px rgba(0,0,0,0.4),inset 0 1px 0 rgba(201,168,76,0.1);}
+.btn-google:hover{border-color:var(--gold-light);background:linear-gradient(135deg,#271508,#3a2510);transform:translateY(-1px);}
+.btn-google svg{width:20px;height:20px;flex-shrink:0;}
+.login-footer{border-top:1px solid rgba(201,168,76,0.1);padding:14px 32px;text-align:center;display:flex;justify-content:center;gap:6px;align-items:center;}
+.login-footer span{font-size:11px;letter-spacing:1px;color:rgba(201,168,76,0.25);font-family:'Cinzel',serif;}
+.login-footer span.hl{color:rgba(201,168,76,0.5);}
 
-    /* ======== LOGIN PAGE ======== */
-    .login-card{
-      width:400px;background:linear-gradient(160deg,#1c0e02 0%,#120900 60%,#0a0500 100%);
-      border-radius:12px;overflow:hidden;
-      box-shadow:0 0 0 1px #8a6a1f,0 0 0 3px #c9a84c,0 0 0 4px #8a6a1f,0 30px 80px rgba(0,0,0,0.8);
-      animation:cardIn 0.7s cubic-bezier(.16,1,.3,1) both;
-    }
-    @keyframes cardIn{from{opacity:0;transform:translateY(40px) scale(0.95)}to{opacity:1;transform:translateY(0) scale(1)}}
+/* HOME */
+#homePage{align-items:flex-start;padding:0;}
+.home-wrap{width:100%;max-width:480px;min-height:100vh;margin:0 auto;display:flex;flex-direction:column;}
+.topbar{background:linear-gradient(135deg,#8a6a1f 0%,#c9a84c 35%,#f0d060 50%,#c9a84c 65%,#8a6a1f 100%);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:relative;overflow:hidden;flex-shrink:0;}
+.topbar::before{content:'';position:absolute;top:0;left:-100%;width:200%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.15),transparent);animation:sheen 5s ease-in-out infinite;}
+.topbar-logo{font-family:'Cinzel',serif;font-size:18px;font-weight:900;color:#0d0500;letter-spacing:3px;}
+.topbar-suits{font-size:0.9rem;color:rgba(12,6,0,0.5);letter-spacing:4px;}
+.user-info{display:flex;align-items:center;gap:8px;}
+.user-avatar{width:34px;height:34px;border-radius:50%;border:2px solid rgba(12,6,0,0.3);object-fit:cover;}
+.user-avatar-placeholder{width:34px;height:34px;border-radius:50%;border:2px solid rgba(12,6,0,0.3);background:rgba(12,6,0,0.2);display:flex;align-items:center;justify-content:center;font-size:16px;}
+.user-name{font-size:12px;font-weight:700;color:rgba(12,6,0,0.7);letter-spacing:1px;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.action-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:18px 16px 12px;flex-shrink:0;}
+.action-btn{padding:16px 12px;border-radius:10px;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;font-family:'Cinzel',serif;font-size:13px;font-weight:700;letter-spacing:1px;transition:all 0.25s;position:relative;overflow:hidden;}
+.action-btn-icon{font-size:24px;line-height:1;}
+.btn-deposit{background:linear-gradient(135deg,#0a3d20,#155c30);border:1px solid rgba(39,174,96,0.4);color:#2ecc71;box-shadow:0 4px 16px rgba(0,0,0,0.4),0 0 15px rgba(39,174,96,0.1);}
+.btn-deposit:hover{transform:translateY(-2px);}
+.btn-withdraw{background:linear-gradient(135deg,#3d1500,#5c2200);border:1px solid rgba(201,168,76,0.4);color:var(--gold-light);box-shadow:0 4px 16px rgba(0,0,0,0.4),0 0 15px rgba(201,168,76,0.1);}
+.btn-withdraw:hover{transform:translateY(-2px);}
+.balance-card{margin:0 16px 16px;background:linear-gradient(160deg,#1c0e02,#0a0500);border:1px solid rgba(201,168,76,0.25);border-radius:12px;padding:18px 20px;box-shadow:0 4px 20px rgba(0,0,0,0.5);}
+.balance-label{font-family:'Cinzel',serif;font-size:9px;letter-spacing:3px;color:rgba(201,168,76,0.4);text-transform:uppercase;margin-bottom:6px;}
+.balance-amount{font-family:'Cinzel',serif;font-size:28px;font-weight:900;color:var(--gold-light);letter-spacing:2px;}
+.balance-amount span{font-size:14px;color:rgba(201,168,76,0.5);margin-right:4px;}
+.balance-sub{font-size:11px;color:rgba(255,255,255,0.2);margin-top:4px;letter-spacing:1px;}
 
-    .card-header{
-      background:linear-gradient(135deg,#8a6a1f 0%,#c9a84c 30%,#f0d060 50%,#c9a84c 70%,#8a6a1f 100%);
-      padding:22px 30px 18px;text-align:center;position:relative;overflow:hidden;
-    }
-    .card-header::before{content:'';position:absolute;top:0;left:-100%;width:200%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent);animation:sheen 4s ease-in-out infinite;}
-    @keyframes sheen{0%,100%{left:-100%}50%{left:0%}}
-    .header-suits{display:flex;justify-content:center;gap:10px;font-size:1.1rem;margin-bottom:6px;color:rgba(12,6,0,0.6);}
-    .logo-title{font-family:'Cinzel',serif;font-size:26px;font-weight:900;color:#0d0500;letter-spacing:4px;text-transform:uppercase;text-shadow:0 1px 0 rgba(255,255,255,0.3);}
-    .logo-sub{font-size:10px;letter-spacing:4px;color:rgba(12,6,0,0.55);text-transform:uppercase;margin-top:2px;font-weight:700;}
+/* Aviator game card on home */
+.section-title{padding:0 16px 10px;font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:3px;color:rgba(201,168,76,0.5);text-transform:uppercase;}
+.aviator-home-card{
+  margin:0 16px 16px;
+  background:linear-gradient(160deg,#0a0018,#1a0030,#0d001a);
+  border:1px solid rgba(201,168,76,0.3);border-radius:12px;
+  overflow:hidden;cursor:pointer;transition:all 0.3s;
+  box-shadow:0 4px 20px rgba(0,0,0,0.6),0 0 20px rgba(150,50,255,0.1);
+}
+.aviator-home-card:hover{transform:translateY(-3px);box-shadow:0 8px 30px rgba(0,0,0,0.7),0 0 30px rgba(150,50,255,0.2);}
+.aviator-banner{
+  background:linear-gradient(135deg,#1a0035,#2d0050,#0d001a);
+  padding:20px;display:flex;align-items:center;justify-content:space-between;
+  position:relative;overflow:hidden;
+}
+.aviator-banner::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 80% 50%,rgba(255,60,60,0.2),transparent 60%);}
+.aviator-title{font-family:'Cinzel',serif;font-size:22px;font-weight:900;color:#fff;letter-spacing:3px;text-shadow:0 0 20px rgba(255,100,100,0.8);}
+.aviator-sub{font-size:10px;letter-spacing:3px;color:rgba(255,180,180,0.6);margin-top:3px;}
+.aviator-plane-preview{font-size:40px;animation:planeFly 3s ease-in-out infinite;}
+@keyframes planeFly{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-8px) rotate(5deg)}}
+.aviator-info-row{display:flex;justify-content:space-around;padding:12px 20px;border-top:1px solid rgba(201,168,76,0.1);}
+.av-info-item{text-align:center;}
+.av-info-val{font-family:'Cinzel',serif;font-size:16px;font-weight:700;color:#ff6b6b;text-shadow:0 0 10px rgba(255,100,100,0.5);}
+.av-info-key{font-size:9px;letter-spacing:2px;color:rgba(255,255,255,0.3);margin-top:2px;}
 
-    .login-body{padding:28px 32px 24px;}
-    .chips-row{display:flex;justify-content:center;gap:8px;margin-bottom:20px;}
-    .chip{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;border:2px dashed;font-family:'Cinzel',serif;}
-    .chip-r{background:rgba(192,57,43,0.15);border-color:rgba(192,57,43,0.4);color:rgba(192,57,43,0.7);}
-    .chip-b{background:rgba(52,152,219,0.12);border-color:rgba(52,152,219,0.3);color:rgba(52,152,219,0.6);}
-    .chip-g{background:rgba(39,174,96,0.12);border-color:rgba(39,174,96,0.3);color:rgba(39,174,96,0.6);}
-    .chip-w{background:rgba(253,246,227,0.06);border-color:rgba(253,246,227,0.2);color:rgba(253,246,227,0.4);}
-    .chip-k{background:rgba(0,0,0,0.3);border-color:rgba(201,168,76,0.25);color:rgba(201,168,76,0.5);}
+.logout-btn{margin:auto 16px 20px;padding:11px;background:rgba(0,0,0,0.3);border:1px solid rgba(201,168,76,0.15);border-radius:8px;color:rgba(201,168,76,0.35);font-family:'Cinzel',serif;font-size:10px;letter-spacing:2px;cursor:pointer;transition:all 0.2s;text-transform:uppercase;width:calc(100% - 32px);}
+.logout-btn:hover{border-color:rgba(201,168,76,0.3);color:rgba(201,168,76,0.6);}
 
-    .status-msg{display:none;font-size:12px;padding:10px 14px;border-radius:6px;margin-bottom:16px;font-weight:700;letter-spacing:0.5px;text-align:center;}
-    .status-msg.error{display:block;background:rgba(192,57,43,0.15);border:1px solid rgba(192,57,43,0.4);color:#e74c3c;}
-    .status-msg.success{display:block;background:rgba(39,174,96,0.1);border:1px solid rgba(39,174,96,0.3);color:#2ecc71;}
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,0.85);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.3s;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal{width:100%;max-width:480px;background:linear-gradient(160deg,#1c0e02 0%,#0a0500 100%);border-radius:16px 16px 0 0;border:1px solid rgba(201,168,76,0.3);border-bottom:none;padding:0;transform:translateY(100%);transition:transform 0.4s cubic-bezier(.16,1,.3,1);max-height:90vh;overflow-y:auto;}
+.modal-overlay.open .modal{transform:translateY(0);}
+.modal-handle{width:36px;height:4px;background:rgba(201,168,76,0.3);border-radius:2px;margin:12px auto 0;}
+.modal-header{padding:16px 20px 14px;border-bottom:1px solid rgba(201,168,76,0.1);display:flex;align-items:center;justify-content:space-between;}
+.modal-title{font-family:'Cinzel',serif;font-size:14px;font-weight:700;letter-spacing:2px;color:var(--gold-light);text-transform:uppercase;}
+.modal-close{background:none;border:none;color:rgba(201,168,76,0.4);font-size:20px;cursor:pointer;padding:4px 8px;transition:color 0.2s;}
+.modal-close:hover{color:var(--gold-light);}
+.modal-body{padding:20px;}
+.method-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+.method-card{background:rgba(0,0,0,0.3);border:1px solid rgba(201,168,76,0.15);border-radius:10px;padding:14px 10px;text-align:center;cursor:pointer;transition:all 0.2s;}
+.method-card:hover,.method-card.selected{border-color:var(--gold);background:rgba(201,168,76,0.08);}
+.method-icon{font-size:24px;margin-bottom:6px;}
+.method-name{font-family:'Cinzel',serif;font-size:10px;font-weight:700;letter-spacing:1px;color:rgba(201,168,76,0.6);text-transform:uppercase;}
+.info-box{background:rgba(0,0,0,0.4);border:1px solid rgba(201,168,76,0.2);border-radius:10px;padding:16px;margin-bottom:16px;}
+.info-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.info-row:last-child{margin-bottom:0;}
+.info-key{font-size:10px;letter-spacing:2px;color:rgba(201,168,76,0.4);font-family:'Cinzel',serif;text-transform:uppercase;}
+.info-val{font-size:14px;font-weight:700;color:var(--cream);letter-spacing:1px;display:flex;align-items:center;gap:8px;}
+.copy-btn{background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.25);border-radius:4px;padding:3px 8px;color:var(--gold);font-size:10px;cursor:pointer;font-family:'Cinzel',serif;letter-spacing:1px;transition:all 0.2s;}
+.copy-btn:hover{background:rgba(201,168,76,0.2);}
+.input-group{margin-bottom:14px;}
+.input-label{display:block;font-family:'Cinzel',serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(201,168,76,0.4);margin-bottom:7px;}
+.input-wrap{position:relative;}
+.input-wrap .icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none;color:rgba(201,168,76,0.4);}
+input[type="text"],input[type="number"],input[type="tel"]{width:100%;background:rgba(0,0,0,0.35);border:1px solid rgba(201,168,76,0.2);border-radius:7px;padding:12px 14px 12px 38px;color:var(--cream);font-family:'Lato',sans-serif;font-size:15px;letter-spacing:1px;outline:none;transition:all 0.2s;}
+input:focus{border-color:rgba(201,168,76,0.6);background:rgba(0,0,0,0.5);box-shadow:0 0 0 3px rgba(201,168,76,0.08);}
+input::placeholder{color:rgba(253,246,227,0.18);}
+.notice-box{background:rgba(39,174,96,0.07);border:1px solid rgba(39,174,96,0.2);border-radius:8px;padding:12px 14px;margin-bottom:16px;font-size:12px;color:rgba(39,174,96,0.8);line-height:1.6;letter-spacing:0.3px;}
+.notice-box.warn{background:rgba(201,168,76,0.07);border-color:rgba(201,168,76,0.2);color:rgba(201,168,76,0.7);}
+.notice-box.danger{background:rgba(231,76,60,0.1);border-color:rgba(231,76,60,0.3);color:rgba(231,76,60,0.85);}
+.btn-submit{width:100%;padding:14px;background:linear-gradient(135deg,#8a6a1f 0%,#c9a84c 40%,#f0d060 50%,#c9a84c 60%,#8a6a1f 100%);background-size:200% 100%;border:none;border-radius:8px;color:#0d0500;font-family:'Cinzel',serif;font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;cursor:pointer;transition:all 0.3s;box-shadow:0 4px 15px rgba(0,0,0,0.4);}
+.btn-submit:hover{background-position:100% 0;transform:translateY(-2px);}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(0,0,0,0.2);border-top-color:#0d0500;border-radius:50%;animation:spin 0.6s linear infinite;vertical-align:middle;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.method-form{display:none;}
+.method-form.active{display:block;animation:fadeIn 0.3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.section-sep{height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,0.2),transparent);margin:16px 0;}
 
-    .btn-google{
-      width:100%;padding:14px 16px;
-      background:linear-gradient(135deg,#1e1008,#2a1a08);
-      border:1px solid #8a6a1f;border-radius:8px;
-      color:var(--gold-light);font-family:'Lato',sans-serif;font-size:14px;font-weight:700;letter-spacing:1px;
-      cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all 0.25s;
-      box-shadow:0 2px 8px rgba(0,0,0,0.4),inset 0 1px 0 rgba(201,168,76,0.1);
-    }
-    .btn-google:hover{border-color:var(--gold-light);background:linear-gradient(135deg,#271508,#3a2510);box-shadow:0 4px 16px rgba(0,0,0,0.5),0 0 12px rgba(201,168,76,0.15);transform:translateY(-1px);}
-    .btn-google svg{width:20px;height:20px;flex-shrink:0;}
+/* ===== AVIATOR GAME PAGE ===== */
+#aviatorPage{align-items:flex-start;padding:0;z-index:15;}
+.av-page-wrap{width:100%;max-width:480px;min-height:100vh;margin:0 auto;display:flex;flex-direction:column;background:linear-gradient(180deg,#0d0018 0%,#0a0014 100%);}
 
-    .login-footer{border-top:1px solid rgba(201,168,76,0.1);padding:14px 32px;text-align:center;display:flex;justify-content:center;gap:6px;align-items:center;}
-    .login-footer span{font-size:11px;letter-spacing:1px;color:rgba(201,168,76,0.25);font-family:'Cinzel',serif;}
-    .login-footer span.hl{color:rgba(201,168,76,0.5);}
+/* Aviator top bar */
+.av-topbar{
+  background:linear-gradient(135deg,#1a0030,#2d0050,#1a0030);
+  padding:12px 16px;display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid rgba(255,100,100,0.2);flex-shrink:0;
+}
+.av-back-btn{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:7px 12px;color:#fff;font-size:12px;cursor:pointer;font-family:'Cinzel',serif;letter-spacing:1px;transition:all 0.2s;}
+.av-back-btn:hover{background:rgba(255,255,255,0.15);}
+.av-topbar-title{font-family:'Cinzel',serif;font-size:16px;font-weight:900;color:#fff;letter-spacing:3px;text-shadow:0 0 15px rgba(255,80,80,0.7);}
+.av-balance-pill{
+  background:rgba(0,0,0,0.4);border:1px solid rgba(201,168,76,0.3);
+  border-radius:20px;padding:5px 12px;
+  font-family:'Cinzel',serif;font-size:12px;color:var(--gold-light);font-weight:700;
+}
+.av-balance-pill span{font-size:9px;color:rgba(201,168,76,0.5);margin-right:2px;}
 
-    /* ======== HOME PAGE ======== */
-    #homePage{align-items:flex-start;padding:0;}
-    .home-wrap{width:100%;max-width:480px;min-height:100vh;margin:0 auto;display:flex;flex-direction:column;}
+/* Demo toggle */
+.demo-toggle-bar{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  padding:10px 16px;background:rgba(0,0,0,0.3);border-bottom:1px solid rgba(255,255,255,0.05);
+}
+.demo-badge{
+  background:rgba(255,165,0,0.15);border:1px solid rgba(255,165,0,0.4);
+  border-radius:20px;padding:4px 14px;
+  font-family:'Cinzel',serif;font-size:10px;color:#ffa500;font-weight:700;letter-spacing:2px;
+}
+.demo-balance{font-family:'Cinzel',serif;font-size:13px;color:#ffa500;font-weight:700;}
+.toggle-switch{position:relative;display:inline-block;width:44px;height:24px;}
+.toggle-switch input{opacity:0;width:0;height:0;}
+.toggle-slider{position:absolute;cursor:pointer;inset:0;background:rgba(255,255,255,0.1);border-radius:24px;transition:0.3s;border:1px solid rgba(255,255,255,0.2);}
+.toggle-slider:before{content:'';position:absolute;width:16px;height:16px;left:3px;bottom:3px;background:rgba(255,255,255,0.5);border-radius:50%;transition:0.3s;}
+.toggle-switch input:checked+.toggle-slider{background:rgba(255,165,0,0.3);border-color:rgba(255,165,0,0.5);}
+.toggle-switch input:checked+.toggle-slider:before{transform:translateX(20px);background:#ffa500;}
+.demo-label{font-size:11px;color:rgba(255,255,255,0.4);letter-spacing:1px;font-family:'Cinzel',serif;}
 
-    /* Top bar */
-    .topbar{
-      background:linear-gradient(135deg,#8a6a1f 0%,#c9a84c 35%,#f0d060 50%,#c9a84c 65%,#8a6a1f 100%);
-      padding:14px 20px;
-      display:flex;align-items:center;justify-content:space-between;
-      position:relative;overflow:hidden;flex-shrink:0;
-    }
-    .topbar::before{content:'';position:absolute;top:0;left:-100%;width:200%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.15),transparent);animation:sheen 5s ease-in-out infinite;}
-    .topbar-logo{font-family:'Cinzel',serif;font-size:18px;font-weight:900;color:#0d0500;letter-spacing:3px;}
-    .topbar-suits{font-size:0.9rem;color:rgba(12,6,0,0.5);letter-spacing:4px;}
-    .user-info{display:flex;align-items:center;gap:8px;}
-    .user-avatar{width:34px;height:34px;border-radius:50%;border:2px solid rgba(12,6,0,0.3);object-fit:cover;}
-    .user-avatar-placeholder{width:34px;height:34px;border-radius:50%;border:2px solid rgba(12,6,0,0.3);background:rgba(12,6,0,0.2);display:flex;align-items:center;justify-content:center;font-size:16px;}
-    .user-name{font-size:12px;font-weight:700;color:rgba(12,6,0,0.7);letter-spacing:1px;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+/* Game canvas area */
+.av-canvas{
+  flex:1;min-height:220px;background:linear-gradient(180deg,#050010 0%,#0a001a 100%);
+  position:relative;overflow:hidden;margin:0;
+}
+.av-grid-lines{position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px);
+  background-size:40px 30px;
+}
+.av-multiplier-display{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  font-family:'Cinzel',serif;font-size:52px;font-weight:900;
+  color:#fff;letter-spacing:2px;text-align:center;
+  text-shadow:0 0 30px rgba(255,100,100,0.9),0 0 60px rgba(255,50,50,0.5);
+  transition:color 0.3s;z-index:5;
+}
+.av-multiplier-display.crashed{color:#ff3333;text-shadow:0 0 30px rgba(255,0,0,1),0 0 80px rgba(255,0,0,0.7);}
+.av-multiplier-display.cashed{color:#00ff88;text-shadow:0 0 30px rgba(0,255,136,0.9);}
+.av-x-label{font-size:22px;font-weight:400;color:rgba(255,255,255,0.6);}
+.av-status-label{font-size:12px;letter-spacing:3px;color:rgba(255,255,255,0.4);margin-top:4px;font-family:'Cinzel',serif;}
+.av-plane{position:absolute;font-size:32px;z-index:6;transition:none;filter:drop-shadow(0 0 10px rgba(255,150,150,0.8));}
+.crash-overlay{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  background:rgba(255,0,0,0.15);z-index:7;
+  font-family:'Cinzel',serif;font-size:18px;font-weight:900;color:#ff4444;letter-spacing:3px;
+  display:none;
+}
+.av-curve{position:absolute;bottom:0;left:0;width:100%;height:100%;z-index:4;}
 
-    /* Action buttons top */
-    .action-row{
-      display:grid;grid-template-columns:1fr 1fr;gap:12px;
-      padding:18px 16px 12px;flex-shrink:0;
-    }
-    .action-btn{
-      padding:16px 12px;border-radius:10px;border:none;cursor:pointer;
-      display:flex;flex-direction:column;align-items:center;gap:6px;
-      font-family:'Cinzel',serif;font-size:13px;font-weight:700;letter-spacing:1px;
-      transition:all 0.25s;position:relative;overflow:hidden;
-    }
-    .action-btn-icon{font-size:24px;line-height:1;}
-    .btn-deposit{
-      background:linear-gradient(135deg,#0a3d20,#155c30);
-      border:1px solid rgba(39,174,96,0.4);color:#2ecc71;
-      box-shadow:0 4px 16px rgba(0,0,0,0.4),0 0 15px rgba(39,174,96,0.1);
-    }
-    .btn-deposit:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.5),0 0 20px rgba(39,174,96,0.2);}
-    .btn-withdraw{
-      background:linear-gradient(135deg,#3d1500,#5c2200);
-      border:1px solid rgba(201,168,76,0.4);color:var(--gold-light);
-      box-shadow:0 4px 16px rgba(0,0,0,0.4),0 0 15px rgba(201,168,76,0.1);
-    }
-    .btn-withdraw:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.5),0 0 20px rgba(201,168,76,0.2);}
+/* Bet controls */
+.av-controls{
+  background:rgba(0,0,0,0.5);border-top:1px solid rgba(255,255,255,0.05);
+  padding:14px 16px;
+}
+.av-bet-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.av-bet-label{font-family:'Cinzel',serif;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,0.3);white-space:nowrap;}
+.av-bet-input{
+  flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);
+  border-radius:8px;padding:10px 14px;color:#fff;font-family:'Cinzel',serif;font-size:16px;
+  font-weight:700;outline:none;transition:all 0.2s;text-align:center;
+}
+.av-bet-input:focus{border-color:rgba(255,165,0,0.5);background:rgba(255,165,0,0.06);}
+.av-quick-bets{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.av-qb{
+  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);
+  border-radius:6px;padding:5px 10px;color:rgba(255,255,255,0.5);
+  font-size:11px;cursor:pointer;font-family:'Cinzel',serif;letter-spacing:1px;transition:all 0.2s;
+}
+.av-qb:hover{background:rgba(255,165,0,0.15);border-color:rgba(255,165,0,0.3);color:#ffa500;}
+.av-action-row{display:flex;gap:10px;}
+.btn-av-bet{
+  flex:1;padding:14px;border:none;border-radius:10px;font-family:'Cinzel',serif;font-size:13px;font-weight:700;letter-spacing:2px;cursor:pointer;transition:all 0.3s;
+}
+.btn-av-bet.bet-now{
+  background:linear-gradient(135deg,#c0392b,#e74c3c,#c0392b);
+  color:#fff;text-shadow:0 1px 2px rgba(0,0,0,0.5);
+  box-shadow:0 4px 15px rgba(231,76,60,0.4);
+}
+.btn-av-bet.bet-now:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(231,76,60,0.5);}
+.btn-av-bet.bet-now:disabled{opacity:0.5;transform:none;cursor:not-allowed;}
+.btn-av-cashout{
+  flex:1;padding:14px;border:none;border-radius:10px;font-family:'Cinzel',serif;font-size:13px;font-weight:700;letter-spacing:2px;cursor:pointer;transition:all 0.3s;
+  background:linear-gradient(135deg,#155c30,#27ae60,#155c30);
+  color:#fff;text-shadow:0 1px 2px rgba(0,0,0,0.5);
+  box-shadow:0 4px 15px rgba(39,174,96,0.4);
+  display:none;
+}
+.btn-av-cashout:hover{transform:translateY(-2px);}
+.av-win-toast{
+  position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);
+  background:linear-gradient(135deg,#155c30,#27ae60);
+  border:1px solid rgba(39,174,96,0.5);border-radius:12px;
+  padding:12px 24px;font-family:'Cinzel',serif;font-size:14px;font-weight:700;
+  color:#fff;letter-spacing:2px;text-align:center;
+  z-index:200;opacity:0;pointer-events:none;transition:all 0.4s;
+}
+.av-win-toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
-    /* Balance card */
-    .balance-card{
-      margin:0 16px 16px;
-      background:linear-gradient(160deg,#1c0e02,#0a0500);
-      border:1px solid rgba(201,168,76,0.25);border-radius:12px;
-      padding:18px 20px;
-      box-shadow:0 4px 20px rgba(0,0,0,0.5);
-    }
-    .balance-label{font-family:'Cinzel',serif;font-size:9px;letter-spacing:3px;color:rgba(201,168,76,0.4);text-transform:uppercase;margin-bottom:6px;}
-    .balance-amount{font-family:'Cinzel',serif;font-size:28px;font-weight:900;color:var(--gold-light);letter-spacing:2px;}
-    .balance-amount span{font-size:14px;color:rgba(201,168,76,0.5);margin-right:4px;}
-    .balance-sub{font-size:11px;color:rgba(255,255,255,0.2);margin-top:4px;letter-spacing:1px;}
-
-    /* Games section */
-    .section-title{
-      padding:0 16px 10px;
-      font-family:'Cinzel',serif;font-size:11px;font-weight:700;
-      letter-spacing:3px;color:rgba(201,168,76,0.5);text-transform:uppercase;
-    }
-    .games-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:0 16px 16px;}
-    .game-card{
-      background:linear-gradient(160deg,#1c0e02,#0a0500);
-      border:1px solid rgba(201,168,76,0.15);border-radius:10px;
-      padding:16px 8px;text-align:center;cursor:pointer;
-      transition:all 0.2s;
-    }
-    .game-card:hover{border-color:rgba(201,168,76,0.4);transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,0.5);}
-    .game-icon{font-size:26px;margin-bottom:6px;}
-    .game-name{font-family:'Cinzel',serif;font-size:9px;font-weight:700;letter-spacing:1px;color:rgba(201,168,76,0.6);text-transform:uppercase;}
-
-    /* Logout */
-    .logout-btn{
-      margin:auto 16px 20px;
-      padding:11px;background:rgba(0,0,0,0.3);border:1px solid rgba(201,168,76,0.15);
-      border-radius:8px;color:rgba(201,168,76,0.35);font-family:'Cinzel',serif;
-      font-size:10px;letter-spacing:2px;cursor:pointer;transition:all 0.2s;text-transform:uppercase;width:calc(100% - 32px);
-    }
-    .logout-btn:hover{border-color:rgba(201,168,76,0.3);color:rgba(201,168,76,0.6);}
-
-    /* ======== MODAL ======== */
-    .modal-overlay{
-      position:fixed;inset:0;z-index:100;
-      background:rgba(0,0,0,0.85);
-      display:flex;align-items:flex-end;justify-content:center;
-      opacity:0;pointer-events:none;transition:opacity 0.3s;
-    }
-    .modal-overlay.open{opacity:1;pointer-events:all;}
-    .modal{
-      width:100%;max-width:480px;
-      background:linear-gradient(160deg,#1c0e02 0%,#0a0500 100%);
-      border-radius:16px 16px 0 0;
-      border:1px solid rgba(201,168,76,0.3);
-      border-bottom:none;
-      padding:0;
-      transform:translateY(100%);transition:transform 0.4s cubic-bezier(.16,1,.3,1);
-      max-height:90vh;overflow-y:auto;
-    }
-    .modal-overlay.open .modal{transform:translateY(0);}
-    .modal-handle{width:36px;height:4px;background:rgba(201,168,76,0.3);border-radius:2px;margin:12px auto 0;}
-    .modal-header{
-      padding:16px 20px 14px;
-      border-bottom:1px solid rgba(201,168,76,0.1);
-      display:flex;align-items:center;justify-content:space-between;
-    }
-    .modal-title{font-family:'Cinzel',serif;font-size:14px;font-weight:700;letter-spacing:2px;color:var(--gold-light);text-transform:uppercase;}
-    .modal-close{background:none;border:none;color:rgba(201,168,76,0.4);font-size:20px;cursor:pointer;padding:4px 8px;transition:color 0.2s;}
-    .modal-close:hover{color:var(--gold-light);}
-    .modal-body{padding:20px;}
-
-    /* Method cards */
-    .method-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
-    .method-card{
-      background:rgba(0,0,0,0.3);border:1px solid rgba(201,168,76,0.15);
-      border-radius:10px;padding:14px 10px;text-align:center;cursor:pointer;
-      transition:all 0.2s;
-    }
-    .method-card:hover,.method-card.selected{border-color:var(--gold);background:rgba(201,168,76,0.08);box-shadow:0 0 12px rgba(201,168,76,0.15);}
-    .method-card.selected{border-color:var(--gold-light);}
-    .method-icon{font-size:24px;margin-bottom:6px;}
-    .method-name{font-family:'Cinzel',serif;font-size:10px;font-weight:700;letter-spacing:1px;color:rgba(201,168,76,0.6);text-transform:uppercase;}
-
-    /* Deposit info box */
-    .info-box{
-      background:rgba(0,0,0,0.4);border:1px solid rgba(201,168,76,0.2);
-      border-radius:10px;padding:16px;margin-bottom:16px;
-    }
-    .info-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
-    .info-row:last-child{margin-bottom:0;}
-    .info-key{font-size:10px;letter-spacing:2px;color:rgba(201,168,76,0.4);font-family:'Cinzel',serif;text-transform:uppercase;}
-    .info-val{font-size:14px;font-weight:700;color:var(--cream);letter-spacing:1px;display:flex;align-items:center;gap:8px;}
-    .copy-btn{
-      background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.25);
-      border-radius:4px;padding:3px 8px;color:var(--gold);font-size:10px;
-      cursor:pointer;font-family:'Cinzel',serif;letter-spacing:1px;transition:all 0.2s;
-    }
-    .copy-btn:hover{background:rgba(201,168,76,0.2);}
-
-    /* Amount input */
-    .input-group{margin-bottom:14px;}
-    .input-label{display:block;font-family:'Cinzel',serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(201,168,76,0.4);margin-bottom:7px;}
-    .input-wrap{position:relative;}
-    .input-wrap .icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none;color:rgba(201,168,76,0.4);}
-    input[type="text"],input[type="number"],input[type="tel"]{
-      width:100%;background:rgba(0,0,0,0.35);border:1px solid rgba(201,168,76,0.2);border-radius:7px;
-      padding:12px 14px 12px 38px;color:var(--cream);font-family:'Lato',sans-serif;font-size:15px;letter-spacing:1px;outline:none;transition:all 0.2s;
-    }
-    input:focus{border-color:rgba(201,168,76,0.6);background:rgba(0,0,0,0.5);box-shadow:0 0 0 3px rgba(201,168,76,0.08);}
-    input::placeholder{color:rgba(253,246,227,0.18);}
-
-    .notice-box{
-      background:rgba(39,174,96,0.07);border:1px solid rgba(39,174,96,0.2);
-      border-radius:8px;padding:12px 14px;margin-bottom:16px;
-      font-size:12px;color:rgba(39,174,96,0.8);line-height:1.6;letter-spacing:0.3px;
-    }
-    .notice-box.warn{background:rgba(201,168,76,0.07);border-color:rgba(201,168,76,0.2);color:rgba(201,168,76,0.7);}
-
-    .btn-submit{
-      width:100%;padding:14px;
-      background:linear-gradient(135deg,#8a6a1f 0%,#c9a84c 40%,#f0d060 50%,#c9a84c 60%,#8a6a1f 100%);
-      background-size:200% 100%;border:none;border-radius:8px;
-      color:#0d0500;font-family:'Cinzel',serif;font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;
-      cursor:pointer;transition:all 0.3s;
-      box-shadow:0 4px 15px rgba(0,0,0,0.4),0 0 20px rgba(201,168,76,0.15);
-    }
-    .btn-submit:hover{background-position:100% 0;transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,0,0,0.5),0 0 30px rgba(201,168,76,0.25);}
-
-    /* Spinner */
-    .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(0,0,0,0.2);border-top-color:#0d0500;border-radius:50%;animation:spin 0.6s linear infinite;vertical-align:middle;}
-    @keyframes spin{to{transform:rotate(360deg)}}
-
-    /* Withdraw method panel */
-    .method-form{display:none;}
-    .method-form.active{display:block;animation:fadeIn 0.3s ease;}
-    @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-
-    .section-sep{height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,0.2),transparent);margin:16px 0;}
-  </style>
+/* Leaderboard */
+.av-leaderboard{
+  margin:12px 16px;
+  background:rgba(0,0,0,0.4);border:1px solid rgba(201,168,76,0.15);border-radius:10px;
+  overflow:hidden;
+}
+.av-lb-header{
+  background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(201,168,76,0.04));
+  padding:10px 14px;display:flex;justify-content:space-between;align-items:center;
+  border-bottom:1px solid rgba(201,168,76,0.1);
+}
+.av-lb-title{font-family:'Cinzel',serif;font-size:10px;font-weight:700;letter-spacing:3px;color:rgba(201,168,76,0.6);}
+.av-lb-live{font-size:10px;color:rgba(39,174,96,0.7);display:flex;align-items:center;gap:5px;}
+.av-lb-dot{width:6px;height:6px;border-radius:50%;background:#2ecc71;animation:pulse 1.5s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.av-lb-row{
+  display:flex;align-items:center;padding:8px 14px;border-bottom:1px solid rgba(255,255,255,0.03);
+  transition:background 0.2s;
+}
+.av-lb-row:last-child{border-bottom:none;}
+.av-lb-row:hover{background:rgba(255,255,255,0.02);}
+.av-lb-rank{font-family:'Cinzel',serif;font-size:11px;font-weight:700;color:rgba(201,168,76,0.4);width:24px;}
+.av-lb-rank.gold{color:#f0d060;}
+.av-lb-rank.silver{color:rgba(192,192,192,0.8);}
+.av-lb-rank.bronze{color:rgba(205,127,50,0.8);}
+.av-lb-name{flex:1;font-size:12px;color:rgba(255,255,255,0.7);letter-spacing:0.5px;}
+.av-lb-mult{font-family:'Cinzel',serif;font-size:12px;font-weight:700;color:#ff6b6b;width:50px;text-align:right;}
+.av-lb-amt{font-family:'Cinzel',serif;font-size:12px;font-weight:700;color:#2ecc71;width:70px;text-align:right;}
+</style>
 </head>
 <body>
 <div class="felt-bg"></div>
@@ -270,7 +308,7 @@
   <div class="suit">♠</div><div class="suit">♦</div>
 </div>
 
-<!-- ========== LOGIN PAGE ========== -->
+<!-- LOGIN PAGE -->
 <div class="page active" id="loginPage">
   <div class="login-card">
     <div class="card-header">
@@ -280,11 +318,8 @@
     </div>
     <div class="login-body">
       <div class="chips-row">
-        <div class="chip chip-r">5</div>
-        <div class="chip chip-b">10</div>
-        <div class="chip chip-g">25</div>
-        <div class="chip chip-w">50</div>
-        <div class="chip chip-k">100</div>
+        <div class="chip chip-r">5</div><div class="chip chip-b">10</div>
+        <div class="chip chip-g">25</div><div class="chip chip-w">50</div><div class="chip chip-k">100</div>
       </div>
       <div class="status-msg" id="loginStatus"></div>
       <button class="btn-google" onclick="loginWithGoogle()" id="googleBtn">
@@ -298,11 +333,9 @@
   </div>
 </div>
 
-<!-- ========== HOME PAGE ========== -->
+<!-- HOME PAGE -->
 <div class="page" id="homePage">
   <div class="home-wrap">
-
-    <!-- Top Bar -->
     <div class="topbar">
       <div>
         <div class="topbar-logo">Royal Bet</div>
@@ -314,41 +347,104 @@
       </div>
     </div>
 
-    <!-- Action Buttons -->
     <div class="action-row">
       <button class="action-btn btn-deposit" onclick="openModal('deposit')">
-        <span class="action-btn-icon">💰</span>
-        Deposit
+        <span class="action-btn-icon">💰</span>Deposit
       </button>
-      <button class="action-btn btn-withdraw" onclick="openModal('withdraw')">
-        <span class="action-btn-icon">💸</span>
-        Withdraw
+      <button class="action-btn btn-withdraw" onclick="checkAndWithdraw()">
+        <span class="action-btn-icon">💸</span>Withdraw
       </button>
     </div>
 
-    <!-- Balance -->
     <div class="balance-card">
       <div class="balance-label">Total Balance</div>
-      <div class="balance-amount"><span>৳</span>0.00</div>
+      <div class="balance-amount" id="homeBalanceDisplay"><span>৳</span>0.00</div>
       <div class="balance-sub">Last updated just now</div>
     </div>
 
-    <!-- Games -->
-    <div class="section-title">🎮 Games</div>
-    <div class="games-grid">
-      <div class="game-card"><div class="game-icon">🎰</div><div class="game-name">Slots</div></div>
-      <div class="game-card"><div class="game-icon">🃏</div><div class="game-name">Poker</div></div>
-      <div class="game-card"><div class="game-icon">🎲</div><div class="game-name">Dice</div></div>
-      <div class="game-card"><div class="game-icon">🎡</div><div class="game-name">Roulette</div></div>
-      <div class="game-card"><div class="game-icon">🂡</div><div class="game-name">Blackjack</div></div>
-      <div class="game-card"><div class="game-icon">🏆</div><div class="game-name">VIP Room</div></div>
+    <div class="section-title">🎮 Featured Game</div>
+    <div class="aviator-home-card" onclick="goToAviator()">
+      <div class="aviator-banner">
+        <div>
+          <div class="aviator-title">✈ AVIATOR</div>
+          <div class="aviator-sub">CRASH · HIGH MULTIPLIER</div>
+        </div>
+        <div class="aviator-plane-preview">✈️</div>
+      </div>
+      <div class="aviator-info-row">
+        <div class="av-info-item"><div class="av-info-val">100x</div><div class="av-info-key">Max Win</div></div>
+        <div class="av-info-item"><div class="av-info-val">৳1000</div><div class="av-info-key">Min Bet</div></div>
+        <div class="av-info-item"><div class="av-info-val">LIVE</div><div class="av-info-key">Status</div></div>
+      </div>
     </div>
 
     <button class="logout-btn" onclick="logout()">⬅ Sign Out</button>
   </div>
 </div>
 
-<!-- ========== DEPOSIT MODAL ========== -->
+<!-- AVIATOR GAME PAGE -->
+<div class="page" id="aviatorPage">
+  <div class="av-page-wrap">
+    <div class="av-topbar">
+      <button class="av-back-btn" onclick="showPage('homePage')">← Back</button>
+      <div class="av-topbar-title">✈ AVIATOR</div>
+      <div class="av-balance-pill" id="avBalancePill"><span>৳</span><span id="avBalanceNum">0</span></div>
+    </div>
+
+    <div class="demo-toggle-bar">
+      <span class="demo-label">REAL</span>
+      <label class="toggle-switch">
+        <input type="checkbox" id="demoToggle" onchange="toggleDemoMode()">
+        <span class="toggle-slider"></span>
+      </label>
+      <span class="demo-label">DEMO</span>
+      <div id="demoBadge" style="display:none;" class="demo-badge">DEMO MODE</div>
+      <div id="demoBalanceDisplay" style="display:none;" class="demo-balance">৳<span id="demoBalanceNum">10,000</span></div>
+    </div>
+
+    <div class="av-canvas" id="avCanvas">
+      <div class="av-grid-lines"></div>
+      <canvas id="avCurveCanvas" class="av-curve"></canvas>
+      <div class="crash-overlay" id="crashOverlay">💥 CRASHED!</div>
+      <div class="av-multiplier-display" id="avMultiplier">
+        <span id="avMultVal">1.00</span><span class="av-x-label">x</span>
+        <div class="av-status-label" id="avStatusLabel">WAITING...</div>
+      </div>
+      <div class="av-plane" id="avPlane">✈️</div>
+    </div>
+
+    <div class="av-controls">
+      <div class="av-bet-row">
+        <span class="av-bet-label">BET ৳</span>
+        <input type="number" class="av-bet-input" id="avBetInput" value="1000" min="1000" max="20000" placeholder="৳1000 – ৳20000"/>
+      </div>
+      <div class="av-quick-bets">
+        <button class="av-qb" onclick="setQuickBet(1000)">1K</button>
+        <button class="av-qb" onclick="setQuickBet(2000)">2K</button>
+        <button class="av-qb" onclick="setQuickBet(5000)">5K</button>
+        <button class="av-qb" onclick="setQuickBet(10000)">10K</button>
+        <button class="av-qb" onclick="setQuickBet(20000)">20K</button>
+      </div>
+      <div class="av-action-row">
+        <button class="btn-av-bet bet-now" id="avBetBtn" onclick="placeBet()">🎲 BET NOW</button>
+        <button class="btn-av-cashout" id="avCashoutBtn" onclick="cashOut()">💰 CASH OUT</button>
+      </div>
+    </div>
+
+    <div class="av-leaderboard">
+      <div class="av-lb-header">
+        <div class="av-lb-title">🏆 LIVE LEADERBOARD</div>
+        <div class="av-lb-live"><div class="av-lb-dot"></div>LIVE</div>
+      </div>
+      <div id="leaderboardBody"></div>
+    </div>
+  </div>
+</div>
+
+<!-- WIN TOAST -->
+<div class="av-win-toast" id="winToast"></div>
+
+<!-- DEPOSIT MODAL -->
 <div class="modal-overlay" id="depositModal">
   <div class="modal">
     <div class="modal-handle"></div>
@@ -357,49 +453,30 @@
       <button class="modal-close" onclick="closeModal('deposit')">✕</button>
     </div>
     <div class="modal-body">
-      <div class="notice-box">
-        ✅ Send USDT (TRC20 or BEP20) to the Binance ID below. After sending, submit your transaction details.
-      </div>
+      <div class="notice-box">✅ Send USDT (TRC20 or BEP20) to the Binance ID below. After sending, submit your transaction details.</div>
       <div class="info-box">
-        <div class="info-row">
-          <span class="info-key">Platform</span>
-          <span class="info-val">🔶 Binance</span>
-        </div>
+        <div class="info-row"><span class="info-key">Platform</span><span class="info-val">🔶 Binance</span></div>
         <div class="info-row">
           <span class="info-key">Binance ID</span>
-          <span class="info-val">
-            894307667
-            <button class="copy-btn" onclick="copyText('894307667', this)">Copy</button>
-          </span>
+          <span class="info-val">894307667<button class="copy-btn" onclick="copyText('894307667',this)">Copy</button></span>
         </div>
-        <div class="info-row">
-          <span class="info-key">Network</span>
-          <span class="info-val">USDT · TRC20 / BEP20</span>
-        </div>
+        <div class="info-row"><span class="info-key">Network</span><span class="info-val">USDT · TRC20 / BEP20</span></div>
       </div>
       <div class="input-group">
         <label class="input-label">Amount (USDT)</label>
-        <div class="input-wrap">
-          <span class="icon">💵</span>
-          <input type="number" id="depositAmount" placeholder="Enter amount Minimum 50$"/>
-        </div>
+        <div class="input-wrap"><span class="icon">💵</span><input type="number" id="depositAmount" placeholder="Minimum 50$"/></div>
       </div>
       <div class="input-group">
         <label class="input-label">Transaction ID / TxHash</label>
-        <div class="input-wrap">
-          <span class="icon">🔗</span>
-          <input type="text" id="depositTxId" placeholder="Paste your TxID here"/>
-        </div>
+        <div class="input-wrap"><span class="icon">🔗</span><input type="text" id="depositTxId" placeholder="Paste your TxID here"/></div>
       </div>
-      <div class="notice-box warn">
-        ⚠️ Minimum deposit: 50 USDT. Processing time: 5–15 minutes after confirmation.
-      </div>
+      <div class="notice-box warn">⚠️ Minimum deposit: 50 USDT. Processing time: 5–15 minutes after confirmation.</div>
       <button class="btn-submit" onclick="submitDeposit()">Submit Deposit</button>
     </div>
   </div>
 </div>
 
-<!-- ========== WITHDRAW MODAL ========== -->
+<!-- WITHDRAW MODAL -->
 <div class="modal-overlay" id="withdrawModal">
   <div class="modal">
     <div class="modal-handle"></div>
@@ -408,215 +485,434 @@
       <button class="modal-close" onclick="closeModal('withdraw')">✕</button>
     </div>
     <div class="modal-body">
-
-      <!-- Method Selection -->
       <div class="input-label" style="margin-bottom:10px;">Select Method</div>
       <div class="method-grid">
-        <div class="method-card" onclick="selectWithdrawMethod('bkash', this)">
-          <div class="method-icon">📱</div>
-          <div class="method-name">bKash</div>
-        </div>
-        <div class="method-card" onclick="selectWithdrawMethod('nagad', this)">
-          <div class="method-icon">🟠</div>
-          <div class="method-name">Nagad</div>
-        </div>
-        <div class="method-card" onclick="selectWithdrawMethod('binance', this)">
-          <div class="method-icon">🔶</div>
-          <div class="method-name">Binance</div>
-        </div>
-        <div class="method-card" onclick="selectWithdrawMethod('upay', this)">
-          <div class="method-icon">💜</div>
-          <div class="method-name">Upay</div>
-        </div>
-        <div class="method-card" onclick="selectWithdrawMethod('rocket', this)">
-          <div class="method-icon">🚀</div>
-          <div class="method-name">Rocket</div>
-        </div>
+        <div class="method-card" onclick="selectWithdrawMethod('bkash',this)"><div class="method-icon">📱</div><div class="method-name">bKash</div></div>
+        <div class="method-card" onclick="selectWithdrawMethod('nagad',this)"><div class="method-icon">🟠</div><div class="method-name">Nagad</div></div>
+        <div class="method-card" onclick="selectWithdrawMethod('binance',this)"><div class="method-icon">🔶</div><div class="method-name">Binance</div></div>
+        <div class="method-card" onclick="selectWithdrawMethod('upay',this)"><div class="method-icon">💜</div><div class="method-name">Upay</div></div>
+        <div class="method-card" onclick="selectWithdrawMethod('rocket',this)"><div class="method-icon">🚀</div><div class="method-name">Rocket</div></div>
       </div>
-
       <div class="section-sep"></div>
-
-      <!-- bKash form -->
       <div class="method-form" id="form-bkash">
-        <div class="input-group">
-          <label class="input-label">bKash Number</label>
-          <div class="input-wrap"><span class="icon">📱</span><input type="tel" placeholder="+880 1X XXX XXXXX"/></div>
-        </div>
-        <div class="input-group">
-          <label class="input-label">Amount (BDT ৳)</label>
-          <div class="input-wrap"><span class="icon">💵</span><input type="number" placeholder="Minimum ৳100"/></div>
-        </div>
+        <div class="input-group"><label class="input-label">bKash Number</label><div class="input-wrap"><span class="icon">📱</span><input type="tel" placeholder="+880 1X XXX XXXXX"/></div></div>
+        <div class="input-group"><label class="input-label">Amount (BDT ৳)</label><div class="input-wrap"><span class="icon">💵</span><input type="number" placeholder="Minimum ৳5000"/></div></div>
         <div class="notice-box warn">⚠️ Minimum withdrawal: ৳5000. Processing time: 1–24 hours.</div>
         <button class="btn-submit" onclick="submitWithdraw('bKash')">Withdraw via bKash</button>
       </div>
-
-      <!-- Nagad form -->
       <div class="method-form" id="form-nagad">
-        <div class="input-group">
-          <label class="input-label">Nagad Number</label>
-          <div class="input-wrap"><span class="icon">🟠</span><input type="tel" placeholder="+880 1X XXX XXXXX"/></div>
-        </div>
-        <div class="input-group">
-          <label class="input-label">Amount (BDT ৳)</label>
-          <div class="input-wrap"><span class="icon">💵</span><input type="number" placeholder="Minimum ৳100"/></div>
-        </div>
+        <div class="input-group"><label class="input-label">Nagad Number</label><div class="input-wrap"><span class="icon">🟠</span><input type="tel" placeholder="+880 1X XXX XXXXX"/></div></div>
+        <div class="input-group"><label class="input-label">Amount (BDT ৳)</label><div class="input-wrap"><span class="icon">💵</span><input type="number" placeholder="Minimum ৳5000"/></div></div>
         <div class="notice-box warn">⚠️ Minimum withdrawal: ৳5000. Processing time: 1–24 hours.</div>
         <button class="btn-submit" onclick="submitWithdraw('Nagad')">Withdraw via Nagad</button>
       </div>
-
-      <!-- Binance form -->
       <div class="method-form" id="form-binance">
-        <div class="input-group">
-          <label class="input-label">Binance ID or Email</label>
-          <div class="input-wrap"><span class="icon">🔶</span><input type="text" placeholder="Your Binance ID"/></div>
-        </div>
-        <div class="input-group">
-          <label class="input-label">Amount (USDT)</label>
-          <div class="input-wrap"><span class="icon">💵</span><input type="number" placeholder="Minimum 5 USDT"/></div>
-        </div>
+        <div class="input-group"><label class="input-label">Binance ID or Email</label><div class="input-wrap"><span class="icon">🔶</span><input type="text" placeholder="Your Binance ID"/></div></div>
+        <div class="input-group"><label class="input-label">Amount (USDT)</label><div class="input-wrap"><span class="icon">💵</span><input type="number" placeholder="Minimum 50 USDT"/></div></div>
         <div class="notice-box warn">⚠️ Minimum withdrawal: 50 USDT. Processing time: 15–60 minutes.</div>
         <button class="btn-submit" onclick="submitWithdraw('Binance')">Withdraw via Binance</button>
       </div>
-
-      <!-- Upay form -->
       <div class="method-form" id="form-upay">
-        <div class="input-group">
-          <label class="input-label">Upay Number</label>
-          <div class="input-wrap"><span class="icon">💜</span><input type="tel" placeholder="+880 1X XXX XXXXX"/></div>
-        </div>
-        <div class="input-group">
-          <label class="input-label">Amount (BDT ৳)</label>
-          <div class="input-wrap"><span class="icon">💵</span><input type="number" placeholder="Minimum ৳100"/></div>
-        </div>
+        <div class="input-group"><label class="input-label">Upay Number</label><div class="input-wrap"><span class="icon">💜</span><input type="tel" placeholder="+880 1X XXX XXXXX"/></div></div>
+        <div class="input-group"><label class="input-label">Amount (BDT ৳)</label><div class="input-wrap"><span class="icon">💵</span><input type="number" placeholder="Minimum ৳10000"/></div></div>
         <div class="notice-box warn">⚠️ Minimum withdrawal: ৳10000. Processing time: 1–24 hours.</div>
         <button class="btn-submit" onclick="submitWithdraw('Upay')">Withdraw via Upay</button>
       </div>
-
-      <!-- Rocket form -->
       <div class="method-form" id="form-rocket">
-        <div class="input-group">
-          <label class="input-label">Rocket Number</label>
-          <div class="input-wrap"><span class="icon">🚀</span><input type="tel" placeholder="+880 1X XXX XXXXX"/></div>
-        </div>
-        <div class="input-group">
-          <label class="input-label">Amount (BDT ৳)</label>
-          <div class="input-wrap"><span class="icon">💵</span><input type="number" placeholder="Minimum ৳100"/></div>
-        </div>
+        <div class="input-group"><label class="input-label">Rocket Number</label><div class="input-wrap"><span class="icon">🚀</span><input type="tel" placeholder="+880 1X XXX XXXXX"/></div></div>
+        <div class="input-group"><label class="input-label">Amount (BDT ৳)</label><div class="input-wrap"><span class="icon">💵</span><input type="number" placeholder="Minimum ৳10000"/></div></div>
         <div class="notice-box warn">⚠️ Minimum withdrawal: ৳10000. Processing time: 1–24 hours.</div>
         <button class="btn-submit" onclick="submitWithdraw('Rocket')">Withdraw via Rocket</button>
       </div>
-
-      <!-- placeholder when no method selected -->
-      <div id="noMethodMsg" style="text-align:center;padding:10px 0;color:rgba(201,168,76,0.3);font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;">
-        ↑ Select a withdrawal method above
-      </div>
+      <div id="noMethodMsg" style="text-align:center;padding:10px 0;color:rgba(201,168,76,0.3);font-family:'Cinzel',serif;font-size:11px;letter-spacing:2px;">↑ Select a withdrawal method above</div>
     </div>
   </div>
 </div>
 
-<!-- ========== FIREBASE ========== -->
+<!-- FIREBASE -->
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-  const app = initializeApp({
-    apiKey:"AIzaSyB_8Bw60xdifJmE7dqhW7a-79qiC1NMqZg",
-    authDomain:"game-v-app.firebaseapp.com",
-    projectId:"game-v-app",
-    storageBucket:"game-v-app.firebasestorage.app",
-    messagingSenderId:"791868402912",
-    appId:"1:791868402912:web:f5f456496656a6589a7485",
-    measurementId:"G-XVC97WVLM3"
-  });
-  const auth = getAuth(app);
+const app = initializeApp({
+  apiKey:"AIzaSyB_8Bw60xdifJmE7dqhW7a-79qiC1NMqZg",
+  authDomain:"game-v-app.firebaseapp.com",
+  projectId:"game-v-app",
+  storageBucket:"game-v-app.firebasestorage.app",
+  messagingSenderId:"791868402912",
+  appId:"1:791868402912:web:f5f456496656a6589a7485"
+});
+const auth = getAuth(app);
 
-  function showPage(id) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
+onAuthStateChanged(auth, user => {
+  if (user) {
+    document.getElementById('userNameLabel').textContent = user.displayName ? user.displayName.split(' ')[0] : 'Player';
+    const wrap = document.getElementById('userAvatarWrap');
+    if (user.photoURL) {
+      wrap.innerHTML = `<img src="${user.photoURL}" class="user-avatar" onerror="this.parentElement.innerHTML='👤'"/>`;
+    }
+    showPage('homePage');
+  } else {
+    showPage('loginPage');
   }
+});
 
-  onAuthStateChanged(auth, user => {
-    if (user) {
-      // set user info
-      document.getElementById('userNameLabel').textContent = user.displayName ? user.displayName.split(' ')[0] : 'Player';
-      const wrap = document.getElementById('userAvatarWrap');
-      if (user.photoURL) {
-        wrap.innerHTML = `<img src="${user.photoURL}" class="user-avatar" onerror="this.parentElement.innerHTML='👤'"/>`;
-      }
-      showPage('homePage');
-    } else {
-      showPage('loginPage');
-    }
-  });
+window.loginWithGoogle = async function() {
+  const btn = document.getElementById('googleBtn');
+  const status = document.getElementById('loginStatus');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Signing in...';
+  status.className = 'status-msg';
+  try {
+    await signInWithPopup(auth, new GoogleAuthProvider());
+  } catch(e) {
+    status.textContent = '❌ ' + e.message;
+    status.className = 'status-msg error';
+    btn.disabled = false;
+    btn.innerHTML = `<svg viewBox="0 0 24 24" width="20" height="20"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg> Sign In with Google`;
+  }
+};
 
-  window.loginWithGoogle = async function() {
-    const btn = document.getElementById('googleBtn');
-    const status = document.getElementById('loginStatus');
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span> Signing in...';
-    status.className = 'status-msg';
-    try {
-      await signInWithPopup(auth, new GoogleAuthProvider());
-    } catch(e) {
-      status.textContent = '❌ ' + e.message;
-      status.className = 'status-msg error';
-      btn.disabled = false;
-      btn.innerHTML = `<svg viewBox="0 0 24 24" width="20" height="20"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg> Sign In with Google`;
-    }
-  };
-
-  window.logout = async function() {
-    await signOut(auth);
-  };
+window.logout = async function() { await signOut(auth); };
 </script>
 
 <script>
-  // Modal control
-  window.openModal = function(type) {
-    document.getElementById(type + 'Modal').classList.add('open');
-  };
-  window.closeModal = function(type) {
-    document.getElementById(type + 'Modal').classList.remove('open');
-  };
-  // Close on backdrop click
-  document.querySelectorAll('.modal-overlay').forEach(el => {
-    el.addEventListener('click', function(e) {
-      if (e.target === this) this.classList.remove('open');
-    });
-  });
+// ===== STATE =====
+let realBalance = 0;
+let demoBalance = 10000;
+let isDemoMode = false;
 
-  // Withdraw method selection
-  window.selectWithdrawMethod = function(method, card) {
-    document.querySelectorAll('.method-card').forEach(c => c.classList.remove('selected'));
-    card.classList.add('selected');
-    document.querySelectorAll('.method-form').forEach(f => f.classList.remove('active'));
-    document.getElementById('noMethodMsg').style.display = 'none';
-    document.getElementById('form-' + method).classList.add('active');
-  };
+// ===== PAGE NAVIGATION =====
+window.showPage = function(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+};
 
-  // Copy button
-  window.copyText = function(text, btn) {
-    navigator.clipboard.writeText(text).then(() => {
-      btn.textContent = 'Copied!';
-      setTimeout(() => btn.textContent = 'Copy', 2000);
-    });
-  };
+// ===== BALANCE HELPERS =====
+function getBalance() { return isDemoMode ? demoBalance : realBalance; }
+function setBalance(val) {
+  if (isDemoMode) demoBalance = val;
+  else realBalance = val;
+  updateBalanceDisplays();
+}
+function updateBalanceDisplays() {
+  const bal = getBalance();
+  document.getElementById('homeBalanceDisplay').innerHTML = `<span>৳</span>${realBalance.toLocaleString('en', {minimumFractionDigits:2, maximumFractionDigits:2})}`;
+  document.getElementById('avBalanceNum').textContent = bal.toLocaleString('en', {minimumFractionDigits:2});
+  if (isDemoMode) document.getElementById('demoBalanceNum').textContent = demoBalance.toLocaleString('en');
+}
 
-  // Submit deposit
-  window.submitDeposit = function() {
-    const amt = document.getElementById('depositAmount').value;
-    const txid = document.getElementById('depositTxId').value;
-    if (!amt || !txid) { alert('Please fill in all fields.'); return; }
-    alert(`✅ Deposit request submitted!\nAmount: ${amt} USDT\nTxID: ${txid}\n\nWe will verify and credit your account within 5–15 minutes.`);
-    closeModal('deposit');
-  };
+// ===== GO TO AVIATOR =====
+window.goToAviator = function() {
+  showPage('aviatorPage');
+  updateBalanceDisplays();
+  if (!gameRunning) startNewRound();
+};
 
-  // Submit withdraw
-  window.submitWithdraw = function(method) {
-    alert(`✅ Withdrawal request via ${method} submitted!\n\nOur team will process it within 1–24 hours.`);
-    closeModal('withdraw');
-  };
+// ===== DEMO MODE =====
+window.toggleDemoMode = function() {
+  isDemoMode = document.getElementById('demoToggle').checked;
+  document.getElementById('demoBadge').style.display = isDemoMode ? 'inline-block' : 'none';
+  document.getElementById('demoBalanceDisplay').style.display = isDemoMode ? 'flex' : 'none';
+  updateBalanceDisplays();
+  if (betPlaced) { betPlaced = false; updateBetButtons(); }
+};
+
+// ===== WITHDRAW CHECK =====
+window.checkAndWithdraw = function() {
+  if (realBalance <= 0) {
+    showToast('❌ No balance! Please deposit first.', true);
+    openModal('deposit');
+    return;
+  }
+  openModal('withdraw');
+};
+
+// ===== MODALS =====
+window.openModal = function(type) { document.getElementById(type+'Modal').classList.add('open'); };
+window.closeModal = function(type) { document.getElementById(type+'Modal').classList.remove('open'); };
+document.querySelectorAll('.modal-overlay').forEach(el => {
+  el.addEventListener('click', function(e) { if (e.target === this) this.classList.remove('open'); });
+});
+
+window.selectWithdrawMethod = function(method, card) {
+  document.querySelectorAll('.method-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  document.querySelectorAll('.method-form').forEach(f => f.classList.remove('active'));
+  document.getElementById('noMethodMsg').style.display = 'none';
+  document.getElementById('form-'+method).classList.add('active');
+};
+window.copyText = function(text, btn) {
+  navigator.clipboard.writeText(text).then(() => { btn.textContent='Copied!'; setTimeout(()=>btn.textContent='Copy',2000); });
+};
+window.submitDeposit = function() {
+  const amt = document.getElementById('depositAmount').value;
+  const txid = document.getElementById('depositTxId').value;
+  if (!amt || !txid) { alert('Please fill in all fields.'); return; }
+  alert(`✅ Deposit request submitted!\nAmount: ${amt} USDT\nTxID: ${txid}\n\nWe will verify and credit your account within 5–15 minutes.`);
+  closeModal('deposit');
+};
+window.submitWithdraw = function(method) {
+  alert(`✅ Withdrawal via ${method} submitted!\nOur team will process it within 1–24 hours.`);
+  closeModal('withdraw');
+};
+
+// ===== WIN TOAST =====
+function showToast(msg, isError) {
+  const t = document.getElementById('winToast');
+  t.textContent = msg;
+  t.style.background = isError
+    ? 'linear-gradient(135deg,#5c1a0a,#c0392b)'
+    : 'linear-gradient(135deg,#155c30,#27ae60)';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ===== AVIATOR GAME =====
+let gameRunning = false, betPlaced = false, currentMult = 1.0;
+let crashAt = 1.0, animFrame = null, gamePhase = 'waiting'; // waiting, flying, crashed
+let betAmount = 0;
+let roundStartTime = 0;
+
+// Curve drawing
+const curvePoints = [];
+let canvasCtx = null;
+function initCanvas() {
+  const canvas = document.getElementById('avCurveCanvas');
+  const container = document.getElementById('avCanvas');
+  canvas.width = container.offsetWidth || 400;
+  canvas.height = container.offsetHeight || 220;
+  canvasCtx = canvas.getContext('2d');
+}
+
+function generateCrashPoint() {
+  // First round always goes to 10x minimum, then cycles
+  const r = Math.random();
+  if (r < 0.15) return 1.0 + Math.random() * 0.5; // early crash ~15%
+  if (r < 0.45) return 10 + Math.random() * 15; // 10-25x
+  if (r < 0.70) return 25 + Math.random() * 30; // 25-55x
+  if (r < 0.88) return 55 + Math.random() * 30; // 55-85x
+  return 85 + Math.random() * 15; // 85-100x
+}
+
+function startNewRound() {
+  gameRunning = true;
+  gamePhase = 'waiting';
+  currentMult = 1.00;
+  curvePoints.length = 0;
+  crashAt = generateCrashPoint();
+  betPlaced = false;
+  updateBetButtons();
+  document.getElementById('avMultVal').textContent = '1.00';
+  document.getElementById('avStatusLabel').textContent = 'NEXT ROUND IN 3s...';
+  document.getElementById('avMultiplier').className = 'av-multiplier-display';
+  document.getElementById('crashOverlay').style.display = 'none';
+  const plane = document.getElementById('avPlane');
+  plane.style.display = 'none';
+
+  setTimeout(() => {
+    if (!gameRunning) return;
+    gamePhase = 'flying';
+    roundStartTime = performance.now();
+    document.getElementById('avStatusLabel').textContent = 'FLYING...';
+    plane.style.display = 'block';
+    plane.style.left = '10%';
+    plane.style.bottom = '10%';
+    initCanvas();
+    flyLoop();
+    refreshLeaderboard();
+  }, 3000);
+}
+
+function flyLoop() {
+  if (gamePhase !== 'flying') return;
+  const elapsed = (performance.now() - roundStartTime) / 1000;
+  // Slow start then accelerate
+  currentMult = 1 + elapsed * 0.8 + elapsed * elapsed * 0.3;
+  currentMult = Math.round(currentMult * 100) / 100;
+
+  document.getElementById('avMultVal').textContent = currentMult.toFixed(2);
+  updateBalanceDisplays();
+
+  // Move plane along curve
+  const canvas = document.getElementById('avCurveCanvas');
+  const pw = canvas.width, ph = canvas.height;
+  const progress = Math.min(elapsed / 15, 1);
+  const px = 10 + progress * 75; // % across screen
+  const py = 85 - progress * 65 - progress * progress * 15; // % from bottom
+  const plane = document.getElementById('avPlane');
+  plane.style.left = px + '%';
+  plane.style.bottom = py + '%';
+
+  // Draw curve
+  curvePoints.push({x: px/100 * pw, y: ph - py/100 * ph});
+  drawCurve(pw, ph);
+
+  if (currentMult >= crashAt) {
+    triggerCrash();
+    return;
+  }
+  animFrame = requestAnimationFrame(flyLoop);
+}
+
+function drawCurve(w, h) {
+  const ctx = canvasCtx;
+  if (!ctx || curvePoints.length < 2) return;
+  ctx.clearRect(0, 0, w, h);
+
+  // Glow gradient line
+  const grad = ctx.createLinearGradient(0, h, w, 0);
+  grad.addColorStop(0, 'rgba(255,100,100,0.1)');
+  grad.addColorStop(0.5, 'rgba(255,100,100,0.6)');
+  grad.addColorStop(1, 'rgba(255,220,100,0.9)');
+
+  ctx.beginPath();
+  ctx.moveTo(curvePoints[0].x, curvePoints[0].y);
+  for (let i = 1; i < curvePoints.length; i++) {
+    ctx.lineTo(curvePoints[i].x, curvePoints[i].y);
+  }
+  ctx.strokeStyle = grad;
+  ctx.lineWidth = 3;
+  ctx.shadowColor = 'rgba(255,100,100,0.8)';
+  ctx.shadowBlur = 10;
+  ctx.stroke();
+
+  // Fill below curve
+  ctx.lineTo(curvePoints[curvePoints.length-1].x, h);
+  ctx.lineTo(curvePoints[0].x, h);
+  ctx.closePath();
+  const fillGrad = ctx.createLinearGradient(0, 0, 0, h);
+  fillGrad.addColorStop(0, 'rgba(255,100,100,0.15)');
+  fillGrad.addColorStop(1, 'rgba(255,100,100,0.0)');
+  ctx.fillStyle = fillGrad;
+  ctx.shadowBlur = 0;
+  ctx.fill();
+}
+
+function triggerCrash() {
+  gamePhase = 'crashed';
+  cancelAnimationFrame(animFrame);
+  document.getElementById('avPlane').style.display = 'none';
+  document.getElementById('avMultiplier').className = 'av-multiplier-display crashed';
+  document.getElementById('avStatusLabel').textContent = '💥 CRASHED!';
+  document.getElementById('crashOverlay').style.display = 'flex';
+
+  if (betPlaced) {
+    // Player lost
+    betPlaced = false;
+    updateBetButtons();
+    showToast(`💥 Crashed at ${currentMult.toFixed(2)}x — You lost ৳${betAmount.toLocaleString()}`, true);
+    // Demo balance loss stays — no refund
+  }
+
+  setTimeout(() => {
+    document.getElementById('crashOverlay').style.display = 'none';
+    startNewRound();
+  }, 2500);
+}
+
+window.placeBet = function() {
+  const input = parseInt(document.getElementById('avBetInput').value);
+  if (isNaN(input) || input < 1000 || input > 20000) {
+    showToast('⚠️ Bet must be ৳1000 – ৳20000', true); return;
+  }
+  const bal = getBalance();
+  if (bal < input) {
+    if (isDemoMode) {
+      showToast('❌ Demo balance empty! No refund in demo mode.', true);
+    } else {
+      showToast('❌ Insufficient balance! Please deposit.', true);
+      setTimeout(() => openModal('deposit'), 1000);
+    }
+    return;
+  }
+  if (gamePhase !== 'flying' && gamePhase !== 'waiting') {
+    showToast('⏳ Wait for next round!', true); return;
+  }
+  betAmount = input;
+  setBalance(getBalance() - input);
+  betPlaced = true;
+  updateBetButtons();
+  showToast(`✅ Bet placed: ৳${input.toLocaleString()}`, false);
+};
+
+window.cashOut = function() {
+  if (!betPlaced || gamePhase !== 'flying') return;
+  const win = Math.floor(betAmount * currentMult);
+  setBalance(getBalance() + win);
+  betPlaced = false;
+  updateBetButtons();
+  showToast(`💰 Cashed out at ${currentMult.toFixed(2)}x! Won ৳${win.toLocaleString()}`, false);
+  document.getElementById('avMultiplier').className = 'av-multiplier-display cashed';
+};
+
+function updateBetButtons() {
+  const betBtn = document.getElementById('avBetBtn');
+  const cashBtn = document.getElementById('avCashoutBtn');
+  if (betPlaced && gamePhase === 'flying') {
+    betBtn.style.display = 'none';
+    cashBtn.style.display = 'flex';
+  } else {
+    betBtn.style.display = 'flex';
+    cashBtn.style.display = 'none';
+    betBtn.disabled = gamePhase === 'crashed';
+  }
+}
+
+window.setQuickBet = function(amt) {
+  document.getElementById('avBetInput').value = amt;
+};
+
+// ===== LEADERBOARD =====
+const lbNames = [
+  'Rahim_X','Karim99','Sumon★','NightKing','BetKing88','GoldRush','Lucky7','SpeedBet',
+  'TigerBet','AcePlayer','RoyalFly','DiamondX','StormBet','PhoenixUp','NightHawk',
+  'PlatinumK','IronFist','CobraKing','MaxBet99','UltraFly'
+];
+const lbMults = [12.5, 34.2, 67.0, 8.5, 45.1, 22.3, 91.0, 15.7, 38.4, 56.2, 100.0, 19.8, 72.3, 28.1, 44.5];
+
+function refreshLeaderboard() {
+  const tbody = document.getElementById('leaderboardBody');
+  // generate 8 random entries
+  const entries = [];
+  const used = new Set();
+  while (entries.length < 8) {
+    const ni = Math.floor(Math.random() * lbNames.length);
+    if (used.has(ni)) continue;
+    used.add(ni);
+    const mult = (5 + Math.random() * 95).toFixed(1);
+    const amt = Math.floor(1000 + Math.random() * 19000);
+    const win = Math.floor(amt * parseFloat(mult));
+    entries.push({ name: lbNames[ni], mult, win });
+  }
+  entries.sort((a,b) => b.win - a.win);
+
+  tbody.innerHTML = entries.map((e, i) => {
+    let rankClass = '';
+    let rankLabel = '#' + (i+1);
+    if (i === 0) { rankClass = 'gold'; rankLabel = '🥇'; }
+    else if (i === 1) { rankClass = 'silver'; rankLabel = '🥈'; }
+    else if (i === 2) { rankClass = 'bronze'; rankLabel = '🥉'; }
+    return `
+      <div class="av-lb-row">
+        <div class="av-lb-rank ${rankClass}">${rankLabel}</div>
+        <div class="av-lb-name">${e.name}</div>
+        <div class="av-lb-mult">${e.mult}x</div>
+        <div class="av-lb-amt">৳${e.win.toLocaleString()}</div>
+      </div>`;
+  }).join('');
+}
+
+// Auto-refresh leaderboard every 8 seconds
+setInterval(() => {
+  if (document.getElementById('aviatorPage').classList.contains('active')) {
+    refreshLeaderboard();
+  }
+}, 8000);
+
+// Init on load
+refreshLeaderboard();
+updateBalanceDisplays();
 </script>
 </body>
 </html>
-
