@@ -1,549 +1,288 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>GameVerse — Login</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet"/>
+  <title>Royal Bet — Sign In</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --gold:#c9a84c;--gold-light:#f0d060;--gold-dark:#8a6a1f;
+      --felt:#0d3b1e;--felt-dark:#061509;--cream:#fdf6e3;
+    }
+    body{
+      font-family:'Lato',sans-serif;
+      background:var(--felt-dark);
+      min-height:100vh;
+      display:flex;align-items:center;justify-content:center;
+      overflow:hidden;position:relative;
+    }
+    .felt-bg{
+      position:fixed;inset:0;z-index:0;
+      background:radial-gradient(ellipse 80% 60% at 50% 50%, #1a5c30 0%, #0d3b1e 45%, #061509 100%);
+    }
+    .felt-bg::before{
+      content:'';position:absolute;inset:0;
+      background-image:url("data:image/svg+xml,%3Csvg width='4' height='4' viewBox='0 0 4 4' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 3h1v1H1V3zm2-2h1v1H3V1z' fill='%23ffffff' fill-opacity='0.015'/%3E%3C/svg%3E");
+      background-size:4px 4px;
+    }
+    .table-rim{
+      position:fixed;width:110vw;height:90vh;border-radius:50%;
+      box-shadow:0 0 0 4px #8a6a1f,0 0 0 10px #c9a84c,0 0 0 14px #8a6a1f,0 0 60px rgba(201,168,76,0.15),inset 0 0 60px rgba(0,0,0,0.5);
+      top:50%;left:50%;transform:translate(-50%,-50%);z-index:1;pointer-events:none;
+    }
+    .suits-bg{position:fixed;inset:0;z-index:2;pointer-events:none;overflow:hidden;}
+    .suit{position:absolute;font-size:3rem;opacity:0.04;animation:floatSuit 15s ease-in-out infinite;user-select:none;}
+    .suit:nth-child(1){top:10%;left:5%;animation-delay:0s;font-size:4rem;}
+    .suit:nth-child(2){top:20%;right:8%;animation-delay:3s;font-size:2.5rem;}
+    .suit:nth-child(3){bottom:15%;left:10%;animation-delay:6s;font-size:3.5rem;}
+    .suit:nth-child(4){bottom:25%;right:5%;animation-delay:9s;font-size:2rem;}
+    .suit:nth-child(5){top:45%;left:2%;animation-delay:2s;}
+    .suit:nth-child(6){top:55%;right:3%;animation-delay:7s;}
+    @keyframes floatSuit{0%,100%{transform:translateY(0) rotate(0deg)}33%{transform:translateY(-20px) rotate(5deg)}66%{transform:translateY(10px) rotate(-3deg)}}
 
-    :root {
-      --neon-cyan: #00f5ff;
-      --neon-pink: #ff006e;
-      --neon-yellow: #ffe600;
-      --dark-bg: #03050f;
-      --panel-bg: rgba(5, 10, 30, 0.85);
-      --border-glow: rgba(0, 245, 255, 0.4);
+    .login-card{
+      position:relative;z-index:10;width:400px;
+      background:linear-gradient(160deg,#1c0e02 0%,#120900 60%,#0a0500 100%);
+      border-radius:12px;overflow:hidden;
+      box-shadow:0 0 0 1px #8a6a1f,0 0 0 3px #c9a84c,0 0 0 4px #8a6a1f,0 30px 80px rgba(0,0,0,0.8),0 0 40px rgba(201,168,76,0.1);
+      animation:cardIn 0.7s cubic-bezier(.16,1,.3,1) both;
     }
+    @keyframes cardIn{from{opacity:0;transform:translateY(40px) scale(0.95)}to{opacity:1;transform:translateY(0) scale(1)}}
 
-    body {
-      font-family: 'Rajdhani', sans-serif;
-      background: var(--dark-bg);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      position: relative;
+    .card-header{
+      background:linear-gradient(135deg,#8a6a1f 0%,#c9a84c 30%,#f0d060 50%,#c9a84c 70%,#8a6a1f 100%);
+      padding:22px 30px 18px;text-align:center;position:relative;overflow:hidden;
     }
+    .card-header::before{
+      content:'';position:absolute;top:0;left:-100%;width:200%;height:100%;
+      background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.2) 50%,transparent 100%);
+      animation:sheen 4s ease-in-out infinite;
+    }
+    @keyframes sheen{0%,100%{left:-100%}50%{left:0%}}
+    .header-suits{display:flex;justify-content:center;gap:10px;font-size:1.1rem;margin-bottom:6px;color:rgba(12,6,0,0.6);}
+    .logo-title{font-family:'Cinzel',serif;font-size:26px;font-weight:900;color:#0d0500;letter-spacing:4px;text-transform:uppercase;text-shadow:0 1px 0 rgba(255,255,255,0.3);}
+    .logo-sub{font-size:10px;letter-spacing:4px;color:rgba(12,6,0,0.55);text-transform:uppercase;margin-top:2px;font-weight:700;}
 
-    /* Animated grid background */
-    .grid-bg {
-      position: fixed; inset: 0; z-index: 0;
-      background-image:
-        linear-gradient(rgba(0,245,255,0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,245,255,0.05) 1px, transparent 1px);
-      background-size: 50px 50px;
-      animation: gridMove 20s linear infinite;
-    }
-    @keyframes gridMove {
-      0% { transform: perspective(500px) rotateX(20deg) translateY(0); }
-      100% { transform: perspective(500px) rotateX(20deg) translateY(50px); }
-    }
+    .card-body{padding:28px 32px 24px;}
 
-    /* Floating orbs */
-    .orb {
-      position: fixed; border-radius: 50%; filter: blur(80px); z-index: 0; pointer-events: none;
-    }
-    .orb-1 { width: 400px; height: 400px; background: rgba(0,245,255,0.08); top: -100px; left: -100px; animation: float1 8s ease-in-out infinite; }
-    .orb-2 { width: 300px; height: 300px; background: rgba(255,0,110,0.08); bottom: -50px; right: -50px; animation: float2 10s ease-in-out infinite; }
-    .orb-3 { width: 200px; height: 200px; background: rgba(255,230,0,0.06); top: 50%; right: 20%; animation: float3 7s ease-in-out infinite; }
-    @keyframes float1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(30px,20px)} }
-    @keyframes float2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-20px,30px)} }
-    @keyframes float3 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(15px,-25px)} }
+    .status-msg{display:none;font-size:12px;padding:10px 14px;border-radius:6px;margin-bottom:16px;font-weight:700;letter-spacing:0.5px;text-align:center;}
+    .status-msg.error{display:block;background:rgba(192,57,43,0.15);border:1px solid rgba(192,57,43,0.4);color:#e74c3c;}
+    .status-msg.success{display:block;background:rgba(39,174,96,0.1);border:1px solid rgba(39,174,96,0.3);color:#2ecc71;}
 
-    /* Scanline effect */
-    body::after {
-      content: '';
-      position: fixed; inset: 0; z-index: 1; pointer-events: none;
-      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px);
+    .btn-google{
+      width:100%;padding:13px 16px;
+      background:linear-gradient(135deg,#1e1008,#2a1a08);
+      border:1px solid #8a6a1f;border-radius:8px;
+      color:var(--gold-light);font-family:'Lato',sans-serif;font-size:14px;font-weight:700;letter-spacing:1px;
+      cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;
+      transition:all 0.25s;
+      box-shadow:0 2px 8px rgba(0,0,0,0.4),inset 0 1px 0 rgba(201,168,76,0.1);
     }
+    .btn-google:hover{border-color:var(--gold-light);background:linear-gradient(135deg,#271508,#3a2510);box-shadow:0 4px 16px rgba(0,0,0,0.5),0 0 12px rgba(201,168,76,0.15);transform:translateY(-1px);}
+    .btn-google svg{width:18px;height:18px;flex-shrink:0;}
 
-    /* Main card */
-    .login-card {
-      position: relative; z-index: 10;
-      width: 420px;
-      background: var(--panel-bg);
-      border: 1px solid var(--border-glow);
-      border-radius: 4px;
-      padding: 40px 36px 36px;
-      box-shadow:
-        0 0 40px rgba(0,245,255,0.1),
-        0 0 80px rgba(0,245,255,0.05),
-        inset 0 1px 0 rgba(255,255,255,0.05);
-      backdrop-filter: blur(20px);
-      animation: cardIn 0.6s cubic-bezier(.16,1,.3,1) both;
-    }
-    @keyframes cardIn {
-      from { opacity: 0; transform: translateY(30px) scale(0.97); }
-      to   { opacity: 1; transform: translateY(0) scale(1); }
-    }
+    .divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:rgba(201,168,76,0.25);font-size:10px;letter-spacing:3px;text-transform:uppercase;font-family:'Cinzel',serif;}
+    .divider::before,.divider::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,0.3),transparent);}
 
-    /* Corner decorations */
-    .login-card::before, .login-card::after {
-      content: '';
-      position: absolute;
-      width: 20px; height: 20px;
-    }
-    .login-card::before {
-      top: -1px; left: -1px;
-      border-top: 2px solid var(--neon-cyan);
-      border-left: 2px solid var(--neon-cyan);
-    }
-    .login-card::after {
-      bottom: -1px; right: -1px;
-      border-bottom: 2px solid var(--neon-pink);
-      border-right: 2px solid var(--neon-pink);
-    }
+    .tabs{display:flex;background:rgba(0,0,0,0.3);border:1px solid rgba(201,168,76,0.2);border-radius:8px;overflow:hidden;margin-bottom:22px;}
+    .tab-btn{flex:1;padding:10px;background:none;border:none;cursor:pointer;font-family:'Cinzel',serif;font-size:10px;font-weight:700;letter-spacing:1px;color:rgba(201,168,76,0.35);transition:all 0.2s;text-transform:uppercase;}
+    .tab-btn+.tab-btn{border-left:1px solid rgba(201,168,76,0.15);}
+    .tab-btn.active{background:linear-gradient(135deg,rgba(201,168,76,0.12),rgba(201,168,76,0.05));color:var(--gold-light);}
+    .tab-btn:hover:not(.active){color:rgba(201,168,76,0.6);}
 
-    /* Logo */
-    .logo-wrap {
-      text-align: center;
-      margin-bottom: 28px;
-    }
-    .logo-icon {
-      display: inline-block;
-      width: 56px; height: 56px;
-      background: linear-gradient(135deg, var(--neon-cyan), var(--neon-pink));
-      border-radius: 12px;
-      margin-bottom: 12px;
-      position: relative;
-      box-shadow: 0 0 20px rgba(0,245,255,0.4);
-      animation: pulse 3s ease-in-out infinite;
-    }
-    @keyframes pulse { 0%,100%{box-shadow:0 0 20px rgba(0,245,255,0.4)} 50%{box-shadow:0 0 35px rgba(0,245,255,0.7)} }
-    .logo-icon::before {
-      content: '▶';
-      position: absolute; inset: 0;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 22px; color: #fff;
-    }
-    .logo-title {
-      font-family: 'Orbitron', monospace;
-      font-size: 22px; font-weight: 900;
-      color: #fff;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-    }
-    .logo-title span { color: var(--neon-cyan); }
-    .logo-sub {
-      font-size: 11px; color: rgba(255,255,255,0.35);
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      margin-top: 4px;
-    }
+    .form-panel{display:none;}
+    .form-panel.active{display:block;animation:fadeIn 0.3s ease;}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 
-    /* Divider */
-    .divider {
-      display: flex; align-items: center; gap: 12px;
-      margin: 22px 0;
-      color: rgba(255,255,255,0.2);
-      font-size: 11px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
+    .input-group{margin-bottom:16px;}
+    .input-label{display:block;font-family:'Cinzel',serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(201,168,76,0.5);margin-bottom:7px;}
+    .input-wrap{position:relative;}
+    .input-wrap .icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none;color:rgba(201,168,76,0.4);}
+    input[type="tel"],input[type="number"]{
+      width:100%;background:rgba(0,0,0,0.35);border:1px solid rgba(201,168,76,0.2);border-radius:7px;
+      padding:12px 14px 12px 38px;color:var(--cream);font-family:'Lato',sans-serif;font-size:15px;letter-spacing:1px;outline:none;transition:all 0.2s;
     }
-    .divider::before, .divider::after {
-      content: ''; flex: 1;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(0,245,255,0.2), transparent);
-    }
+    input:focus{border-color:rgba(201,168,76,0.6);background:rgba(0,0,0,0.5);box-shadow:0 0 0 3px rgba(201,168,76,0.08);}
+    input::placeholder{color:rgba(253,246,227,0.18);}
 
-    /* Tabs */
-    .tabs {
-      display: flex; gap: 4px;
-      background: rgba(0,0,0,0.3);
-      border-radius: 4px;
-      padding: 4px;
-      margin-bottom: 24px;
+    .btn-main{
+      width:100%;padding:14px;
+      background:linear-gradient(135deg,#8a6a1f 0%,#c9a84c 40%,#f0d060 50%,#c9a84c 60%,#8a6a1f 100%);
+      background-size:200% 100%;border:none;border-radius:8px;
+      color:#0d0500;font-family:'Cinzel',serif;font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;
+      cursor:pointer;margin-top:4px;transition:all 0.3s;
+      box-shadow:0 4px 15px rgba(0,0,0,0.4),0 0 20px rgba(201,168,76,0.15);
     }
-    .tab-btn {
-      flex: 1; padding: 9px;
-      background: none; border: none; cursor: pointer;
-      font-family: 'Orbitron', monospace;
-      font-size: 10px; font-weight: 700;
-      letter-spacing: 1px;
-      color: rgba(255,255,255,0.4);
-      border-radius: 3px;
-      transition: all 0.2s;
-      text-transform: uppercase;
-    }
-    .tab-btn.active {
-      background: linear-gradient(135deg, rgba(0,245,255,0.15), rgba(0,245,255,0.05));
-      color: var(--neon-cyan);
-      box-shadow: inset 0 0 0 1px rgba(0,245,255,0.3);
-    }
-    .tab-btn:hover:not(.active) { color: rgba(255,255,255,0.7); }
+    .btn-main:hover{background-position:100% 0;transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,0,0,0.5),0 0 30px rgba(201,168,76,0.25);}
+    .btn-main:active{transform:translateY(0);}
 
-    /* Form panels */
-    .form-panel { display: none; }
-    .form-panel.active { display: block; animation: fadeIn 0.3s ease; }
-    @keyframes fadeIn { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }
+    .chips-row{display:flex;justify-content:center;gap:8px;margin-bottom:18px;}
+    .chip{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;border:2px dashed;font-family:'Cinzel',serif;}
+    .chip-r{background:rgba(192,57,43,0.15);border-color:rgba(192,57,43,0.4);color:rgba(192,57,43,0.7);}
+    .chip-b{background:rgba(52,152,219,0.12);border-color:rgba(52,152,219,0.3);color:rgba(52,152,219,0.6);}
+    .chip-g{background:rgba(39,174,96,0.12);border-color:rgba(39,174,96,0.3);color:rgba(39,174,96,0.6);}
+    .chip-w{background:rgba(253,246,227,0.06);border-color:rgba(253,246,227,0.2);color:rgba(253,246,227,0.4);}
+    .chip-k{background:rgba(0,0,0,0.3);border-color:rgba(201,168,76,0.25);color:rgba(201,168,76,0.5);}
 
-    /* Input group */
-    .input-group { margin-bottom: 16px; position: relative; }
-    .input-label {
-      display: block;
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.4);
-      margin-bottom: 7px;
-    }
-    .input-wrap { position: relative; }
-    .input-wrap .icon {
-      position: absolute; left: 14px; top: 50%;
-      transform: translateY(-50%);
-      color: rgba(0,245,255,0.5);
-      font-size: 15px;
-      pointer-events: none;
-    }
-    input[type="tel"], input[type="text"], input[type="number"] {
-      width: 100%;
-      background: rgba(0,245,255,0.04);
-      border: 1px solid rgba(0,245,255,0.15);
-      border-radius: 3px;
-      padding: 12px 14px 12px 40px;
-      color: #fff;
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 15px;
-      font-weight: 600;
-      letter-spacing: 1px;
-      outline: none;
-      transition: all 0.2s;
-    }
-    input:focus {
-      border-color: var(--neon-cyan);
-      background: rgba(0,245,255,0.07);
-      box-shadow: 0 0 0 3px rgba(0,245,255,0.08), 0 0 15px rgba(0,245,255,0.1);
-    }
-    input::placeholder { color: rgba(255,255,255,0.2); font-weight: 400; }
+    .back-link{background:none;border:none;color:rgba(201,168,76,0.4);font-family:'Lato',sans-serif;font-size:12px;cursor:pointer;letter-spacing:1px;display:block;text-align:center;margin-top:12px;transition:color 0.2s;}
+    .back-link:hover{color:var(--gold);}
 
-    /* OTP row */
-    .otp-row { display: flex; gap: 8px; align-items: flex-end; }
-    .otp-row .input-group { flex: 1; margin-bottom: 0; }
-    .send-otp-btn {
-      padding: 12px 14px;
-      background: rgba(0,245,255,0.1);
-      border: 1px solid rgba(0,245,255,0.3);
-      border-radius: 3px;
-      color: var(--neon-cyan);
-      font-family: 'Orbitron', monospace;
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.2s;
-      text-transform: uppercase;
-    }
-    .send-otp-btn:hover {
-      background: rgba(0,245,255,0.18);
-      box-shadow: 0 0 12px rgba(0,245,255,0.2);
-    }
-    .send-otp-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .card-footer{border-top:1px solid rgba(201,168,76,0.1);padding:14px 32px;text-align:center;display:flex;justify-content:center;gap:6px;align-items:center;}
+    .card-footer span{font-size:11px;letter-spacing:1px;color:rgba(201,168,76,0.25);font-family:'Cinzel',serif;}
+    .card-footer span.hl{color:rgba(201,168,76,0.5);}
 
-    /* Main CTA button */
-    .btn-main {
-      width: 100%;
-      padding: 14px;
-      background: linear-gradient(135deg, #00c8d7, #0077ff);
-      border: none;
-      border-radius: 3px;
-      color: #fff;
-      font-family: 'Orbitron', monospace;
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-      margin-top: 4px;
-      transition: all 0.2s;
-      box-shadow: 0 0 20px rgba(0,119,255,0.3);
-    }
-    .btn-main::before {
-      content: '';
-      position: absolute; top: 0; left: -100%;
-      width: 100%; height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
-      transition: left 0.4s;
-    }
-    .btn-main:hover::before { left: 100%; }
-    .btn-main:hover { transform: translateY(-1px); box-shadow: 0 4px 25px rgba(0,119,255,0.5); }
-    .btn-main:active { transform: translateY(0); }
-
-    /* Google button */
-    .btn-google {
-      width: 100%;
-      padding: 13px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 3px;
-      color: rgba(255,255,255,0.8);
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 14px;
-      font-weight: 600;
-      letter-spacing: 1px;
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center; gap: 10px;
-      transition: all 0.2s;
-    }
-    .btn-google:hover {
-      background: rgba(255,255,255,0.08);
-      border-color: rgba(255,255,255,0.25);
-      color: #fff;
-    }
-    .btn-google svg { width: 18px; height: 18px; flex-shrink: 0; }
-
-    /* Status messages */
-    .status-msg {
-      font-size: 12px;
-      padding: 10px 14px;
-      border-radius: 3px;
-      margin-bottom: 14px;
-      display: none;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-    }
-    .status-msg.error { background: rgba(255,0,110,0.1); border: 1px solid rgba(255,0,110,0.3); color: #ff6b9d; display: block; }
-    .status-msg.success { background: rgba(0,245,255,0.07); border: 1px solid rgba(0,245,255,0.25); color: var(--neon-cyan); display: block; }
-
-    /* Footer */
-    .card-footer {
-      margin-top: 20px;
-      text-align: center;
-      font-size: 11px;
-      color: rgba(255,255,255,0.2);
-      letter-spacing: 1px;
-    }
-    .card-footer span { color: rgba(0,245,255,0.5); }
-
-    /* Loading spinner */
-    .spinner {
-      display: inline-block;
-      width: 14px; height: 14px;
-      border: 2px solid rgba(255,255,255,0.2);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin 0.6s linear infinite;
-      vertical-align: middle;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* Recaptcha */
-    #recaptcha-container { margin-bottom: 14px; }
-
-    /* Step indicator for phone */
-    .step-indicator {
-      display: flex; gap: 6px; justify-content: center;
-      margin-bottom: 20px;
-    }
-    .step-dot {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: rgba(255,255,255,0.15);
-      transition: all 0.3s;
-    }
-    .step-dot.active { background: var(--neon-cyan); box-shadow: 0 0 6px var(--neon-cyan); width: 18px; border-radius: 3px; }
-    .step-dot.done { background: rgba(0,245,255,0.4); }
+    .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(0,0,0,0.2);border-top-color:#0d0500;border-radius:50%;animation:spin 0.6s linear infinite;vertical-align:middle;}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    #recaptcha-container{margin-bottom:14px;}
   </style>
 </head>
 <body>
-
-<div class="grid-bg"></div>
-<div class="orb orb-1"></div>
-<div class="orb orb-2"></div>
-<div class="orb orb-3"></div>
+<div class="felt-bg"></div>
+<div class="table-rim"></div>
+<div class="suits-bg">
+  <div class="suit">♠</div><div class="suit">♥</div>
+  <div class="suit">♦</div><div class="suit">♣</div>
+  <div class="suit">♠</div><div class="suit">♦</div>
+</div>
 
 <div class="login-card">
-
-  <!-- Logo -->
-  <div class="logo-wrap">
-    <div class="logo-icon"></div>
-    <div class="logo-title">Game<span>Verse</span></div>
-    <div class="logo-sub">Enter the Arena</div>
+  <div class="card-header">
+    <div class="header-suits">♠ ♥ ♦ ♣</div>
+    <div class="logo-title">Royal Bet</div>
+    <div class="logo-sub">Play Smart · Win Big</div>
   </div>
 
-  <!-- Status -->
-  <div class="status-msg" id="statusMsg"></div>
-
-  <!-- Google Login -->
-  <button class="btn-google" onclick="loginWithGoogle()" id="googleBtn">
-    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
-      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-    </svg>
-    Continue with Google
-  </button>
-
-  <div class="divider">or</div>
-
-  <!-- Tabs -->
-  <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('phone')" id="tabPhone">📱 Phone</button>
-    <button class="tab-btn" onclick="switchTab('otp')" id="tabOtp">🔢 OTP</button>
-  </div>
-
-  <!-- Phone Step -->
-  <div class="form-panel active" id="panelPhone">
-    <div class="step-indicator">
-      <div class="step-dot active" id="dot1"></div>
-      <div class="step-dot" id="dot2"></div>
+  <div class="card-body">
+    <div class="chips-row">
+      <div class="chip chip-r">5</div>
+      <div class="chip chip-b">10</div>
+      <div class="chip chip-g">25</div>
+      <div class="chip chip-w">50</div>
+      <div class="chip chip-k">100</div>
     </div>
-    <div class="input-group">
-      <label class="input-label">Mobile Number</label>
-      <div class="input-wrap">
-        <span class="icon">📞</span>
-        <input type="tel" id="phoneInput" placeholder="+880 1X XX XXX XXX" />
-      </div>
-    </div>
-    <div id="recaptcha-container"></div>
-    <button class="btn-main" onclick="sendOTP()" id="sendOtpBtn">
-      Send OTP Code
+
+    <div class="status-msg" id="statusMsg"></div>
+
+    <button class="btn-google" onclick="loginWithGoogle()" id="googleBtn">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+      </svg>
+      Continue with Google
     </button>
-  </div>
 
-  <!-- OTP Step -->
-  <div class="form-panel" id="panelOtp">
-    <div class="step-indicator">
-      <div class="step-dot done" id="dot1b"></div>
-      <div class="step-dot active" id="dot2b"></div>
+    <div class="divider">or</div>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('phone')" id="tabPhone">📱 Phone</button>
+      <button class="tab-btn" onclick="switchTab('otp')" id="tabOtp">🔢 OTP Code</button>
     </div>
-    <div class="input-group">
-      <label class="input-label">Verification Code</label>
-      <div class="input-wrap">
-        <span class="icon">🔑</span>
-        <input type="number" id="otpInput" placeholder="Enter 6-digit OTP" />
+
+    <div class="form-panel active" id="panelPhone">
+      <div class="input-group">
+        <label class="input-label">Mobile Number</label>
+        <div class="input-wrap">
+          <span class="icon">📞</span>
+          <input type="tel" id="phoneInput" placeholder="+880 1X XX XXX XXX"/>
+        </div>
       </div>
+      <div id="recaptcha-container"></div>
+      <button class="btn-main" onclick="sendOTP()" id="sendOtpBtn">Deal Me In</button>
     </div>
-    <button class="btn-main" onclick="verifyOTP()" id="verifyBtn">
-      Verify & Enter Game
-    </button>
-    <div style="text-align:center; margin-top:12px;">
-      <button style="background:none;border:none;color:rgba(0,245,255,0.5);font-family:'Rajdhani',sans-serif;font-size:12px;cursor:pointer;letter-spacing:1px;" onclick="switchTab('phone')">← Change Number</button>
+
+    <div class="form-panel" id="panelOtp">
+      <div class="input-group">
+        <label class="input-label">Verification Code</label>
+        <div class="input-wrap">
+          <span class="icon">🎴</span>
+          <input type="number" id="otpInput" placeholder="6-digit code"/>
+        </div>
+      </div>
+      <button class="btn-main" onclick="verifyOTP()" id="verifyBtn">Show My Hand</button>
+      <button class="back-link" onclick="switchTab('phone')">← Change Number</button>
     </div>
   </div>
 
-  <!-- Footer -->
   <div class="card-footer">
-    By continuing, you agree to our <span>Terms of Service</span>
+    <span>♠</span><span class="hl">18+ · Play Responsibly</span><span>♠</span>
   </div>
 </div>
 
-<!-- Firebase SDKs -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, GoogleAuthProvider, signInWithPopup, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyB_8Bw60xdifJmE7dqhW7a-79qiC1NMqZg",
-    authDomain: "game-v-app.firebaseapp.com",
-    projectId: "game-v-app",
-    storageBucket: "game-v-app.firebasestorage.app",
-    messagingSenderId: "791868402912",
-    appId: "1:791868402912:web:f5f456496656a6589a7485",
-    measurementId: "G-XVC97WVLM3"
-  };
-
-  const app = initializeApp(firebaseConfig);
+  const app = initializeApp({
+    apiKey:"AIzaSyB_8Bw60xdifJmE7dqhW7a-79qiC1NMqZg",
+    authDomain:"game-v-app.firebaseapp.com",
+    projectId:"game-v-app",
+    storageBucket:"game-v-app.firebasestorage.app",
+    messagingSenderId:"791868402912",
+    appId:"1:791868402912:web:f5f456496656a6589a7485",
+    measurementId:"G-XVC97WVLM3"
+  });
   const auth = getAuth(app);
   auth.languageCode = 'en';
-
   let confirmationResult = null;
 
-  // ---- Helpers ----
   function showStatus(msg, type) {
     const el = document.getElementById('statusMsg');
-    el.textContent = msg;
-    el.className = 'status-msg ' + type;
+    el.textContent = msg; el.className = 'status-msg ' + type;
   }
-  function clearStatus() {
-    const el = document.getElementById('statusMsg');
-    el.className = 'status-msg';
-  }
-  function setLoading(btnId, loading) {
-    const btn = document.getElementById(btnId);
-    if (loading) {
-      btn.dataset.orig = btn.innerHTML;
-      btn.innerHTML = '<span class="spinner"></span>';
-      btn.disabled = true;
-    } else {
-      btn.innerHTML = btn.dataset.orig || btn.innerHTML;
-      btn.disabled = false;
-    }
+  function setLoading(id, on) {
+    const btn = document.getElementById(id);
+    if (on) { btn.dataset.orig = btn.innerHTML; btn.innerHTML = '<span class="spinner"></span>'; btn.disabled = true; }
+    else { btn.innerHTML = btn.dataset.orig; btn.disabled = false; }
   }
 
-  // ---- Google Login ----
-  window.loginWithGoogle = async function () {
-    clearStatus();
+  window.loginWithGoogle = async function() {
     setLoading('googleBtn', true);
     try {
-      const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
-      showStatus('✅ Welcome, ' + result.user.displayName + '! Loading game...', 'success');
-      setTimeout(() => { /* redirect to game dashboard */ }, 1500);
-    } catch (err) {
-      showStatus('❌ ' + err.message, 'error');
-    } finally {
-      setLoading('googleBtn', false);
-    }
+      const r = await signInWithPopup(auth, new GoogleAuthProvider());
+      showStatus('🃏 Welcome, ' + r.user.displayName + '!', 'success');
+    } catch(e) { showStatus('❌ ' + e.message, 'error'); }
+    finally { setLoading('googleBtn', false); }
   };
 
-  // ---- Phone: Send OTP ----
-  window.sendOTP = async function () {
-    clearStatus();
+  window.sendOTP = async function() {
     const phone = document.getElementById('phoneInput').value.trim();
-    if (!phone) { showStatus('⚠️ Please enter your phone number', 'error'); return; }
-
+    if (!phone) { showStatus('⚠️ Enter your phone number', 'error'); return; }
     setLoading('sendOtpBtn', true);
     try {
-      if (!window.recaptchaVerifier) {
-        window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-          size: 'normal',
-          callback: () => {},
-        });
-        await window.recaptchaVerifier.render();
+      if (!window.rcv) {
+        window.rcv = new RecaptchaVerifier(auth, 'recaptcha-container', { size: 'normal' });
+        await window.rcv.render();
       }
-      confirmationResult = await signInWithPhoneNumber(auth, phone, window.recaptchaVerifier);
+      confirmationResult = await signInWithPhoneNumber(auth, phone, window.rcv);
       showStatus('📨 OTP sent to ' + phone, 'success');
       switchTab('otp');
-    } catch (err) {
-      showStatus('❌ ' + err.message, 'error');
-      if (window.recaptchaVerifier) { window.recaptchaVerifier.clear(); window.recaptchaVerifier = null; }
-    } finally {
-      setLoading('sendOtpBtn', false);
-    }
+    } catch(e) {
+      showStatus('❌ ' + e.message, 'error');
+      if (window.rcv) { window.rcv.clear(); window.rcv = null; }
+    } finally { setLoading('sendOtpBtn', false); }
   };
 
-  // ---- Phone: Verify OTP ----
-  window.verifyOTP = async function () {
-    clearStatus();
+  window.verifyOTP = async function() {
     const code = document.getElementById('otpInput').value.trim();
-    if (!code || code.length !== 6) { showStatus('⚠️ Enter the 6-digit OTP', 'error'); return; }
-    if (!confirmationResult) { showStatus('⚠️ Please request an OTP first', 'error'); return; }
-
+    if (!code || code.length !== 6) { showStatus('⚠️ Enter 6-digit OTP', 'error'); return; }
+    if (!confirmationResult) { showStatus('⚠️ Request OTP first', 'error'); return; }
     setLoading('verifyBtn', true);
     try {
-      const result = await confirmationResult.confirm(code);
-      showStatus('🎮 Access granted! Welcome to the arena!', 'success');
-      setTimeout(() => { /* redirect to game dashboard */ }, 1500);
-    } catch (err) {
-      showStatus('❌ Invalid OTP. Try again.', 'error');
-    } finally {
-      setLoading('verifyBtn', false);
-    }
+      await confirmationResult.confirm(code);
+      showStatus('🎰 Access granted! Loading table...', 'success');
+    } catch(e) { showStatus('❌ Wrong code. Try again.', 'error'); }
+    finally { setLoading('verifyBtn', false); }
   };
 
-  // ---- Tab switching ----
-  window.switchTab = function (tab) {
-    document.getElementById('panelPhone').classList.toggle('active', tab === 'phone');
-    document.getElementById('panelOtp').classList.toggle('active', tab === 'otp');
-    document.getElementById('tabPhone').classList.toggle('active', tab === 'phone');
-    document.getElementById('tabOtp').classList.toggle('active', tab === 'otp');
+  window.switchTab = function(tab) {
+    ['Phone','Otp'].forEach(t => {
+      document.getElementById('panel'+t).classList.toggle('active', t.toLowerCase()===tab);
+      document.getElementById('tab'+t).classList.toggle('active', t.toLowerCase()===tab);
+    });
   };
 </script>
 </body>
