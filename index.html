@@ -732,6 +732,10 @@ function flyLoop() {
   currentMult = Math.round(currentMult * 100) / 100;
 
   document.getElementById('avMultVal').textContent = currentMult.toFixed(2);
+  if (betPlaced) {
+    const potWin = Math.floor(betAmount * currentMult);
+    document.getElementById('avCashoutBtn').textContent = '💰 STOP — ৳' + potWin.toLocaleString();
+  }
   updateBalanceDisplays();
 
   // Move plane along curve
@@ -838,12 +842,15 @@ window.placeBet = function() {
 
 window.cashOut = function() {
   if (!betPlaced || gamePhase !== 'flying') return;
-  const win = Math.floor(betAmount * currentMult);
+  const mult = currentMult;
+  const win = Math.floor(betAmount * mult); // total return = bet × multiplier
   setBalance(getBalance() + win);
   betPlaced = false;
   updateBetButtons();
-  showToast(`💰 Cashed out at ${currentMult.toFixed(2)}x! Won ৳${win.toLocaleString()}`, false);
+  const profit = win - betAmount;
+  showToast(`💰 ${mult.toFixed(2)}x — Bet ৳${betAmount.toLocaleString()} → ৳${win.toLocaleString()} (+৳${profit.toLocaleString()})`, false);
   document.getElementById('avMultiplier').className = 'av-multiplier-display cashed';
+  document.getElementById('avStatusLabel').textContent = `✅ CASHED ${mult.toFixed(2)}x`;
 };
 
 function updateBetButtons() {
@@ -873,32 +880,28 @@ const lbMults = [12.5, 34.2, 67.0, 8.5, 45.1, 22.3, 91.0, 15.7, 38.4, 56.2, 100.
 
 function refreshLeaderboard() {
   const tbody = document.getElementById('leaderboardBody');
-  // generate 8 random entries
   const entries = [];
   const used = new Set();
   while (entries.length < 8) {
     const ni = Math.floor(Math.random() * lbNames.length);
     if (used.has(ni)) continue;
     used.add(ni);
-    const mult = (5 + Math.random() * 95).toFixed(1);
-    const amt = Math.floor(1000 + Math.random() * 19000);
-    const win = Math.floor(amt * parseFloat(mult));
-    entries.push({ name: lbNames[ni], mult, win });
+    const mult = (2 + Math.random() * 93).toFixed(2);
+    const betAmt = Math.floor(1000 + Math.random() * 19000);
+    entries.push({ name: lbNames[ni], mult, betAmt });
   }
-  entries.sort((a,b) => b.win - a.win);
-
+  entries.sort((a,b) => parseFloat(b.mult) - parseFloat(a.mult));
   tbody.innerHTML = entries.map((e, i) => {
     let rankClass = '';
     let rankLabel = '#' + (i+1);
     if (i === 0) { rankClass = 'gold'; rankLabel = '🥇'; }
     else if (i === 1) { rankClass = 'silver'; rankLabel = '🥈'; }
     else if (i === 2) { rankClass = 'bronze'; rankLabel = '🥉'; }
-    return `
-      <div class="av-lb-row">
+    return `<div class="av-lb-row">
         <div class="av-lb-rank ${rankClass}">${rankLabel}</div>
         <div class="av-lb-name">${e.name}</div>
         <div class="av-lb-mult">${e.mult}x</div>
-        <div class="av-lb-amt">৳${e.win.toLocaleString()}</div>
+        <div class="av-lb-amt">৳${e.betAmt.toLocaleString()}</div>
       </div>`;
   }).join('');
 }
