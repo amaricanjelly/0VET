@@ -7,14 +7,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;600;800&display=swap" rel="stylesheet" />
   <style>
-    /* ── Design Tokens ─────────────────────────────────── */
     :root {
       --bg:          #0a0c0f;
       --surface:     #111418;
       --surface2:    #181c22;
       --border:      #242930;
       --accent:      #00e5ff;
-      --accent-dim:  #00e5ff22;
+      --accent-dim:  #00e5ff18;
       --accent2:     #ff6b35;
       --ok:          #00e676;
       --warn:        #ffab40;
@@ -28,7 +27,6 @@
       --fab-size:    56px;
     }
 
-    /* ── Reset ─────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body {
       height: 100%; width: 100%;
@@ -38,7 +36,6 @@
       overflow: hidden;
     }
 
-    /* ── Layout ────────────────────────────────────────── */
     #app {
       display: flex;
       flex-direction: column;
@@ -48,9 +45,9 @@
       position: relative;
     }
 
-    /* ── Header ────────────────────────────────────────── */
+    /* ── Header ── */
     header {
-      padding: 20px 20px 14px;
+      padding: 18px 20px 13px;
       background: var(--surface);
       border-bottom: 1px solid var(--border);
       flex-shrink: 0;
@@ -61,141 +58,187 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 14px;
+      margin-bottom: 13px;
     }
-    .app-logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+    .app-logo { display: flex; align-items: center; gap: 10px; }
     .logo-icon {
       width: 36px; height: 36px;
       background: linear-gradient(135deg, var(--accent), #0088aa);
       border-radius: 8px;
       display: flex; align-items: center; justify-content: center;
       font-size: 18px;
-      box-shadow: 0 0 16px var(--accent-dim);
+      position: relative;
     }
-    .app-name {
-      font-size: 20px;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-      color: var(--text);
+    .logo-icon.pulse-logo::after {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 11px;
+      border: 1.5px solid var(--accent);
+      opacity: 0;
+      animation: logo-ring 2s ease-out infinite;
     }
+    @keyframes logo-ring {
+      0%   { opacity: 0.6; transform: scale(1); }
+      100% { opacity: 0;   transform: scale(1.4); }
+    }
+    .app-name { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
     .app-name span { color: var(--accent); }
+
+    .header-right { display: flex; align-items: center; gap: 8px; }
+
+    /* notif counter badge */
+    .notif-counter {
+      position: relative;
+      width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+    }
+    .notif-bell-icon { font-size: 18px; color: var(--text-muted); transition: color 0.2s; }
+    .notif-counter.has-new .notif-bell-icon { color: var(--accent); animation: bell-shake 0.5s ease; }
+    @keyframes bell-shake {
+      0%,100% { transform: rotate(0deg); }
+      20%     { transform: rotate(-15deg); }
+      40%     { transform: rotate(15deg); }
+      60%     { transform: rotate(-10deg); }
+      80%     { transform: rotate(10deg); }
+    }
+    .counter-badge {
+      position: absolute;
+      top: 1px; right: 1px;
+      min-width: 16px; height: 16px;
+      background: var(--err);
+      border-radius: 8px;
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 600;
+      color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      padding: 0 3px;
+      opacity: 0;
+      transform: scale(0);
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .counter-badge.visible { opacity: 1; transform: scale(1); }
+    .counter-badge.bump { animation: badge-bump 0.25s ease; }
+    @keyframes badge-bump {
+      0%,100% { transform: scale(1); }
+      50%     { transform: scale(1.4); }
+    }
+
     .status-pill {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 5px 12px;
+      display: flex; align-items: center; gap: 6px;
+      padding: 5px 11px;
       background: var(--surface2);
       border: 1px solid var(--border);
       border-radius: 999px;
       font-family: var(--mono);
-      font-size: 11px;
+      font-size: 10px;
       color: var(--text-muted);
+      transition: border-color 0.3s;
     }
+    .status-pill.live { border-color: #00e67633; }
     .status-dot {
-      width: 7px; height: 7px;
+      width: 6px; height: 6px;
       border-radius: 50%;
       background: var(--text-dim);
       transition: background 0.4s, box-shadow 0.4s;
+      flex-shrink: 0;
     }
     .status-dot.live {
       background: var(--ok);
-      box-shadow: 0 0 8px var(--ok);
+      box-shadow: 0 0 6px var(--ok);
       animation: pulse-dot 2s infinite;
     }
     @keyframes pulse-dot {
-      0%, 100% { opacity: 1; }
-      50%       { opacity: 0.4; }
+      0%,100% { opacity: 1; }
+      50%     { opacity: 0.3; }
     }
 
-    /* ── Topic Chips ───────────────────────────────────── */
-    .topic-row {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      min-height: 28px;
-    }
+    /* ── Topic chips ── */
+    .topic-row { display: flex; gap: 7px; flex-wrap: wrap; min-height: 26px; }
     .topic-chip {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      padding: 4px 10px 4px 8px;
+      display: flex; align-items: center; gap: 5px;
+      padding: 3px 9px 3px 8px;
       background: var(--accent-dim);
-      border: 1px solid #00e5ff44;
+      border: 1px solid #00e5ff33;
       border-radius: 999px;
       font-family: var(--mono);
-      font-size: 11px;
+      font-size: 10px;
       color: var(--accent);
       cursor: pointer;
       transition: background 0.2s, transform 0.15s;
       user-select: none;
     }
-    .topic-chip:hover { background: #00e5ff33; transform: translateY(-1px); }
-    .topic-chip.active { background: #00e5ff22; border-color: var(--accent); }
-    .chip-remove {
-      font-size: 14px;
-      line-height: 1;
-      opacity: 0.5;
-      transition: opacity 0.2s;
-    }
+    .topic-chip:hover { background: #00e5ff28; transform: translateY(-1px); }
+    .topic-chip.active { border-color: #00e5ff66; }
+    .chip-remove { font-size: 13px; line-height: 1; opacity: 0.45; transition: opacity 0.2s; }
     .chip-remove:hover { opacity: 1; }
-    .topic-empty {
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--text-dim);
-      align-self: center;
-    }
+    .topic-empty { font-family: var(--mono); font-size: 10px; color: var(--text-dim); align-self: center; }
 
-    /* ── Feed ──────────────────────────────────────────── */
+    /* ── Feed ── */
     #feed {
       flex: 1;
       overflow-y: auto;
-      padding: 12px 16px 80px;
+      padding: 10px 14px 80px;
       scroll-behavior: smooth;
+      position: relative;
     }
-    #feed::-webkit-scrollbar { width: 4px; }
+    #feed::-webkit-scrollbar { width: 3px; }
     #feed::-webkit-scrollbar-track { background: transparent; }
     #feed::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-    /* empty state */
     .empty-state {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
-      gap: 12px;
-      opacity: 0.4;
-      pointer-events: none;
-      user-select: none;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      height: 100%; gap: 10px; opacity: 0.35;
+      pointer-events: none; user-select: none;
     }
-    .empty-icon { font-size: 48px; }
-    .empty-label {
-      font-family: var(--mono);
-      font-size: 12px;
-      color: var(--text-muted);
-      text-align: center;
-      line-height: 1.6;
-    }
+    .empty-icon { font-size: 44px; }
+    .empty-label { font-family: var(--mono); font-size: 11px; color: var(--text-muted); text-align: center; line-height: 1.6; }
 
-    /* ── Notification Card ─────────────────────────────── */
+    /* ── Notification Card ── */
     .notif-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 12px 14px;
-      margin-bottom: 8px;
+      padding: 11px 13px;
+      margin-bottom: 7px;
       position: relative;
       overflow: hidden;
-      animation: slide-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation: slide-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      transform-origin: top center;
     }
     @keyframes slide-in {
-      from { opacity: 0; transform: translateY(-8px) scale(0.98); }
-      to   { opacity: 1; transform: translateY(0)   scale(1);    }
+      from { opacity: 0; transform: translateY(-10px) scaleY(0.95); }
+      to   { opacity: 1; transform: translateY(0) scaleY(1); }
     }
+    /* glow flash on new card */
+    .notif-card.new-glow {
+      animation: slide-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+                 card-glow 1.2s ease-out forwards;
+    }
+    @keyframes card-glow {
+      0%   { box-shadow: 0 0 0 1px var(--accent), 0 0 18px #00e5ff22; }
+      100% { box-shadow: none; }
+    }
+    .notif-card.priority-urgent.new-glow {
+      animation: slide-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+                 card-glow-urgent 1.2s ease-out forwards;
+    }
+    @keyframes card-glow-urgent {
+      0%   { box-shadow: 0 0 0 1px var(--err), 0 0 18px #ff525222; }
+      100% { box-shadow: none; }
+    }
+
+    .notif-card.dismissing {
+      animation: dismiss-out 0.28s cubic-bezier(0.4,0,1,1) forwards;
+    }
+    @keyframes dismiss-out {
+      from { opacity: 1; transform: translateX(0) scaleY(1); max-height: 200px; margin-bottom: 7px; }
+      60%  { opacity: 0; transform: translateX(32px) scaleY(1); }
+      to   { opacity: 0; transform: translateX(32px) scaleY(0); max-height: 0; margin-bottom: 0; padding: 0; }
+    }
+
     .notif-card::before {
       content: '';
       position: absolute;
@@ -203,6 +246,7 @@
       width: 3px;
       background: var(--accent);
       border-radius: 3px 0 0 3px;
+      transition: background 0.3s;
     }
     .notif-card.priority-urgent::before { background: var(--err); }
     .notif-card.priority-high::before   { background: var(--warn); }
@@ -210,104 +254,74 @@
     .notif-card.type-test::before       { background: var(--accent2); }
 
     .card-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 6px;
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 8px; margin-bottom: 5px;
     }
-    .card-meta {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
+    .card-meta { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
     .card-topic {
-      font-family: var(--mono);
-      font-size: 10px;
-      color: var(--accent);
-      background: var(--accent-dim);
-      padding: 2px 7px;
-      border-radius: 4px;
-      letter-spacing: 0.5px;
+      font-family: var(--mono); font-size: 10px;
+      color: var(--accent); background: var(--accent-dim);
+      padding: 2px 6px; border-radius: 4px; letter-spacing: 0.3px;
     }
     .card-badge {
-      font-family: var(--mono);
-      font-size: 10px;
-      padding: 2px 7px;
-      border-radius: 4px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      font-family: var(--mono); font-size: 10px;
+      padding: 2px 6px; border-radius: 4px;
+      text-transform: uppercase; letter-spacing: 0.3px;
     }
-    .badge-urgent  { background: #ff525222; color: var(--err);  border: 1px solid #ff525244; }
-    .badge-high    { background: #ffab4022; color: var(--warn); border: 1px solid #ffab4044; }
+    .badge-urgent  { background: #ff525218; color: var(--err);  border: 1px solid #ff525230; }
+    .badge-high    { background: #ffab4018; color: var(--warn); border: 1px solid #ffab4030; }
     .badge-default { background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border); }
-    .badge-test    { background: #ff6b3522; color: var(--accent2); border: 1px solid #ff6b3544; }
+    .badge-test    { background: #ff6b3518; color: var(--accent2); border: 1px solid #ff6b3530; }
 
-    .card-time {
-      font-family: var(--mono);
-      font-size: 10px;
+    .card-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .card-time  { font-family: var(--mono); font-size: 10px; color: var(--text-dim); white-space: nowrap; }
+    .card-dismiss {
+      width: 18px; height: 18px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 4px;
       color: var(--text-dim);
-      white-space: nowrap;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.15s, color 0.15s;
       flex-shrink: 0;
     }
-    .card-title {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 4px;
-      line-height: 1.4;
-    }
-    .card-body {
-      font-family: var(--mono);
-      font-size: 12px;
-      color: var(--text-muted);
-      line-height: 1.6;
-      word-break: break-word;
-    }
+    .card-dismiss:hover { background: #ff525220; color: var(--err); }
 
-    /* ── FAB ───────────────────────────────────────────── */
+    .card-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; line-height: 1.4; }
+    .card-body  { font-family: var(--mono); font-size: 11px; color: var(--text-muted); line-height: 1.6; word-break: break-word; }
+
+    /* ── FAB ── */
     #fab {
       position: fixed;
       bottom: 108px;
       right: calc(50% - 300px + 16px);
-      width: var(--fab-size);
-      height: var(--fab-size);
+      width: var(--fab-size); height: var(--fab-size);
       background: linear-gradient(135deg, var(--accent), #0099bb);
-      border: none;
-      border-radius: 50%;
-      color: #000;
-      font-size: 26px;
+      border: none; border-radius: 50%;
+      color: #000; font-size: 26px; font-weight: 300;
       cursor: pointer;
       display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 4px 20px #00e5ff44;
+      box-shadow: 0 4px 20px #00e5ff30;
       transition: transform 0.2s, box-shadow 0.2s;
       z-index: 20;
     }
-    #fab:hover  { transform: scale(1.08); box-shadow: 0 6px 28px #00e5ff66; }
+    #fab:hover  { transform: scale(1.08); box-shadow: 0 6px 28px #00e5ff55; }
     #fab:active { transform: scale(0.96); }
-    @media (max-width: 600px) {
-      #fab { right: 16px; }
-    }
+    @media (max-width: 600px) { #fab { right: 16px; } }
 
-    /* ── Hardware Emulator Panel ───────────────────────── */
+    /* ── Emulator Panel ── */
     #emulator {
       flex-shrink: 0;
       background: var(--surface);
       border-top: 1px solid var(--border);
-      padding: 10px 16px 14px;
+      padding: 9px 14px 13px;
       z-index: 10;
     }
     .emu-label {
-      font-family: var(--mono);
-      font-size: 10px;
-      color: var(--text-dim);
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      margin-bottom: 9px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      font-family: var(--mono); font-size: 9px;
+      color: var(--text-dim); letter-spacing: 1.5px;
+      text-transform: uppercase; margin-bottom: 8px;
+      display: flex; align-items: center; gap: 6px;
     }
     .emu-label::before {
       content: '';
@@ -315,170 +329,252 @@
       width: 5px; height: 5px;
       border-radius: 50%;
       background: var(--accent2);
-      box-shadow: 0 0 6px var(--accent2);
+      box-shadow: 0 0 5px var(--accent2);
     }
-    .emu-buttons {
-      display: flex;
-      gap: 10px;
-    }
+    .emu-buttons { display: flex; gap: 8px; }
     .emu-btn {
-      flex: 1;
-      padding: 9px 12px;
+      flex: 1; padding: 8px 10px;
       border: 1px solid var(--border);
       border-radius: var(--radius);
       background: var(--surface2);
       color: var(--text);
-      font-family: var(--mono);
-      font-size: 12px;
+      font-family: var(--mono); font-size: 11px;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 7px;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
       transition: background 0.2s, border-color 0.2s, transform 0.15s;
       user-select: none;
     }
     .emu-btn:active { transform: scale(0.97); }
-    .emu-btn.alert  { border-color: #ff6b3544; }
-    .emu-btn.alert:hover  { background: #ff6b3522; border-color: var(--accent2); color: var(--accent2); }
-    .emu-btn.clear  { border-color: #ff525244; }
-    .emu-btn.clear:hover  { background: #ff525222; border-color: var(--err); color: var(--err); }
+    .emu-btn.alert { border-color: #ff6b3530; }
+    .emu-btn.alert:hover { background: #ff6b3518; border-color: var(--accent2); color: var(--accent2); }
+    .emu-btn.clear { border-color: #ff525230; }
+    .emu-btn.clear:hover { background: #ff525218; border-color: var(--err); color: var(--err); }
+    .emu-btn.urgent-btn { border-color: #ff525230; }
+    .emu-btn.urgent-btn:hover { background: #ff525218; border-color: var(--err); color: var(--err); }
 
-    /* ── Modal / Overlay ───────────────────────────────── */
+    /* ── Modal / Overlay ── */
     #overlay {
       position: fixed; inset: 0;
-      background: #000000cc;
-      backdrop-filter: blur(4px);
+      background: #00000099;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
       z-index: 100;
-      display: none;
-      align-items: flex-end;
-      justify-content: center;
+      display: none; align-items: flex-end; justify-content: center;
     }
     #overlay.open { display: flex; }
     .modal {
       background: var(--surface);
       border: 1px solid var(--border);
+      border-top: 1px solid #2e3540;
       border-radius: 20px 20px 0 0;
-      padding: 24px 20px 32px;
-      width: 100%;
-      max-width: 600px;
-      animation: modal-up 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      padding: 22px 20px 30px;
+      width: 100%; max-width: 600px;
+      animation: modal-up 0.32s cubic-bezier(0.16, 1, 0.3, 1);
     }
     @keyframes modal-up {
       from { transform: translateY(40px); opacity: 0; }
-      to   { transform: translateY(0);    opacity: 1; }
+      to   { transform: translateY(0); opacity: 1; }
     }
     .modal-handle {
       width: 36px; height: 4px;
-      background: var(--border);
-      border-radius: 2px;
-      margin: 0 auto 20px;
+      background: var(--border); border-radius: 2px;
+      margin: 0 auto 18px;
     }
-    .modal-title {
-      font-size: 18px;
-      font-weight: 800;
-      margin-bottom: 6px;
-    }
-    .modal-sub {
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-bottom: 18px;
-    }
-    .input-group {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 14px;
-    }
+    .modal-title { font-size: 17px; font-weight: 800; margin-bottom: 5px; }
+    .modal-sub { font-family: var(--mono); font-size: 10px; color: var(--text-muted); margin-bottom: 16px; }
+    .input-group { display: flex; gap: 9px; margin-bottom: 11px; }
     .modal-input {
       flex: 1;
       background: var(--surface2);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 12px 14px;
+      padding: 11px 13px;
       color: var(--text);
-      font-family: var(--mono);
-      font-size: 13px;
+      font-family: var(--mono); font-size: 13px;
       outline: none;
       transition: border-color 0.2s;
     }
     .modal-input:focus { border-color: var(--accent); }
     .modal-input::placeholder { color: var(--text-dim); }
-    .modal-hint {
-      font-family: var(--mono);
-      font-size: 10px;
-      color: var(--text-dim);
-      margin-bottom: 18px;
-    }
-    .modal-actions {
-      display: flex;
-      gap: 10px;
-    }
+    .modal-hint { font-family: var(--mono); font-size: 10px; color: var(--text-dim); margin-bottom: 16px; line-height: 1.5; }
+    .modal-actions { display: flex; gap: 9px; }
     .btn-primary {
-      flex: 1;
-      padding: 12px;
+      flex: 1; padding: 11px;
       background: linear-gradient(135deg, var(--accent), #0099bb);
-      border: none;
-      border-radius: var(--radius);
-      color: #000;
-      font-family: var(--sans);
-      font-size: 14px;
-      font-weight: 600;
+      border: none; border-radius: var(--radius);
+      color: #000; font-family: var(--sans); font-size: 14px; font-weight: 600;
       cursor: pointer;
       transition: opacity 0.2s, transform 0.15s;
     }
-    .btn-primary:hover  { opacity: 0.9; }
+    .btn-primary:hover { opacity: 0.88; }
     .btn-primary:active { transform: scale(0.98); }
     .btn-ghost {
-      padding: 12px 18px;
+      padding: 11px 16px;
       background: transparent;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      color: var(--text-muted);
-      font-family: var(--sans);
-      font-size: 14px;
+      border: 1px solid var(--border); border-radius: var(--radius);
+      color: var(--text-muted); font-family: var(--sans); font-size: 14px;
       cursor: pointer;
       transition: border-color 0.2s, color 0.2s;
     }
     .btn-ghost:hover { border-color: var(--text-muted); color: var(--text); }
 
-    /* ── Toast ─────────────────────────────────────────── */
+    /* ── Permission Modal ── */
+    #permOverlay {
+      position: fixed; inset: 0;
+      background: #00000099;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 200;
+      display: none; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    #permOverlay.open { display: flex; }
+    .perm-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px 28px 28px;
+      max-width: 380px; width: 100%;
+      text-align: center;
+      animation: perm-appear 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes perm-appear {
+      from { opacity: 0; transform: scale(0.92) translateY(20px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .perm-icon-wrap {
+      width: 72px; height: 72px;
+      margin: 0 auto 20px;
+      background: var(--accent-dim);
+      border: 1px solid #00e5ff22;
+      border-radius: 20px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 32px;
+      position: relative;
+    }
+    .perm-icon-wrap::after {
+      content: '';
+      position: absolute; inset: -8px;
+      border-radius: 26px;
+      border: 1px solid #00e5ff15;
+      animation: perm-ring 2.5s ease-in-out infinite;
+    }
+    @keyframes perm-ring {
+      0%,100% { opacity: 0.5; transform: scale(1); }
+      50%     { opacity: 0.1; transform: scale(1.08); }
+    }
+    .perm-title {
+      font-size: 18px; font-weight: 800; margin-bottom: 8px;
+    }
+    .perm-desc {
+      font-family: var(--mono); font-size: 11px; color: var(--text-muted);
+      line-height: 1.65; margin-bottom: 24px;
+    }
+    .perm-features {
+      display: flex; flex-direction: column; gap: 9px;
+      margin-bottom: 24px;
+      text-align: left;
+    }
+    .perm-feature {
+      display: flex; align-items: center; gap: 10px;
+      font-family: var(--mono); font-size: 11px; color: var(--text-muted);
+    }
+    .perm-feature-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent); flex-shrink: 0;
+    }
+    .btn-enable {
+      width: 100%; padding: 14px;
+      background: linear-gradient(135deg, var(--accent), #0099bb);
+      border: none; border-radius: var(--radius);
+      color: #000; font-family: var(--sans); font-size: 14px; font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+      margin-bottom: 10px;
+      letter-spacing: 0.3px;
+    }
+    .btn-enable:hover { opacity: 0.88; }
+    .btn-enable:active { transform: scale(0.98); }
+    .btn-skip {
+      width: 100%; padding: 10px;
+      background: transparent;
+      border: none;
+      color: var(--text-dim); font-family: var(--mono); font-size: 11px;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .btn-skip:hover { color: var(--text-muted); }
+
+    /* ── Toast ── */
     #toast {
-      position: fixed;
-      bottom: 180px;
-      left: 50%;
-      transform: translateX(-50%) translateY(20px);
+      position: fixed; bottom: 175px; left: 50%;
+      transform: translateX(-50%) translateY(14px);
       background: var(--surface2);
       border: 1px solid var(--border);
       border-radius: 999px;
-      padding: 8px 18px;
-      font-family: var(--mono);
-      font-size: 12px;
+      padding: 7px 16px;
+      font-family: var(--mono); font-size: 11px;
       color: var(--text-muted);
-      z-index: 200;
+      z-index: 300;
       pointer-events: none;
       opacity: 0;
-      transition: opacity 0.25s, transform 0.25s;
+      transition: opacity 0.22s, transform 0.22s;
+      white-space: nowrap;
     }
-    #toast.show {
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ── Activity shimmer on feed when live ── */
+    .feed-live-bar {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .feed-live-bar.active {
       opacity: 1;
-      transform: translateX(-50%) translateY(0);
+      animation: scan-line 2.5s linear infinite;
+    }
+    @keyframes scan-line {
+      from { transform: translateX(-100%); }
+      to   { transform: translateX(100%); }
+    }
+
+    /* ── Notification sound visual feedback ── */
+    @keyframes sound-ripple {
+      0%   { transform: scale(1);   opacity: 0.6; }
+      100% { transform: scale(2.2); opacity: 0; }
+    }
+    .sound-ripple {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: sound-ripple 0.6s ease-out forwards;
+      pointer-events: none;
     }
   </style>
 </head>
 <body>
 <div id="app">
 
-  <!-- ── Header ─────────────────────────────────────── -->
+  <!-- Header -->
   <header>
     <div class="header-top">
       <div class="app-logo">
-        <div class="logo-icon">📡</div>
+        <div class="logo-icon" id="logoIcon">📡</div>
         <div class="app-name">Pulse<span>Notify</span></div>
       </div>
-      <div class="status-pill">
-        <div class="status-dot" id="statusDot"></div>
-        <span id="statusText">IDLE</span>
+      <div class="header-right">
+        <div class="notif-counter" id="notifCounter" title="Notifications">
+          <span class="notif-bell-icon">🔔</span>
+          <div class="counter-badge" id="counterBadge">0</div>
+        </div>
+        <div class="status-pill" id="statusPill">
+          <div class="status-dot" id="statusDot"></div>
+          <span id="statusText">IDLE</span>
+        </div>
       </div>
     </div>
     <div class="topic-row" id="topicRow">
@@ -486,28 +582,30 @@
     </div>
   </header>
 
-  <!-- ── Feed ───────────────────────────────────────── -->
+  <!-- Feed -->
   <div id="feed">
+    <div class="feed-live-bar" id="feedLiveBar"></div>
     <div class="empty-state" id="emptyState">
       <div class="empty-icon">🔕</div>
       <div class="empty-label">No notifications yet.<br>Subscribe to a topic or trigger a test alert.</div>
     </div>
   </div>
 
-  <!-- ── FAB ────────────────────────────────────────── -->
+  <!-- FAB -->
   <button id="fab" title="Subscribe to topic">+</button>
 
-  <!-- ── Hardware Emulator ──────────────────────────── -->
+  <!-- Emulator -->
   <div id="emulator">
     <div class="emu-label">Hardware Emulator</div>
     <div class="emu-buttons">
-      <button class="emu-btn alert" onclick="App.triggerTestAlert()">⚡ Test Alert</button>
-      <button class="emu-btn clear"  onclick="App.clearLogs()">🗑 Clear Logs</button>
+      <button class="emu-btn alert"      onclick="App.triggerTestAlert()">⚡ Test Alert</button>
+      <button class="emu-btn urgent-btn" onclick="App.triggerUrgentAlert()">🚨 Urgent</button>
+      <button class="emu-btn clear"      onclick="App.clearLogs()">🗑 Clear</button>
     </div>
   </div>
 </div>
 
-<!-- ── Subscribe Modal ────────────────────────────── -->
+<!-- Subscribe Modal -->
 <div id="overlay">
   <div class="modal">
     <div class="modal-handle"></div>
@@ -518,89 +616,299 @@
              placeholder="e.g. my-alerts-42" autocomplete="off"
              autocorrect="off" autocapitalize="none" spellcheck="false" />
     </div>
-    <div class="modal-hint">Topic names are case-sensitive. Avoid common words to reduce accidental messages.</div>
+    <div class="modal-hint">Topic names are case-sensitive. Use unique names to avoid accidental messages.</div>
     <div class="modal-actions">
-      <button class="btn-ghost" onclick="App.closeModal()">Cancel</button>
-      <button class="btn-primary" onclick="App.subscribe()">Subscribe</button>
+      <button class="btn-ghost"    onclick="App.closeModal()">Cancel</button>
+      <button class="btn-primary"  onclick="App.subscribe()">Subscribe</button>
     </div>
   </div>
 </div>
 
-<!-- ── Toast ──────────────────────────────────────── -->
+<!-- Permission Modal -->
+<div id="permOverlay">
+  <div class="perm-card">
+    <div class="perm-icon-wrap">🔔</div>
+    <div class="perm-title">Stay in the loop</div>
+    <div class="perm-desc">
+      Enable push notifications to receive realtime alerts even when PulseNotify is running in the background.
+    </div>
+    <div class="perm-features">
+      <div class="perm-feature">
+        <div class="perm-feature-dot"></div>
+        Background alerts when tab is minimized
+      </div>
+      <div class="perm-feature">
+        <div class="perm-feature-dot"></div>
+        Instant delivery for urgent notifications
+      </div>
+      <div class="perm-feature">
+        <div class="perm-feature-dot"></div>
+        Click notification to jump straight to feed
+      </div>
+      <div class="perm-feature">
+        <div class="perm-feature-dot"></div>
+        Works on desktop and mobile browsers
+      </div>
+    </div>
+    <button class="btn-enable" onclick="NotifManager.requestPermission()">Enable Notifications</button>
+    <button class="btn-skip"   onclick="NotifManager.skipPermission()">Maybe later</button>
+  </div>
+</div>
+
+<!-- Toast -->
 <div id="toast"></div>
 
-<script>
-/* ═══════════════════════════════════════════════════════
-   PulseNotify — Core Application
-═══════════════════════════════════════════════════════ */
-const App = (() => {
+<!-- Service Worker registration script -->
+<script id="sw-script" type="text/javascript">
+const SW_SOURCE = `
+self.addEventListener('install', e => self.skipWaiting());
+self.addEventListener('activate', e => e.waitUntil(clients.claim()));
+self.addEventListener('push', function(e) {
+  const data = e.data ? e.data.json() : {};
+  const title = data.title || 'PulseNotify';
+  const options = {
+    body: data.body || '',
+    icon: data.icon || '',
+    badge: data.badge || '',
+    tag: data.tag || 'pn',
+    data: { url: data.url || '/' },
+    requireInteraction: data.urgent || false,
+  };
+  e.waitUntil(self.registration.showNotification(title, options));
+});
+self.addEventListener('notificationclick', function(e) {
+  e.notification.close();
+  e.waitUntil(clients.matchAll({ type: 'window' }).then(list => {
+    for (const c of list) { if (c.focus) return c.focus(); }
+    return clients.openWindow(e.notification.data.url || '/');
+  }));
+});
+`;
+</script>
 
-  /* ── State ─────────────────────────────────────────── */
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   PulseNotify — Advanced Notification System
+═══════════════════════════════════════════════════════════════ */
+
+/* ── Audio Engine ──────────────────────────────────────────── */
+const AudioEngine = (() => {
+  let ctx = null;
+  let enabled = true;
+
+  function ensureCtx() {
+    if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+    if (ctx.state === 'suspended') ctx.resume();
+  }
+
+  function playDefaultTone() {
+    try {
+      ensureCtx();
+      const t = ctx.currentTime;
+      // Soft two-tone chime: 880 Hz then 1100 Hz, short decay
+      [[880, 0, 0.06], [1100, 0.09, 0.06]].forEach(([freq, delay, dur]) => {
+        const osc  = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, t + delay);
+        gain.gain.setValueAtTime(0, t + delay);
+        gain.gain.linearRampToValueAtTime(0.12, t + delay + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + delay + dur);
+        osc.start(t + delay);
+        osc.stop(t + delay + dur + 0.01);
+      });
+    } catch(e) {}
+  }
+
+  function playUrgentTone() {
+    try {
+      ensureCtx();
+      const t = ctx.currentTime;
+      // Three rapid pulses at higher frequency
+      [0, 0.13, 0.26].forEach(delay => {
+        const osc  = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(1320, t + delay);
+        gain.gain.setValueAtTime(0, t + delay);
+        gain.gain.linearRampToValueAtTime(0.14, t + delay + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + delay + 0.10);
+        osc.start(t + delay);
+        osc.stop(t + delay + 0.12);
+      });
+    } catch(e) {}
+  }
+
+  function play(urgent = false) {
+    if (!enabled) return;
+    if (urgent) playUrgentTone();
+    else        playDefaultTone();
+  }
+
+  function setEnabled(v) { enabled = v; }
+  return { play, setEnabled };
+})();
+
+
+/* ── Notification Manager ──────────────────────────────────── */
+const NotifManager = (() => {
+  const $ = id => document.getElementById(id);
+  const permOverlay = $('permOverlay');
+  let swReg = null;
+  let _permissionAsked = localStorage.getItem('pn_perm_asked') === '1';
+
+  async function registerSW() {
+    if (!('serviceWorker' in navigator)) return;
+    try {
+      const swCode = window.SW_SOURCE;
+      const blob   = new Blob([swCode], { type: 'application/javascript' });
+      const url    = URL.createObjectURL(blob);
+      swReg = await navigator.serviceWorker.register(url, { scope: '/' });
+    } catch(e) { /* SW optional */ }
+  }
+
+  function showPermissionModal() {
+    if (_permissionAsked) return;
+    if (!('Notification' in window)) return;
+    if (Notification.permission !== 'default') return;
+    permOverlay.classList.add('open');
+  }
+
+  async function requestPermission() {
+    permOverlay.classList.remove('open');
+    _permissionAsked = true;
+    localStorage.setItem('pn_perm_asked', '1');
+
+    if (!('Notification' in window)) {
+      toast('⚠ Notifications not supported in this browser');
+      return;
+    }
+    try {
+      const result = await Notification.requestPermission();
+      if (result === 'granted') {
+        toast('✓ Notifications enabled');
+        if (!swReg) registerSW();
+      } else {
+        toast('Notifications blocked — enable in browser settings');
+      }
+    } catch(e) {}
+  }
+
+  function skipPermission() {
+    permOverlay.classList.remove('open');
+    _permissionAsked = true;
+    localStorage.setItem('pn_perm_asked', '1');
+  }
+
+  function sendNative(title, body, topic, urgent = false) {
+    // Cordova
+    if (typeof cordova !== 'undefined' && cordova.plugins?.notification) {
+      cordova.plugins.notification.local.schedule({
+        title, text: body, foreground: true,
+      });
+      return;
+    }
+    // Web Notification API
+    if ('Notification' in window && Notification.permission === 'granted') {
+      const n = new Notification(title, {
+        body,
+        tag: topic,
+        requireInteraction: urgent,
+        silent: true, // we handle sound ourselves
+      });
+      n.onclick = () => { window.focus(); n.close(); };
+    }
+  }
+
+  function init() {
+    setTimeout(() => {
+      if (Notification.permission === 'default' && !_permissionAsked) {
+        showPermissionModal();
+      }
+    }, 1800);
+    if (Notification.permission === 'granted') registerSW();
+  }
+
+  return { init, requestPermission, skipPermission, sendNative, showPermissionModal };
+})();
+
+
+/* ═══════════════════════════════════════════════════════════════
+   Main App
+═══════════════════════════════════════════════════════════════ */
+const App = (() => {
   const state = {
     topics:      JSON.parse(localStorage.getItem('pn_topics') || '[]'),
-    connections: {},   // topic -> EventSource
+    connections: {},
     logs:        [],
+    unread:      0,
   };
 
-  /* ── DOM refs ──────────────────────────────────────── */
   const $ = id => document.getElementById(id);
-  const feed       = $('feed');
-  const emptyState = $('emptyState');
-  const topicRow   = $('topicRow');
-  const topicEmpty = $('topicEmpty');
-  const statusDot  = $('statusDot');
-  const statusText = $('statusText');
-  const overlay    = $('overlay');
-  const topicInput = $('topicInput');
-  const toastEl    = $('toast');
+  const feed        = $('feed');
+  const emptyState  = $('emptyState');
+  const topicRow    = $('topicRow');
+  const topicEmpty  = $('topicEmpty');
+  const statusDot   = $('statusDot');
+  const statusText  = $('statusText');
+  const statusPill  = $('statusPill');
+  const overlay     = $('overlay');
+  const topicInput  = $('topicInput');
+  const toastEl     = $('toast');
+  const feedLiveBar = $('feedLiveBar');
+  const logoIcon    = $('logoIcon');
+  const counterBadge = $('counterBadge');
+  const notifCounter = $('notifCounter');
 
-  /* ── Toast ─────────────────────────────────────────── */
+  /* ── Toast ── */
   let toastTimer;
-  function toast(msg, dur = 2400) {
+  window.toast = function(msg, dur = 2400) {
     toastEl.textContent = msg;
     toastEl.classList.add('show');
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => toastEl.classList.remove('show'), dur);
-  }
+  };
 
-  /* ── Notification Permission ───────────────────────── */
-  function requestPermission() {
-    if (!('Notification' in window)) return;
-    if (Notification.permission === 'default') {
-      Notification.requestPermission();
-    }
+  /* ── Counter ── */
+  function incrementCounter() {
+    state.unread++;
+    counterBadge.textContent = state.unread > 99 ? '99+' : state.unread;
+    counterBadge.classList.add('visible');
+    counterBadge.classList.remove('bump');
+    void counterBadge.offsetWidth;
+    counterBadge.classList.add('bump');
+    notifCounter.classList.add('has-new');
+    setTimeout(() => notifCounter.classList.remove('has-new'), 600);
+    // Pulse logo
+    logoIcon.classList.add('pulse-logo');
   }
+  notifCounter.addEventListener('click', () => {
+    state.unread = 0;
+    counterBadge.textContent = '0';
+    counterBadge.classList.remove('visible', 'bump');
+  });
 
-  function sendNativeNotification(title, body, topic) {
-    if (typeof cordova !== 'undefined' && cordova.plugins && cordova.plugins.notification) {
-      // Apache Cordova Local Notifications plugin
-      cordova.plugins.notification.local.schedule({
-        title: title,
-        text:  body,
-        foreground: true,
-        icon: 'res://notification_icon',
-      });
-      return;
-    }
-    // Web Notifications fallback
-    if ('Notification' in window && Notification.permission === 'granted') {
-      new Notification(title, { body, icon: '📡', tag: topic });
-    }
-  }
-
-  /* ── Status bar ────────────────────────────────────── */
+  /* ── Status ── */
   function updateStatus() {
     const count = Object.keys(state.connections).length;
     if (count === 0) {
       statusDot.className  = 'status-dot';
       statusText.textContent = 'IDLE';
+      statusPill.classList.remove('live');
+      feedLiveBar.classList.remove('active');
+      logoIcon.classList.remove('pulse-logo');
     } else {
       statusDot.className  = 'status-dot live';
       statusText.textContent = `LIVE ×${count}`;
+      statusPill.classList.add('live');
+      feedLiveBar.classList.add('active');
+      logoIcon.classList.add('pulse-logo');
     }
   }
 
-  /* ── Topic chips ───────────────────────────────────── */
+  /* ── Topic chips ── */
   function renderTopics() {
     topicRow.innerHTML = '';
     if (state.topics.length === 0) {
@@ -620,14 +928,11 @@ const App = (() => {
     });
   }
 
-  /* ── Subscribe / SSE ───────────────────────────────── */
-  function subscribeAll() {
-    state.topics.forEach(t => connectSSE(t));
-  }
+  /* ── SSE ── */
+  function subscribeAll() { state.topics.forEach(t => connectSSE(t)); }
 
   function connectSSE(topic) {
     if (state.connections[topic]) return;
-
     const url = `https://ntfy.sh/${encodeURIComponent(topic)}/sse`;
     const es  = new EventSource(url);
 
@@ -635,26 +940,23 @@ const App = (() => {
       try {
         const msg = JSON.parse(e.data);
         if (msg.event === 'message') {
+          const urgent = msg.priority >= 5;
           addCard({
             topic,
-            title:    msg.title    || `📨 ${topic}`,
-            body:     msg.message  || '',
+            title:    msg.title   || `📨 ${topic}`,
+            body:     msg.message || '',
             priority: msg.priority || 3,
             time:     new Date(msg.time * 1000),
             type:     'live',
           });
-          sendNativeNotification(msg.title || topic, msg.message || '', topic);
+          AudioEngine.play(urgent);
+          NotifManager.sendNative(msg.title || topic, msg.message || '', topic, urgent);
         }
-      } catch { /* skip keepalive/open events */ }
+      } catch {}
     });
 
-    es.onerror = () => {
-      // auto-reconnects by browser; just flag visually
-      updateStatus();
-    };
-
-    es.onopen = () => updateStatus();
-
+    es.onerror = () => updateStatus();
+    es.onopen  = () => updateStatus();
     state.connections[topic] = es;
     updateStatus();
     renderTopics();
@@ -672,46 +974,71 @@ const App = (() => {
     toast(`Unsubscribed from #${topic}`);
   }
 
-  /* ── Card rendering ────────────────────────────────── */
+  /* ── Card rendering ── */
   const PRIORITY_MAP = {
-    5: { label: 'URGENT', cls: 'priority-urgent badge-urgent' },
-    4: { label: 'HIGH',   cls: 'priority-high   badge-high'   },
-    3: { label: 'DEFAULT', cls: '',              bcls: 'badge-default' },
-    2: { label: 'LOW',    cls: 'priority-low',   bcls: 'badge-default' },
-    1: { label: 'MIN',    cls: 'priority-low',   bcls: 'badge-default' },
+    5: { label: 'URGENT',  cls: 'priority-urgent', bcls: 'badge-urgent' },
+    4: { label: 'HIGH',    cls: 'priority-high',   bcls: 'badge-high' },
+    3: { label: 'DEFAULT', cls: '',                bcls: 'badge-default' },
+    2: { label: 'LOW',     cls: 'priority-low',    bcls: 'badge-default' },
+    1: { label: 'MIN',     cls: 'priority-low',    bcls: 'badge-default' },
   };
 
   function addCard({ topic, title, body, priority = 3, time = new Date(), type = 'live' }) {
     emptyState.style.display = 'none';
-
     const pinfo  = PRIORITY_MAP[priority] || PRIORITY_MAP[3];
-    const isTest = (type === 'test');
+    const isTest = type === 'test';
+    const urgent = priority >= 5;
     const hh     = String(time.getHours()).padStart(2, '0');
     const mm     = String(time.getMinutes()).padStart(2, '0');
     const ss     = String(time.getSeconds()).padStart(2, '0');
 
     const card = document.createElement('div');
-    card.className = `notif-card ${pinfo.cls || ''} ${isTest ? 'type-test' : ''}`;
+    card.className = [
+      'notif-card',
+      pinfo.cls,
+      isTest ? 'type-test' : '',
+      'new-glow',
+    ].filter(Boolean).join(' ');
+
     card.innerHTML = `
       <div class="card-header">
         <div class="card-meta">
           <span class="card-topic">#${topic}</span>
-          <span class="card-badge ${isTest ? 'badge-test' : (pinfo.bcls || pinfo.cls.split(' ')[1] || 'badge-default')}">
+          <span class="card-badge ${isTest ? 'badge-test' : pinfo.bcls}">
             ${isTest ? 'TEST' : pinfo.label}
           </span>
         </div>
-        <span class="card-time">${hh}:${mm}:${ss}</span>
+        <div class="card-right">
+          <span class="card-time">${hh}:${mm}:${ss}</span>
+          <span class="card-dismiss" title="Dismiss">×</span>
+        </div>
       </div>
       <div class="card-title">${escHtml(title)}</div>
       ${body ? `<div class="card-body">${escHtml(body)}</div>` : ''}
     `;
 
-    // Prepend so newest is on top
+    card.querySelector('.card-dismiss').addEventListener('click', () => dismissCard(card));
+
     const firstCard = feed.querySelector('.notif-card');
     if (firstCard) feed.insertBefore(card, firstCard);
     else feed.appendChild(card);
 
+    // Remove glow class after animation
+    setTimeout(() => card.classList.remove('new-glow'), 1300);
+
+    incrementCounter();
     state.logs.push({ topic, title, body, priority, time, type });
+  }
+
+  function dismissCard(card) {
+    card.classList.add('dismissing');
+    card.addEventListener('animationend', () => {
+      card.remove();
+      if (!feed.querySelector('.notif-card')) {
+        feed.appendChild(emptyState);
+        emptyState.style.display = '';
+      }
+    }, { once: true });
   }
 
   function escHtml(str) {
@@ -720,22 +1047,19 @@ const App = (() => {
       .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
-  /* ── Modal ─────────────────────────────────────────── */
+  /* ── Modal ── */
   function openModal() {
     overlay.classList.add('open');
     setTimeout(() => topicInput.focus(), 300);
   }
-
   function closeModal() {
     overlay.classList.remove('open');
     topicInput.value = '';
   }
-
   function subscribe() {
-    const raw   = topicInput.value.trim().toLowerCase().replace(/[^a-z0-9_\-]/g, '');
+    const raw = topicInput.value.trim().toLowerCase().replace(/[^a-z0-9_\-]/g, '');
     if (!raw) { toast('⚠ Enter a valid topic name'); return; }
     if (state.topics.includes(raw)) { toast('Already subscribed'); closeModal(); return; }
-
     state.topics.push(raw);
     localStorage.setItem('pn_topics', JSON.stringify(state.topics));
     connectSSE(raw);
@@ -744,58 +1068,75 @@ const App = (() => {
     toast(`✓ Subscribed to #${raw}`);
   }
 
-  /* ── Test Alert ────────────────────────────────────── */
+  /* ── Test Alerts ── */
   function triggerTestAlert() {
     const activeTopic = state.topics[0] || 'test-channel';
     const alerts = [
       { title: '🌡 Temperature Alert', body: 'Sensor reading: 87°C — threshold exceeded on Node-3.' },
       { title: '🔋 Battery Warning',   body: 'Device BATT-07 at 12%. Charging recommended.' },
       { title: '🚨 Motion Detected',   body: 'PIR sensor triggered at Zone B, Entry Point 2.' },
-      { title: '📶 Signal Lost',        body: 'Connection to remote unit HW-221 timed out.' },
-      { title: '✅ System OK',          body: 'Health check passed. All nodes nominal.' },
+      { title: '📶 Signal Lost',        body: 'Connection to remote unit HW-221 timed out (30s).' },
+      { title: '✅ System OK',          body: 'Health check passed. All 12 nodes nominal.' },
     ];
     const pick = alerts[Math.floor(Math.random() * alerts.length)];
     addCard({ topic: activeTopic, title: pick.title, body: pick.body, priority: 3, time: new Date(), type: 'test' });
-    sendNativeNotification(pick.title, pick.body, activeTopic);
+    AudioEngine.play(false);
+    NotifManager.sendNative(pick.title, pick.body, activeTopic, false);
     toast('⚡ Test alert fired');
   }
 
-  /* ── Clear Logs ────────────────────────────────────── */
+  function triggerUrgentAlert() {
+    const activeTopic = state.topics[0] || 'test-channel';
+    const alerts = [
+      { title: '🚨 Critical: Server Down', body: 'Production server PROD-01 is unreachable. Immediate action required.' },
+      { title: '⚠️ Security Breach',       body: 'Unauthorized access detected on API gateway. IP: 203.0.113.42.' },
+      { title: '🔴 Data Loss Risk',        body: 'RAID array degraded. Drive 4 failure detected. Backup NOW.' },
+    ];
+    const pick = alerts[Math.floor(Math.random() * alerts.length)];
+    addCard({ topic: activeTopic, title: pick.title, body: pick.body, priority: 5, time: new Date(), type: 'live' });
+    AudioEngine.play(true);
+    NotifManager.sendNative(pick.title, pick.body, activeTopic, true);
+    toast('🚨 Urgent alert fired');
+  }
+
+  /* ── Clear ── */
   function clearLogs() {
-    feed.innerHTML = '';
-    feed.appendChild(emptyState);
-    emptyState.style.display = '';
+    feed.querySelectorAll('.notif-card').forEach(c => c.remove());
+    if (!feed.querySelector('.notif-card')) {
+      feed.appendChild(emptyState);
+      emptyState.style.display = '';
+    }
     state.logs = [];
+    state.unread = 0;
+    counterBadge.textContent = '0';
+    counterBadge.classList.remove('visible', 'bump');
     toast('🗑 Logs cleared');
   }
 
-  /* ── Keyboard shortcuts ────────────────────────────── */
+  /* ── Keyboard ── */
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') closeModal();
     if (e.key === 'Enter' && overlay.classList.contains('open')) subscribe();
   });
 
-  /* ── FAB & overlay ─────────────────────────────────── */
   $('fab').addEventListener('click', openModal);
   overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
 
-  /* ── Cordova device ready ──────────────────────────── */
+  /* ── Init ── */
   function init() {
-    requestPermission();
     renderTopics();
     subscribeAll();
+    updateStatus();
+    NotifManager.init();
   }
 
   if (typeof cordova !== 'undefined') {
     document.addEventListener('deviceready', init, false);
   } else {
-    // Browser / dev mode
     document.addEventListener('DOMContentLoaded', init);
   }
 
-  /* ── Public API ────────────────────────────────────── */
-  return { openModal, closeModal, subscribe, triggerTestAlert, clearLogs };
-
+  return { openModal, closeModal, subscribe, triggerTestAlert, triggerUrgentAlert, clearLogs };
 })();
 </script>
 </body>
