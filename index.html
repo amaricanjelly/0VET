@@ -6,6 +6,18 @@
 <title>JellyNotify</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+
+<!-- ── OneSignal Web Push SDK ── -->
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  OneSignalDeferred.push(async function(OneSignal) {
+    await OneSignal.init({
+      appId: "5f7f7bfc-3980-4906-8dd3-0f1314c20d95",
+    });
+  });
+</script>
+
 <style>
 /* ═══════════════════════════════════════════════════
    JELLYNOTIFY — PRODUCTION PREMIUM UI v3
@@ -416,56 +428,35 @@ html, body {
   margin-bottom: 4px;
 }
 .empty-icon-wrap svg { width: 28px; height: 28px; color: var(--text-tertiary); }
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-  import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-messaging.js";
+.empty-title { font-size: 14px; font-weight: 500; color: var(--text-secondary); }
+.empty-sub { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); line-height: 1.6; }
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyAD-VLPWD1dPdt6jquYSVJ-AzO68FzxRAQ",
-    authDomain: "jelly-notify.firebaseapp.com",
-    projectId: "jelly-notify",
-    storageBucket: "jelly-notify.firebasestorage.app",
-    messagingSenderId: "901828999016",
-    appId: "1:901828999016:web:a0d94df5417e4bef3ac8dd",
-    measurementId: "G-H4P415087V"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const messaging = getMessaging(app);
-
-  async function initNotification() {
-    try {
-      const permission = await Notification.requestPermission();
-      if (permission === 'granted') {
-        console.log("Permission granted!");
-        const token = await getToken(messaging, { 
-          vapidKey: 'BL--DPqtQeDDyCCkL4raOYEGpd8ennkzvioObDy-QZPmKuVRyPRJ2dTKmk86GjecF-tKMBO5E-o0kLHtpPHV5Wc' 
-        });
-        if (token) {
-          console.log("FCM Token:", token);
-        }
-      } else {
-        console.log("Permission denied!");
-      }
-    } catch (error) {
-      console.error("Error during token retrieval:", error);
-    }
-  }
-
-  // Listen for foreground messages
-  onMessage(messaging, (payload) => {
-    console.log("Foreground message received:", payload);
-    alert(`নতুন নোটিফিকেশন:\n${payload.notification.title}\n${payload.notification.body}`);
-  });
-
-  // Bind the function to the custom UI button click event
-  document.addEventListener("DOMContentLoaded", () => {
-    const notifyBtn = document.getElementById('enable-notify-btn');
-    if (notifyBtn) {
-      notifyBtn.addEventListener('click', initNotification);
-    }
-  });
-</script>
+.notif {
+  background: var(--surface-0); border: 1px solid var(--border-subtle);
+  border-radius: var(--r-lg); padding: 13px 14px;
+  margin-bottom: 8px; position: relative; overflow: hidden;
+  transition: border-color 0.2s, transform 0.2s;
+  animation: card-in 0.28s cubic-bezier(0.16,1,0.3,1);
+}
+@keyframes card-in { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:none} }
+.notif:hover { border-color: var(--border-default); }
+.notif.p5 { border-left: 2px solid var(--red); }
+.notif.p4 { border-left: 2px solid var(--amber); }
+.notif.p3 { border-left: 2px solid var(--accent); }
+.notif.p2,.notif.p1 { border-left: 2px solid var(--text-tertiary); }
+.notif.p-test { border-left: 2px solid var(--purple); }
+.notif.out { animation: card-out 0.22s ease forwards; }
+@keyframes card-out { to{opacity:0;transform:translateX(12px);max-height:0;margin:0;padding:0} }
+.new-glow { animation: card-in 0.28s cubic-bezier(0.16,1,0.3,1), new-pulse 1.5s ease; }
+.urgent-glow { animation: card-in 0.28s cubic-bezier(0.16,1,0.3,1), urgent-pulse 1.5s ease; }
+@keyframes new-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(0,200,255,0.3); }
+  50%  { box-shadow: 0 0 0 6px rgba(0,200,255,0.05); }
+  100% { box-shadow: none; }
+}
+@keyframes urgent-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(240,64,96,0.4); }
+  50%  { box-shadow: 0 0 0 8px rgba(240,64,96,0.05); }
   100% { box-shadow: none; }
 }
 
@@ -935,7 +926,6 @@ html, body {
 .text-purple { color: var(--purple); }
 .mono { font-family: var(--font-mono); }
 
-/* Responsive clamp */
 @media(max-width:390px){
   .stats-grid { gap: 6px; }
   .stat-val { font-size: 20px; }
@@ -1091,7 +1081,7 @@ html, body {
       <div class="health-card">
         <div class="health-row">
           <div class="health-label">ntfy.sh SSE</div>
-          <div class="health-val hv-ok" id="sseStatus">● Connected</div>
+          <div class="health-val" id="sseStatus">○ Disconnected</div>
         </div>
         <div class="health-row">
           <div class="health-label">Notification API</div>
@@ -1102,8 +1092,8 @@ html, body {
           <div class="health-val" id="swStatus">Checking…</div>
         </div>
         <div class="health-row">
-          <div class="health-label">FCM Status</div>
-          <div class="health-val" id="fcmStatus">Initializing…</div>
+          <div class="health-label">OneSignal</div>
+          <div class="health-val" id="onesignalStatus">Initializing…</div>
         </div>
         <div class="health-row">
           <div class="health-label">Audio Engine</div>
@@ -1474,7 +1464,7 @@ html, body {
 <!-- ── TOAST ── -->
 <div id="toast"></div>
 
-<!-- SW source (existing ntfy.sh inline SW — preserved exactly) -->
+<!-- ── SW source (ntfy.sh inline SW) ── -->
 <script id="sw-src" type="text/plain">
 self.addEventListener('install',e=>self.skipWaiting());
 self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
@@ -1493,7 +1483,7 @@ self.addEventListener('notificationclick',function(e){
 
 <script>
 /* ═══════════════════════════════════════════════
-   JELLYNOTIFY — CORE ENGINE (Logic Unchanged)
+   JELLYNOTIFY — CORE ENGINE
 ═══════════════════════════════════════════════ */
 
 /* ── Ambient particles ── */
@@ -1766,7 +1756,6 @@ const App=(()=>{
     toast(`Unsubscribed from #${topic}`);
   }
 
-  /* Priority map */
   const PMAP={
     5:{label:'Urgent',pcls:'p5',tagCls:'tag-urgent'},
     4:{label:'High',  pcls:'p4',tagCls:'tag-high'},
@@ -2106,6 +2095,9 @@ const App=(()=>{
     if($('sel-priority'))$('sel-priority').value=String(pf===1?'1':pf===3?'3':pf===4?'4':'5');
     renderChips();subscribeAll();updateStatus();
     NotifManager.init();startUptime();
+    // Update OneSignal health row on load
+    const osEl=document.getElementById('onesignalStatus');
+    if(osEl){osEl.textContent='● Loaded';osEl.className='health-val hv-ok';}
   }
 
   if(typeof cordova!=='undefined'){document.addEventListener('deviceready',init,false);}
@@ -2115,318 +2107,5 @@ const App=(()=>{
 })();
 </script>
 
-<!-- ═══════════════════════════════════════════════════════════════
-     ▼▼▼ FCM INTEGRATION — INSERTED AT VERY BOTTOM OF <body> ▼▼▼
-     Location: directly before </body>, after all existing scripts.
-     Uses Firebase 12.13.0 modular SDK via CDN (ES module).
-     Does NOT modify or remove any existing code above.
-════════════════════════════════════════════════════════════════ -->
-<script type="module">
-  // ── Firebase 12.13.0 Modular SDK Imports (CDN) ──────────────────
-  import { initializeApp }        from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-  import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-messaging.js";
-
-  // ── Firebase Project Configuration ──────────────────────────────
-  const firebaseConfig = {
-    apiKey:            "AIzaSyAD-VLPWD1dPdt6jquYSVJ-AzO68FzxRAQ",
-    authDomain:        "jelly-notify.firebaseapp.com",
-    projectId:         "jelly-notify",
-    storageBucket:     "jelly-notify.firebasestorage.app",
-    messagingSenderId: "901828999016",
-    appId:             "1:901828999016:web:a0d94df5417e4bef3ac8dd",
-    measurementId:     "G-H4P415087V"
-  };
-
-  // ── VAPID Public Key (Web Push Certificate) ──────────────────────
-  const VAPID_KEY = "BL--DPqtQeDDyCCkL4raOYEGpd8ennkzvioObDy-QZPmKuVRyPRJ2dTKmk86GjecF-tKMBO5E-o0kLHtpPHV5Wc";
-
-  // ── Helper: update the FCM health row in Channels page ──────────
-  function setFcmStatus(text, cssClass) {
-    const el = document.getElementById("fcmStatus");
-    if (!el) return;
-    el.textContent = text;
-    el.className   = "health-val " + (cssClass || "");
-  }
-
-  // ── Initialize Firebase App & Messaging ─────────────────────────
-  const firebaseApp = initializeApp(firebaseConfig);
-  const messaging   = getMessaging(firebaseApp);
-
-  // ── initNotification() — auto-called on page load ───────────────
-  async function initNotification() {
-    // Guard: browser must support the Notification API
-    if (!("Notification" in window)) {
-      console.warn("FCM: Notification API not supported in this browser.");
-      setFcmStatus("Not supported", "hv-err");
-      return;
-    }
-
-    // Guard: service workers required for FCM token generation
-    if (!("serviceWorker" in navigator)) {
-      console.warn("FCM: Service Worker not supported in this browser.");
-      setFcmStatus("SW unavailable", "hv-err");
-      return;
-    }
-
-    try {
-      // ── Step 1: Request browser notification permission ──────────
-      const permission = await Notification.requestPermission();
-
-      if (permission !== "granted") {
-        console.warn("FCM: Notification permission was not granted. Status:", permission);
-        setFcmStatus("Permission denied", "hv-err");
-        // Sync the existing NotifManager health display as well
-        if (typeof NotifManager !== "undefined" && NotifManager.updateStatus) {
-          NotifManager.updateStatus();
-        }
-        return;
-      }
-
-      // Permission granted — update existing NotifManager health row
-      if (typeof NotifManager !== "undefined" && NotifManager.updateStatus) {
-        NotifManager.updateStatus();
-      }
-
-      // ── Step 2: Register the FCM-dedicated service worker ────────
-      // firebase-messaging-sw.js must exist at the web root (/).
-      let swRegistration;
-      try {
-        swRegistration = await navigator.serviceWorker.register(
-          "/firebase-messaging-sw.js",
-          { scope: "/" }
-        );
-        console.log("FCM SW registered:", swRegistration.scope);
-      } catch (swErr) {
-        console.error("FCM: Service worker registration failed:", swErr);
-        setFcmStatus("SW reg failed", "hv-err");
-        return;
-      }
-
-      // ── Step 3: Obtain the FCM registration token ─────────────────
-      let token;
-      try {
-        token = await getToken(messaging, {
-          vapidKey:                VAPID_KEY,
-          serviceWorkerRegistration: swRegistration
-        });
-      } catch (tokenErr) {
-        console.error("FCM: getToken() failed:", tokenErr);
-        setFcmStatus("Token error", "hv-err");
-        return;
-      }
-
-      if (token) {
-        // ── Log the token to the console as required ───────────────
-        console.log("FCM Token:", token);
-
-        // Surface a brief UI toast using the existing toast() helper
-        if (typeof window.toast === "function") {
-          window.toast("✓ FCM ready");
-        }
-
-        // Update the health row in the Channels page
-        setFcmStatus("● Token ready", "hv-ok");
-      } else {
-        // getToken resolved but returned nothing — misconfiguration
-        console.warn("FCM: getToken returned empty. Verify VAPID key and SW registration.");
-        setFcmStatus("No token", "hv-warn");
-      }
-
-    } catch (err) {
-      console.error("FCM initNotification() unhandled error:", err);
-      setFcmStatus("Init error", "hv-err");
-    }
-  }
-
-  // ── Foreground Message Handler ───────────────────────────────────
-  // Fires when a push arrives while the app tab is active/focused.
-  onMessage(messaging, (payload) => {
-    console.log("FCM foreground message received:", payload);
-
-    const title = payload.notification?.title ?? "JellyNotify";
-    const body  = payload.notification?.body  ?? "";
-
-    // ── Required: trigger a temporary browser alert ──────────────
-    alert(`${title}\n${body}`);
-
-    // ── Also feed the message into the existing live feed ─────────
-    // This lets the in-app card system and audio engine handle it
-    // exactly like an ntfy.sh SSE message, maintaining full UI parity.
-    if (typeof App !== "undefined") {
-      const topic = payload.data?.topic ?? "fcm";
-      const rawPriority = parseInt(payload.data?.priority ?? "3", 10);
-      const priority = isNaN(rawPriority) ? 3 : Math.min(5, Math.max(1, rawPriority));
-      const urgent   = priority >= 5;
-
-      // addCard is defined inside the App IIFE; call it via the public interface
-      // by dispatching a synthetic CustomEvent that the app can listen to.
-      // (We use a direct internal call since addCard is closure-scoped; instead
-      //  we trigger the same path the emulator buttons use, via triggerTest/
-      //  triggerUrgent, but with real payload data by injecting a custom event.)
-      const fcmEvent = new CustomEvent("jn:fcm-message", {
-        detail: { topic, title, body, priority, urgent }
-      });
-      document.dispatchEvent(fcmEvent);
-
-      // Play the appropriate audio tone
-      if (typeof AudioEngine !== "undefined") {
-        AudioEngine.play(urgent);
-      }
-    }
-  });
-
-  // ── Listen for the custom event and inject into the live feed ────
-  // This bridges the FCM foreground message into App.addCard() safely,
-  // without breaking or modifying the existing App IIFE.
-  document.addEventListener("jn:fcm-message", (e) => {
-    const { topic, title, body, priority } = e.detail;
-    // Temporarily hook into App internals via the emulator path:
-    // We build a fake SSE-style card by directly constructing what
-    // App.triggerTest/triggerUrgent does — but using FCM payload data.
-    // Since addCard is private, we clone its logic here minimally.
-    const feedWrap   = document.getElementById("feedWrap");
-    const emptyState = document.getElementById("emptyState");
-    const statTotal  = document.getElementById("statTotal");
-    const feedSub    = document.getElementById("feedSub");
-    if (!feedWrap) return;
-
-    const PMAP = {
-      5: { label:"Urgent", pcls:"p5", tagCls:"tag-urgent" },
-      4: { label:"High",   pcls:"p4", tagCls:"tag-high"   },
-      3: { label:"Normal", pcls:"p3", tagCls:"tag-normal"  },
-      2: { label:"Low",    pcls:"p2", tagCls:"tag-normal"  },
-      1: { label:"Min",    pcls:"p1", tagCls:"tag-normal"  },
-    };
-    const p       = PMAP[priority] || PMAP[3];
-    const urgent  = priority >= 5;
-    const now     = new Date();
-    const pad     = n => String(n).padStart(2, "0");
-    const timeStr = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
-    const esc     = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
-
-    const card = document.createElement("div");
-    card.className = `notif ${p.pcls} ${urgent ? "urgent-glow" : "new-glow"}`;
-    card.dataset.priority = String(priority);
-    card.dataset.type = "live";
-    card.innerHTML = `
-      <div class="n-row1">
-        <div class="n-meta">
-          <span class="n-channel">#${esc(topic)}</span>
-          <span class="n-tag ${p.tagCls}">${p.label}</span>
-          <span class="n-tag tag-info">FCM</span>
-        </div>
-        <div class="n-right">
-          <span class="n-time">${timeStr}</span>
-          <span class="n-dismiss" title="Dismiss">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-            </svg>
-          </span>
-        </div>
-      </div>
-      <div class="n-title">${esc(title)}</div>
-      ${body ? `<div class="n-body">${esc(body)}</div>` : ""}
-    `;
-
-    // Wire up dismiss button
-    card.querySelector(".n-dismiss").addEventListener("click", () => {
-      card.classList.add("out");
-      card.addEventListener("animationend", () => {
-        card.remove();
-        if (!feedWrap.querySelector(".notif") && emptyState) {
-          emptyState.style.display = "";
-        }
-      }, { once: true });
-    });
-
-    // Insert card and hide empty state
-    if (emptyState) emptyState.style.display = "none";
-    const firstCard = feedWrap.querySelector(".notif");
-    if (firstCard) feedWrap.insertBefore(card, firstCard);
-    else feedWrap.appendChild(card);
-
-    // Remove glow classes after animation
-    setTimeout(() => card.classList.remove("new-glow", "urgent-glow"), 1600);
-
-    // Update stat counter
-    if (statTotal) statTotal.textContent = String((parseInt(statTotal.textContent, 10) || 0) + 1);
-    if (feedSub)   feedSub.textContent   = `FCM message · ${timeStr}`;
-
-    // Vibrate on urgent (mobile)
-    if (urgent && navigator.vibrate) navigator.vibrate([200, 100, 200]);
-  });
-
-  // ── Auto-invoke initNotification() after DOM is ready ───────────
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initNotification);
-  } else {
-    // DOMContentLoaded already fired (script is at bottom of body)
-    initNotification();
-  }
-</script>
-<!-- ▲▲▲ END FCM INTEGRATION ▲▲▲ -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-  import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-messaging.js";
-
-  // Using the exact config you just provided
-  const firebaseConfig = {
-    apiKey: "AIzaSyAD-VLPWD1dPdt6jquYSVJ-AzO68FzxRAQ",
-    authDomain: "jelly-notify.firebaseapp.com",
-    projectId: "jelly-notify",
-    storageBucket: "jelly-notify.firebasestorage.app",
-    messagingSenderId: "901828999016",
-    appId: "1:901828999016:web:a0d94df5417e4bef3ac8dd",
-    measurementId: "G-H4P415087V"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const messaging = getMessaging(app);
-
-  async function initNotification() {
-    try {
-      console.log("Requesting token with verified config...");
-      if ('serviceWorker' in navigator) {
-        // Registering the service worker cleanly
-        const registration = await navigator.serviceWorker.register('./firebase-messaging-sw.js?v=' + Date.now());
-        
-        const permission = await Notification.requestPermission();
-        if (permission === 'granted') {
-          const token = await getToken(messaging, { 
-            vapidKey: 'BL--DPqtQeDDyCCkL4raOYEGpd8ennkzvioObDy-QZPmKuVRyPRJ2dTKmk86GjecF-tKMBO5E-o0kLHtpPHV5Wc',
-            serviceWorkerRegistration: registration
-          });
-
-          if (token) {
-            console.log("====================================");
-            console.log("SUCCESS! YOUR FCM TOKEN IS:");
-            console.log(token);
-            console.log("====================================");
-          } else {
-            console.log("No token available.");
-          }
-        } else {
-          console.log("Notification permission denied.");
-        }
-      }
-    } catch (error) {
-      console.error("FCM Error:", error.message);
-    }
-  }
-
-  // Handle foreground messages
-  onMessage(messaging, (payload) => {
-    console.log("Foreground message:", payload);
-    alert(`নতুন নোটিফিকেশন:\n${payload.notification.title}\n${payload.notification.body}`);
-  });
-
-  // Bind to the custom UI button
-  document.addEventListener("DOMContentLoaded", () => {
-    const notifyBtn = document.getElementById('enable-notify-btn');
-    if (notifyBtn) {
-      notifyBtn.addEventListener('click', initNotification);
-    }
-  });
-</script>
 </body>
 </html>
