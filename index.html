@@ -1,2086 +1,1695 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
-    <title>JellyNotify — Realtime Notification Platform</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
-        rel="stylesheet" />
-    <style>
-        :root {
-            --bg-base: #06080b;
-            --bg-elevated: #0b0f14;
-            --bg-surface: #11161d;
-            --bg-surface2: #181e26;
-            --bg-glass: rgba(14, 18, 24, 0.72);
-            --border-subtle: #1a2029;
-            --border-default: #242b33;
-            --border-accent: #00e5ff33;
-            --accent: #00e5ff;
-            --accent-glow: #00e5ff44;
-            --accent-dim: #00e5ff14;
-            --accent2: #ff6b35;
-            --accent2-glow: #ff6b3544;
-            --ok: #00e676;
-            --ok-glow: #00e67633;
-            --warn: #ffab40;
-            --err: #ff5252;
-            --err-glow: #ff525233;
-            --text-primary: #e6ecf2;
-            --text-secondary: #9aa4b2;
-            --text-muted: #5a6472;
-            --text-dim: #353d48;
-            --mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
-            --sans: 'Inter', 'SF Pro Display', system-ui, sans-serif;
-            --grotesk: 'Space Grotesk', 'Inter', sans-serif;
-            --radius-sm: 8px;
-            --radius: 12px;
-            --radius-lg: 16px;
-            --radius-xl: 20px;
-            --radius-2xl: 24px;
-            --fab-size: 56px;
-            --nav-height: 68px;
-            --header-height: 60px;
-            --transition-fast: 0.18s cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-smooth: 0.28s cubic-bezier(0.22, 1, 0.36, 1);
-            --transition-spring: 0.45s cubic-bezier(0.16, 1, 0.3, 1);
-            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
-            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
-            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
-            --shadow-glow: 0 0 24px var(--accent-glow);
-            --blur-glass: blur(18px) saturate(130%);
-            --blur-heavy: blur(24px) saturate(140%);
-        }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<title>JellyNotify</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&family=Geist+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+/* ══════════════════════════════════════════════
+   JELLY NOTIFY — CYBER PREMIUM UI
+══════════════════════════════════════════════ */
+:root {
+  --bg:          #060810;
+  --bg2:         #0c0f18;
+  --surface:     #111520;
+  --surface2:    #161b2a;
+  --surface3:    #1c2235;
+  --border:      rgba(255,255,255,0.06);
+  --border2:     rgba(255,255,255,0.10);
+  --border3:     rgba(255,255,255,0.16);
+  --cyan:        #00f5ff;
+  --cyan-dim:    rgba(0,245,255,0.08);
+  --cyan-mid:    rgba(0,245,255,0.18);
+  --cyan-glow:   rgba(0,245,255,0.35);
+  --purple:      #a855f7;
+  --purple-dim:  rgba(168,85,247,0.10);
+  --rose:        #f43f5e;
+  --rose-dim:    rgba(244,63,94,0.10);
+  --amber:       #f59e0b;
+  --amber-dim:   rgba(245,158,11,0.10);
+  --green:       #22c55e;
+  --green-dim:   rgba(34,197,94,0.10);
+  --text:        #e8edf8;
+  --text2:       #8b92a8;
+  --text3:       #454d63;
+  --mono:        'Space Mono', 'Geist Mono', monospace;
+  --sans:        'Space Grotesk', sans-serif;
+  --r:           12px;
+  --r2:          8px;
+  --nav-h:       72px;
+}
+[data-theme="light"] {
+  --bg:          #f0f2f8;
+  --bg2:         #e8eaf4;
+  --surface:     #ffffff;
+  --surface2:    #f5f6fc;
+  --surface3:    #eef0f8;
+  --border:      rgba(0,0,0,0.06);
+  --border2:     rgba(0,0,0,0.10);
+  --border3:     rgba(0,0,0,0.16);
+  --cyan-dim:    rgba(0,180,220,0.08);
+  --cyan-mid:    rgba(0,180,220,0.15);
+  --text:        #141828;
+  --text2:       #5a6180;
+  --text3:       #9ba3bc;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;width:100%;background:var(--bg);color:var(--text);font-family:var(--sans);overflow:hidden;-webkit-font-smoothing:antialiased}
+#root{display:flex;flex-direction:column;height:100%;max-width:430px;margin:0 auto;position:relative;overflow:hidden}
 
-        [data-theme="light"] {
-            --bg-base: #f4f6f9;
-            --bg-elevated: #ffffff;
-            --bg-surface: #f8fafb;
-            --bg-surface2: #eef1f5;
-            --bg-glass: rgba(255, 255, 255, 0.78);
-            --border-subtle: #e2e6ec;
-            --border-default: #d5dbe3;
-            --border-accent: #00c8e033;
-            --accent: #0099bb;
-            --accent-glow: #0099bb33;
-            --accent-dim: #0099bb0f;
-            --accent2: #e0552b;
-            --text-primary: #1a1d23;
-            --text-secondary: #555d6b;
-            --text-muted: #8892a0;
-            --text-dim: #c5cad4;
-            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
-            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
-            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.1);
-            --shadow-glow: 0 0 20px rgba(0, 153, 187, 0.18);
-            --blur-glass: blur(14px) saturate(120%);
-            --blur-heavy: blur(20px) saturate(130%);
-        }
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar{width:2px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
 
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        html,
-        body {
-            height: 100%;
-            width: 100%;
-            background: var(--bg-base);
-            color: var(--text-primary);
-            font-family: var(--sans);
-            overflow: hidden;
-            -webkit-tap-highlight-color: transparent;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            transition: background var(--transition-smooth), color var(--transition-smooth);
-        }
+/* ─── Particle Canvas ─── */
+#particles{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:0.4}
 
-        #app {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            max-width: 640px;
-            margin: 0 auto;
-            position: relative;
-            background: var(--bg-base);
-            transition: background var(--transition-smooth);
-        }
+/* ─── Header ─── */
+.hdr{
+  flex-shrink:0;
+  position:relative;z-index:10;
+  padding:14px 18px 12px;
+  background:rgba(6,8,16,0.85);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--border);
+}
+[data-theme="light"] .hdr{background:rgba(240,242,248,0.85)}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
 
-        /* ── Particle Canvas ── */
-        #particleCanvas {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            pointer-events: none;
-            opacity: 0.5;
-        }
-        [data-theme="light"] #particleCanvas {
-            opacity: 0.25;
-        }
+/* Logo */
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo-mark{
+  width:36px;height:36px;
+  background:linear-gradient(135deg,var(--cyan) 0%,var(--purple) 100%);
+  border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:17px;position:relative;
+  box-shadow:0 0 20px rgba(0,245,255,0.3);
+}
+.logo-mark::after{
+  content:'';position:absolute;inset:-3px;border-radius:13px;
+  border:1px solid rgba(0,245,255,0.3);
+  animation:logo-pulse 3s ease-in-out infinite;
+}
+@keyframes logo-pulse{0%,100%{opacity:0.5;transform:scale(1)}50%{opacity:0.1;transform:scale(1.12)}}
+.logo-name{font-size:19px;font-weight:700;letter-spacing:-0.4px;color:var(--text)}
+.logo-name em{color:var(--cyan);font-style:normal}
 
-        /* ── Header ── */
-        header {
-            flex-shrink: 0;
-            padding: 10px 16px;
-            background: var(--bg-glass);
-            backdrop-filter: var(--blur-glass);
-            -webkit-backdrop-filter: var(--blur-glass);
-            border-bottom: 1px solid var(--border-subtle);
-            z-index: 30;
-            position: relative;
-            transition: background var(--transition-smooth), border-color var(--transition-smooth);
-        }
-        .header-inner {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-        }
-        .logo-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            user-select: none;
-        }
-        .logo-mark {
-            width: 38px;
-            height: 38px;
-            background: linear-gradient(135deg, var(--accent), #007f99);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 19px;
-            position: relative;
-            box-shadow: 0 0 18px var(--accent-glow);
-            transition: box-shadow var(--transition-smooth), transform var(--transition-fast);
-        }
-        .logo-mark:active {
-            transform: scale(0.94);
-        }
-        .logo-ring {
-            position: absolute;
-            inset: -5px;
-            border-radius: 14px;
-            border: 1.5px solid var(--accent);
-            opacity: 0;
-            animation: logoPulse 2.4s ease-out infinite;
-            pointer-events: none;
-        }
-        @keyframes logoPulse {
-            0% {
-                opacity: 0.55;
-                transform: scale(1);
-            }
-            100% {
-                opacity: 0;
-                transform: scale(1.5);
-            }
-        }
-        .logo-text {
-            font-family: var(--grotesk);
-            font-weight: 700;
-            font-size: 18px;
-            letter-spacing: -0.4px;
-            color: var(--text-primary);
-        }
-        .logo-text span {
-            color: var(--accent);
-        }
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .header-btn {
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            border: 1px solid var(--border-subtle);
-            background: var(--bg-surface);
-            color: var(--text-secondary);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 15px;
-            transition: all var(--transition-fast);
-            position: relative;
-        }
-        .header-btn:hover {
-            border-color: var(--border-default);
-            color: var(--text-primary);
-            background: var(--bg-surface2);
-        }
-        .header-btn:active {
-            transform: scale(0.93);
-        }
-        .badge-dot {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--err);
-            box-shadow: 0 0 8px var(--err-glow);
-            opacity: 0;
-            transform: scale(0);
-            transition: all var(--transition-fast);
-        }
-        .badge-dot.visible {
-            opacity: 1;
-            transform: scale(1);
-        }
-        .status-chip {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            padding: 5px 11px;
-            border-radius: 999px;
-            font-family: var(--mono);
-            font-size: 10px;
-            font-weight: 500;
-            letter-spacing: 0.3px;
-            border: 1px solid var(--border-subtle);
-            background: var(--bg-surface);
-            color: var(--text-muted);
-            transition: all var(--transition-smooth);
-            cursor: pointer;
-        }
-        .status-chip.live {
-            border-color: #00e67644;
-            color: var(--ok);
-            box-shadow: 0 0 12px var(--ok-glow);
-        }
-        .status-dot-indicator {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--text-dim);
-            transition: all var(--transition-smooth);
-            flex-shrink: 0;
-        }
-        .status-dot-indicator.live {
-            background: var(--ok);
-            box-shadow: 0 0 6px var(--ok);
-            animation: dotPulse 1.8s ease-in-out infinite;
-        }
-        @keyframes dotPulse {
-            0%,
-            100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.25;
-            }
-        }
+/* Header right */
+.hdr-right{display:flex;align-items:center;gap:8px}
+.hdr-btn{
+  width:34px;height:34px;border-radius:var(--r2);
+  background:var(--surface2);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all 0.18s;color:var(--text2);font-size:15px;
+  position:relative;
+}
+.hdr-btn:hover{background:var(--surface3);border-color:var(--border2);color:var(--text)}
+.badge{
+  position:absolute;top:-3px;right:-3px;
+  min-width:16px;height:16px;border-radius:8px;
+  background:var(--rose);color:#fff;
+  font-family:var(--mono);font-size:9px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;padding:0 3px;
+  transition:transform 0.2s;opacity:0;transform:scale(0);
+}
+.badge.show{opacity:1;transform:scale(1)}
+.badge.bump{animation:bump 0.3s ease}
+@keyframes bump{0%,100%{transform:scale(1)}50%{transform:scale(1.5)}}
 
-        /* ── Topic chips row ── */
-        .topic-scroll {
-            display: flex;
-            gap: 6px;
-            overflow-x: auto;
-            padding: 8px 0 2px;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-            flex-shrink: 0;
-        }
-        .topic-scroll::-webkit-scrollbar {
-            display: none;
-        }
-        .topic-chip {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            padding: 4px 10px 4px 9px;
-            background: var(--accent-dim);
-            border: 1px solid var(--border-accent);
-            border-radius: 999px;
-            font-family: var(--mono);
-            font-size: 10px;
-            color: var(--accent);
-            cursor: pointer;
-            white-space: nowrap;
-            user-select: none;
-            transition: all var(--transition-fast);
-            flex-shrink: 0;
-            font-weight: 500;
-        }
-        .topic-chip:hover {
-            background: #00e5ff20;
-            transform: translateY(-1px);
-        }
-        .topic-chip.active {
-            border-color: #00e5ff55;
-            box-shadow: 0 0 10px var(--accent-glow);
-        }
-        .chip-remove {
-            font-size: 14px;
-            opacity: 0.5;
-            transition: opacity var(--transition-fast);
-            cursor: pointer;
-            line-height: 1;
-        }
-        .chip-remove:hover {
-            opacity: 1;
-            color: var(--err);
-        }
-        .topic-empty {
-            font-family: var(--mono);
-            font-size: 10px;
-            color: var(--text-dim);
-            padding: 4px 0;
-            flex-shrink: 0;
-        }
+/* Status pill */
+.status-pill{
+  display:flex;align-items:center;gap:6px;
+  padding:5px 12px;border-radius:999px;
+  background:var(--surface2);border:1px solid var(--border);
+  font-family:var(--mono);font-size:10px;color:var(--text2);
+  transition:border-color 0.4s;
+}
+.status-pill.live{border-color:rgba(34,197,94,0.3)}
+.s-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--text3);transition:all 0.4s;flex-shrink:0;
+}
+.s-dot.live{background:var(--green);box-shadow:0 0 8px var(--green);animation:dot-blink 2s infinite}
+@keyframes dot-blink{0%,100%{opacity:1}50%{opacity:0.3}}
 
-        /* ── Main content area ── */
-        #mainContent {
-            flex: 1;
-            overflow-y: auto;
-            overflow-x: hidden;
-            position: relative;
-            z-index: 1;
-            padding-bottom: calc(var(--nav-height) + 20px);
-            scroll-behavior: smooth;
-        }
-        #mainContent::-webkit-scrollbar {
-            width: 3px;
-        }
-        #mainContent::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        #mainContent::-webkit-scrollbar-thumb {
-            background: var(--border-default);
-            border-radius: 2px;
-        }
+/* Topic chips */
+.chip-row{display:flex;gap:6px;flex-wrap:wrap;min-height:24px}
+.chip{
+  display:flex;align-items:center;gap:5px;
+  padding:3px 9px;border-radius:999px;
+  background:var(--cyan-dim);border:1px solid rgba(0,245,255,0.2);
+  font-family:var(--mono);font-size:10px;color:var(--cyan);
+  cursor:pointer;transition:all 0.18s;user-select:none;
+}
+.chip:hover{background:var(--cyan-mid);transform:translateY(-1px)}
+.chip-x{font-size:13px;opacity:0.4;transition:opacity 0.2s}
+.chip-x:hover{opacity:1}
+.no-chips{font-family:var(--mono);font-size:10px;color:var(--text3);align-self:center}
 
-        /* ── Page panels ── */
-        .page-panel {
-            display: none;
-            padding: 10px 14px 20px;
-            animation: pageFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .page-panel.active {
-            display: block;
-        }
-        @keyframes pageFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(12px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+/* ─── Page System ─── */
+.pages{flex:1;overflow:hidden;position:relative;z-index:1}
+.page{
+  position:absolute;inset:0;overflow-y:auto;
+  padding:14px 16px calc(var(--nav-h) + 16px);
+  opacity:0;transform:translateY(10px);pointer-events:none;
+  transition:opacity 0.25s,transform 0.25s;
+}
+.page.active{opacity:1;transform:none;pointer-events:all}
 
-        /* ── Feed cards ── */
-        .empty-state-wrap {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 220px;
-            gap: 10px;
-            opacity: 0.4;
-            pointer-events: none;
-            user-select: none;
-            text-align: center;
-        }
-        .empty-icon {
-            font-size: 40px;
-        }
-        .empty-label {
-            font-family: var(--mono);
-            font-size: 11px;
-            color: var(--text-muted);
-            line-height: 1.6;
-        }
+/* ─── Bottom Nav ─── */
+.bnav{
+  position:absolute;bottom:0;left:0;right:0;z-index:20;
+  height:var(--nav-h);
+  display:flex;align-items:center;justify-content:space-around;
+  padding:0 8px env(safe-area-inset-bottom,12px);
+  background:rgba(6,8,16,0.88);
+  backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);
+  border-top:1px solid var(--border);
+}
+[data-theme="light"] .bnav{background:rgba(240,242,248,0.88)}
+.nav-item{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:8px 12px;border-radius:var(--r);
+  cursor:pointer;transition:all 0.2s;color:var(--text3);
+  min-width:52px;position:relative;
+}
+.nav-item:hover{color:var(--text2)}
+.nav-item.active{color:var(--cyan)}
+.nav-item.active::before{
+  content:'';position:absolute;bottom:-1px;
+  width:20px;height:2px;border-radius:2px;
+  background:var(--cyan);box-shadow:0 0 8px var(--cyan);
+}
+.nav-icon{font-size:20px;line-height:1}
+.nav-label{font-family:var(--mono);font-size:9px;letter-spacing:0.5px}
+.nav-badge{
+  position:absolute;top:4px;right:6px;
+  width:7px;height:7px;border-radius:50%;background:var(--rose);
+  opacity:0;transform:scale(0);transition:all 0.2s;
+}
+.nav-badge.show{opacity:1;transform:scale(1)}
 
-        .notif-card {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-lg);
-            padding: 12px 14px;
-            margin-bottom: 8px;
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-            animation: cardSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            transform-origin: top center;
-            transition: all var(--transition-fast);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-        }
-        .notif-card:hover {
-            border-color: var(--border-default);
-            box-shadow: var(--shadow-md);
-            transform: translateY(-1px);
-        }
-        @keyframes cardSlideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-14px) scaleY(0.94);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scaleY(1);
-            }
-        }
-        .notif-card.new-glow {
-            animation: cardSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards,
-                cardGlowFlash 1.5s ease-out forwards;
-        }
-        @keyframes cardGlowFlash {
-            0% {
-                box-shadow: 0 0 0 1px var(--accent), 0 0 22px var(--accent-glow);
-            }
-            100% {
-                box-shadow: none;
-            }
-        }
-        .notif-card.priority-urgent.new-glow {
-            animation: cardSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards,
-                cardGlowUrgent 1.5s ease-out forwards;
-        }
-        @keyframes cardGlowUrgent {
-            0% {
-                box-shadow: 0 0 0 1px var(--err), 0 0 22px var(--err-glow);
-            }
-            100% {
-                box-shadow: none;
-            }
-        }
-        .notif-card.dismissing {
-            animation: cardDismissOut 0.3s cubic-bezier(0.4, 0, 1, 1) forwards;
-        }
-        @keyframes cardDismissOut {
-            from {
-                opacity: 1;
-                transform: translateX(0) scaleY(1);
-                max-height: 200px;
-                margin-bottom: 8px;
-            }
-            60% {
-                opacity: 0;
-                transform: translateX(40px) scaleY(1);
-            }
-            to {
-                opacity: 0;
-                transform: translateX(40px) scaleY(0);
-                max-height: 0;
-                margin-bottom: 0;
-                padding: 0;
-            }
-        }
-        .notif-card::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 3px;
-            background: var(--accent);
-            border-radius: 3px 0 0 3px;
-            transition: background var(--transition-smooth);
-        }
-        .notif-card.priority-urgent::before {
-            background: var(--err);
-        }
-        .notif-card.priority-high::before {
-            background: var(--warn);
-        }
-        .notif-card.priority-low::before {
-            background: var(--text-dim);
-        }
-        .notif-card.type-test::before {
-            background: var(--accent2);
-        }
-        .card-header-row {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            gap: 8px;
-            margin-bottom: 5px;
-        }
-        .card-meta-group {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            flex-wrap: wrap;
-        }
-        .card-topic-tag {
-            font-family: var(--mono);
-            font-size: 10px;
-            color: var(--accent);
-            background: var(--accent-dim);
-            padding: 2px 7px;
-            border-radius: 5px;
-            letter-spacing: 0.3px;
-            font-weight: 500;
-        }
-        .card-badge-pill {
-            font-family: var(--mono);
-            font-size: 9px;
-            padding: 2px 7px;
-            border-radius: 4px;
-            text-transform: uppercase;
-            letter-spacing: 0.4px;
-            font-weight: 600;
-        }
-        .badge-urgent {
-            background: #ff52521a;
-            color: var(--err);
-            border: 1px solid #ff525235;
-        }
-        .badge-high {
-            background: #ffab401a;
-            color: var(--warn);
-            border: 1px solid #ffab4035;
-        }
-        .badge-default {
-            background: var(--bg-surface2);
-            color: var(--text-muted);
-            border: 1px solid var(--border-subtle);
-        }
-        .badge-test {
-            background: #ff6b351a;
-            color: var(--accent2);
-            border: 1px solid #ff6b3535;
-        }
-        .card-right-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-shrink: 0;
-        }
-        .card-time-text {
-            font-family: var(--mono);
-            font-size: 10px;
-            color: var(--text-dim);
-            white-space: nowrap;
-        }
-        .card-dismiss-btn {
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 5px;
-            color: var(--text-dim);
-            cursor: pointer;
-            font-size: 15px;
-            transition: all var(--transition-fast);
-            flex-shrink: 0;
-            border: none;
-            background: transparent;
-        }
-        .card-dismiss-btn:hover {
-            background: #ff52521e;
-            color: var(--err);
-        }
-        .card-title-text {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 3px;
-            line-height: 1.4;
-            letter-spacing: -0.2px;
-        }
-        .card-body-text {
-            font-family: var(--mono);
-            font-size: 10.5px;
-            color: var(--text-secondary);
-            line-height: 1.6;
-            word-break: break-word;
-        }
-        .card-expand-toggle {
-            font-family: var(--mono);
-            font-size: 10px;
-            color: var(--accent);
-            cursor: pointer;
-            margin-top: 4px;
-            display: inline-block;
-            user-select: none;
-        }
+/* ─── Feed Page ─── */
+.feed-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:16px;
+}
+.feed-title{font-size:22px;font-weight:700;letter-spacing:-0.5px;color:var(--text)}
+.feed-sub{font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:2px}
+.feed-actions{display:flex;gap:6px}
+.icon-btn{
+  width:32px;height:32px;border-radius:var(--r2);
+  background:var(--surface2);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all 0.18s;color:var(--text2);font-size:14px;
+}
+.icon-btn:hover{background:var(--surface3);color:var(--text);border-color:var(--border2)}
 
-        /* ── Bottom Nav ── */
-        #bottomNav {
-            position: fixed;
-            bottom: 12px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 50;
-            display: flex;
-            gap: 4px;
-            background: var(--bg-glass);
-            backdrop-filter: var(--blur-heavy);
-            -webkit-backdrop-filter: var(--blur-heavy);
-            border: 1px solid var(--border-subtle);
-            border-radius: 999px;
-            padding: 5px 8px;
-            box-shadow: var(--shadow-lg);
-            transition: all var(--transition-smooth);
-        }
-        .nav-item {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            border: none;
-            background: transparent;
-            color: var(--text-muted);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 17px;
-            transition: all var(--transition-fast);
-            position: relative;
-            flex-shrink: 0;
-        }
-        .nav-item:hover {
-            color: var(--text-primary);
-            background: var(--bg-surface2);
-        }
-        .nav-item.active {
-            color: var(--accent);
-            background: var(--accent-dim);
-            box-shadow: 0 0 14px var(--accent-glow);
-        }
-        .nav-item:active {
-            transform: scale(0.9);
-        }
-        .nav-label {
-            position: absolute;
-            bottom: -18px;
-            font-family: var(--mono);
-            font-size: 8px;
-            white-space: nowrap;
-            opacity: 0;
-            transition: opacity var(--transition-fast);
-            pointer-events: none;
-            color: var(--text-muted);
-        }
-        .nav-item.active .nav-label {
-            opacity: 1;
-            color: var(--accent);
-        }
+/* Stats row */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.stat-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:12px;
+  transition:border-color 0.2s;
+}
+.stat-card:hover{border-color:var(--border2)}
+.stat-val{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--text);line-height:1}
+.stat-lbl{font-family:var(--mono);font-size:9px;color:var(--text3);margin-top:4px;letter-spacing:0.8px;text-transform:uppercase}
+.stat-card.c-cyan .stat-val{color:var(--cyan)}
+.stat-card.c-purple .stat-val{color:var(--purple)}
+.stat-card.c-rose .stat-val{color:var(--rose)}
 
-        /* ── FAB ── */
-        #fab {
-            position: fixed;
-            bottom: 100px;
-            right: calc(50% - 300px + 16px);
-            width: var(--fab-size);
-            height: var(--fab-size);
-            background: linear-gradient(135deg, var(--accent), #007f99);
-            border: none;
-            border-radius: 50%;
-            color: #000;
-            font-size: 26px;
-            font-weight: 400;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 6px 28px var(--accent-glow);
-            transition: all var(--transition-smooth);
-            z-index: 40;
-            font-family: var(--grotesk);
-        }
-        #fab:hover {
-            transform: scale(1.07);
-            box-shadow: 0 8px 36px #00e5ff55;
-        }
-        #fab:active {
-            transform: scale(0.94);
-        }
-        @media (max-width: 640px) {
-            #fab {
-                right: 12px;
-                bottom: 95px;
-            }
-            #bottomNav {
-                bottom: 8px;
-                padding: 4px 6px;
-            }
-            .nav-item {
-                width: 36px;
-                height: 36px;
-                font-size: 15px;
-            }
-        }
+/* Empty state */
+.empty{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:60px 20px;gap:12px;text-align:center;opacity:0.5;
+}
+.empty-icon{font-size:48px;opacity:0.6}
+.empty-text{font-family:var(--mono);font-size:11px;color:var(--text2);line-height:1.7}
 
-        /* ── Overlay / Modal ── */
-        #overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            z-index: 100;
-            display: none;
-            align-items: flex-end;
-            justify-content: center;
-        }
-        #overlay.open {
-            display: flex;
-        }
-        .modal-sheet {
-            background: var(--bg-elevated);
-            border: 1px solid var(--border-default);
-            border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
-            padding: 20px 18px 28px;
-            width: 100%;
-            max-width: 640px;
-            animation: modalSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-            max-height: 85vh;
-            overflow-y: auto;
-        }
-        @keyframes modalSlideUp {
-            from {
-                transform: translateY(50px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-        .modal-handle-bar {
-            width: 36px;
-            height: 4px;
-            background: var(--border-default);
-            border-radius: 2px;
-            margin: 0 auto 16px;
-        }
-        .modal-title-lg {
-            font-family: var(--grotesk);
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 4px;
-            letter-spacing: -0.3px;
-        }
-        .modal-subtitle {
-            font-family: var(--mono);
-            font-size: 10px;
-            color: var(--text-muted);
-            margin-bottom: 16px;
-        }
-        .input-row {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 10px;
-        }
-        .modal-input-field {
-            flex: 1;
-            background: var(--bg-surface);
-            border: 1px solid var(--border-default);
-            border-radius: var(--radius);
-            padding: 11px 14px;
-            color: var(--text-primary);
-            font-family: var(--mono);
-            font-size: 13px;
-            outline: none;
-            transition: border-color var(--transition-fast);
-        }
-        .modal-input-field:focus {
-            border-color: var(--accent);
-        }
-        .modal-input-field::placeholder {
-            color: var(--text-dim);
-        }
-        .btn-row {
-            display: flex;
-            gap: 8px;
-        }
-        .btn-primary-action {
-            flex: 1;
-            padding: 11px;
-            background: linear-gradient(135deg, var(--accent), #007f99);
-            border: none;
-            border-radius: var(--radius);
-            color: #000;
-            font-family: var(--grotesk);
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all var(--transition-fast);
-            letter-spacing: -0.2px;
-        }
-        .btn-primary-action:hover {
-            opacity: 0.86;
-        }
-        .btn-primary-action:active {
-            transform: scale(0.97);
-        }
-        .btn-ghost-action {
-            padding: 11px 18px;
-            background: transparent;
-            border: 1px solid var(--border-default);
-            border-radius: var(--radius);
-            color: var(--text-muted);
-            font-family: var(--grotesk);
-            font-size: 13px;
-            cursor: pointer;
-            transition: all var(--transition-fast);
-        }
-        .btn-ghost-action:hover {
-            border-color: var(--text-muted);
-            color: var(--text-primary);
-        }
+/* Notification Card */
+.notif{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:12px 14px;margin-bottom:8px;
+  position:relative;overflow:hidden;
+  animation:card-in 0.35s cubic-bezier(0.16,1,0.3,1) forwards;
+  cursor:default;transition:border-color 0.2s;
+}
+.notif:hover{border-color:var(--border2)}
+@keyframes card-in{from{opacity:0;transform:translateY(-8px) scaleY(0.96)}to{opacity:1;transform:none}}
+.notif.new-glow{animation:card-in 0.35s cubic-bezier(0.16,1,0.3,1) forwards,glow-in 1.2s ease-out forwards}
+@keyframes glow-in{0%{box-shadow:0 0 0 1px rgba(0,245,255,0.4),0 0 24px rgba(0,245,255,0.1)}100%{box-shadow:none}}
+.notif.urgent-glow{animation:card-in 0.35s cubic-bezier(0.16,1,0.3,1) forwards,glow-urg 1.2s ease-out forwards}
+@keyframes glow-urg{0%{box-shadow:0 0 0 1px rgba(244,63,94,0.5),0 0 24px rgba(244,63,94,0.15)}100%{box-shadow:none}}
+.notif.out{animation:card-out 0.28s cubic-bezier(0.4,0,1,1) forwards}
+@keyframes card-out{from{opacity:1;transform:none;max-height:200px;margin-bottom:8px}60%{opacity:0;transform:translateX(28px)}to{opacity:0;max-height:0;margin-bottom:0;padding:0;transform:translateX(28px)}}
+/* priority stripe */
+.notif::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px}
+.notif.p5::before{background:var(--rose);box-shadow:2px 0 10px rgba(244,63,94,0.4)}
+.notif.p4::before{background:var(--amber);box-shadow:2px 0 10px rgba(245,158,11,0.3)}
+.notif.p3::before{background:var(--cyan)}
+.notif.p2::before,.notif.p1::before{background:var(--text3)}
+.notif.test::before{background:var(--purple)}
+.n-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px}
+.n-meta{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.n-topic{
+  font-family:var(--mono);font-size:10px;color:var(--cyan);
+  background:var(--cyan-dim);padding:2px 7px;border-radius:4px;
+}
+.n-badge{font-family:var(--mono);font-size:10px;padding:2px 7px;border-radius:4px}
+.nb-urgent{background:rgba(244,63,94,0.1);color:var(--rose);border:1px solid rgba(244,63,94,0.2)}
+.nb-high{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.2)}
+.nb-norm{background:var(--surface2);color:var(--text2);border:1px solid var(--border)}
+.nb-test{background:var(--purple-dim);color:var(--purple);border:1px solid rgba(168,85,247,0.2)}
+.n-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.n-time{font-family:var(--mono);font-size:10px;color:var(--text3);white-space:nowrap}
+.n-close{
+  width:18px;height:18px;display:flex;align-items:center;justify-content:center;
+  border-radius:4px;color:var(--text3);cursor:pointer;font-size:14px;
+  transition:all 0.15s;
+}
+.n-close:hover{background:rgba(244,63,94,0.15);color:var(--rose)}
+.n-title{font-size:13px;font-weight:600;margin-bottom:3px;line-height:1.4;color:var(--text)}
+.n-body{font-family:var(--mono);font-size:11px;color:var(--text2);line-height:1.6;word-break:break-word}
 
-        /* ── Settings Panels ── */
-        .settings-section {
-            margin-bottom: 20px;
-        }
-        .settings-section-title {
-            font-family: var(--mono);
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: var(--text-muted);
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-        .settings-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 14px;
-            background: var(--bg-surface);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius);
-            margin-bottom: 6px;
-            transition: all var(--transition-fast);
-            gap: 10px;
-        }
-        .settings-row:hover {
-            border-color: var(--border-default);
-        }
-        .settings-label {
-            font-size: 12px;
-            font-weight: 500;
-            color: var(--text-primary);
-        }
-        .settings-sublabel {
-            font-family: var(--mono);
-            font-size: 9px;
-            color: var(--text-muted);
-        }
-        .toggle-switch {
-            width: 44px;
-            height: 26px;
-            border-radius: 13px;
-            background: var(--border-default);
-            cursor: pointer;
-            position: relative;
-            transition: background var(--transition-fast);
-            flex-shrink: 0;
-        }
-        .toggle-switch.on {
-            background: var(--accent);
-        }
-        .toggle-switch::after {
-            content: '';
-            position: absolute;
-            top: 3px;
-            left: 3px;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #fff;
-            transition: transform var(--transition-fast);
-            box-shadow: var(--shadow-sm);
-        }
-        .toggle-switch.on::after {
-            transform: translateX(18px);
-        }
-        .accent-dot-row {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .accent-dot {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: all var(--transition-fast);
-            flex-shrink: 0;
-        }
-        .accent-dot:hover {
-            transform: scale(1.15);
-        }
-        .accent-dot.selected {
-            border-color: var(--text-primary);
-            box-shadow: 0 0 12px currentColor;
-        }
+/* Live bar */
+.live-bar{
+  position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+  animation:scan 2.5s linear infinite;opacity:0;transition:opacity 0.3s;
+  pointer-events:none;
+}
+.live-bar.on{opacity:1}
+@keyframes scan{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
 
-        /* ── Toast ── */
-        #toast {
-            position: fixed;
-            bottom: 160px;
-            left: 50%;
-            transform: translateX(-50%) translateY(12px);
-            background: var(--bg-surface2);
-            border: 1px solid var(--border-default);
-            border-radius: 999px;
-            padding: 8px 18px;
-            font-family: var(--mono);
-            font-size: 10px;
-            color: var(--text-secondary);
-            z-index: 300;
-            pointer-events: none;
-            opacity: 0;
-            transition: all var(--transition-fast);
-            white-space: nowrap;
-            box-shadow: var(--shadow-md);
-        }
-        #toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
+/* ─── Channels Page ─── */
+.section-title{
+  font-family:var(--mono);font-size:10px;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--text3);margin-bottom:10px;
+  display:flex;align-items:center;gap:8px;
+}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border)}
 
-        /* ── Profile modal specifics ── */
-        .profile-avatar-wrap {
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--accent), #007f99);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            margin: 0 auto 12px;
-            box-shadow: 0 0 20px var(--accent-glow);
-            font-family: var(--grotesk);
-            font-weight: 700;
-            color: #000;
-        }
-        .profile-stat-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 8px;
-            margin: 14px 0;
-        }
-        .profile-stat-card {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius);
-            padding: 10px;
-            text-align: center;
-        }
-        .profile-stat-value {
-            font-family: var(--grotesk);
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--accent);
-        }
-        .profile-stat-label {
-            font-family: var(--mono);
-            font-size: 9px;
-            color: var(--text-muted);
-        }
+.channel-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;
+  cursor:pointer;transition:all 0.2s;
+}
+.channel-card:hover{border-color:var(--border2);background:var(--surface2)}
+.ch-icon{
+  width:40px;height:40px;border-radius:10px;
+  background:var(--cyan-dim);border:1px solid rgba(0,245,255,0.15);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;
+}
+.ch-info{flex:1;min-width:0}
+.ch-name{font-size:14px;font-weight:600;margin-bottom:2px;color:var(--text)}
+.ch-meta{font-family:var(--mono);font-size:10px;color:var(--text3)}
+.ch-status{display:flex;align-items:center;gap:5px}
+.ch-dot{width:7px;height:7px;border-radius:50%;background:var(--text3);flex-shrink:0}
+.ch-dot.live{background:var(--green);box-shadow:0 0 6px var(--green)}
 
-        /* ── Live scan line ── */
-        .scan-line {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--accent), transparent);
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-        }
-        .scan-line.active {
-            opacity: 1;
-            animation: scanMove 2.8s linear infinite;
-        }
-        @keyframes scanMove {
-            from {
-                transform: translateX(-100%);
-            }
-            to {
-                transform: translateX(100%);
-            }
-        }
+/* ─── Analytics Page ─── */
+.analytics-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.a-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:14px;
+}
+.a-card.full{grid-column:1/-1}
+.a-val{font-family:var(--mono);font-size:28px;font-weight:700;color:var(--text)}
+.a-lbl{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
+.a-trend{font-family:var(--mono);font-size:10px;margin-top:4px}
+.a-trend.up{color:var(--green)}.a-trend.dn{color:var(--rose)}
+.a-bar-wrap{margin-top:10px;display:flex;flex-direction:column;gap:5px}
+.a-bar-row{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;color:var(--text2)}
+.a-bar-lbl{width:24px;text-align:right;color:var(--text3)}
+.a-bar-track{flex:1;height:6px;background:var(--surface3);border-radius:3px;overflow:hidden}
+.a-bar-fill{height:100%;border-radius:3px;background:var(--cyan);transition:width 0.8s cubic-bezier(0.16,1,0.3,1)}
+.a-bar-val{width:28px;text-align:right}
+/* sparkline */
+.sparkline{width:100%;height:60px;margin-top:10px}
 
-        /* ── Responsive ── */
-        @media (min-width: 641px) {
-            #bottomNav {
-                gap: 6px;
-                padding: 6px 10px;
-            }
-            .nav-item {
-                width: 44px;
-                height: 44px;
-                font-size: 18px;
-            }
-        }
-    </style>
+/* ─── Settings Page ─── */
+.setting-section{margin-bottom:20px}
+.setting-item{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:14px;margin-bottom:6px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  transition:border-color 0.2s;
+}
+.setting-item:hover{border-color:var(--border2)}
+.setting-info{flex:1}
+.setting-label{font-size:14px;font-weight:500;margin-bottom:2px;color:var(--text)}
+.setting-desc{font-family:var(--mono);font-size:10px;color:var(--text3);line-height:1.5}
+/* Toggle */
+.toggle{
+  width:44px;height:24px;border-radius:12px;
+  background:var(--surface3);border:1px solid var(--border2);
+  position:relative;cursor:pointer;transition:all 0.25s;flex-shrink:0;
+}
+.toggle.on{background:var(--cyan);border-color:transparent;box-shadow:0 0 12px rgba(0,245,255,0.3)}
+.toggle-knob{
+  position:absolute;top:2px;left:2px;
+  width:18px;height:18px;border-radius:50%;background:#fff;
+  transition:transform 0.25s cubic-bezier(0.16,1,0.3,1);
+  box-shadow:0 1px 4px rgba(0,0,0,0.4);
+}
+.toggle.on .toggle-knob{transform:translateX(20px)}
+/* Accent swatches */
+.accent-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.swatch{
+  width:28px;height:28px;border-radius:50%;cursor:pointer;
+  transition:transform 0.18s;position:relative;border:2px solid transparent;
+}
+.swatch:hover{transform:scale(1.15)}
+.swatch.active{border-color:#fff;box-shadow:0 0 10px var(--swatch-color)}
+/* Color picker */
+.color-picker-row{display:flex;align-items:center;gap:10px;margin-top:8px}
+.setting-select{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:var(--r2);padding:6px 10px;
+  color:var(--text);font-family:var(--mono);font-size:11px;
+  cursor:pointer;outline:none;transition:border-color 0.2s;
+}
+.setting-select:focus{border-color:var(--cyan)}
+
+/* ─── Profile Page ─── */
+.profile-hero{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:20px;margin-bottom:12px;
+  text-align:center;position:relative;overflow:hidden;
+}
+.profile-hero::before{
+  content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);
+  width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle,rgba(0,245,255,0.08) 0%,transparent 70%);
+  pointer-events:none;
+}
+.avatar-wrap{position:relative;display:inline-block;margin-bottom:14px}
+.avatar{
+  width:72px;height:72px;border-radius:50%;
+  background:linear-gradient(135deg,var(--cyan),var(--purple));
+  display:flex;align-items:center;justify-content:center;
+  font-size:28px;font-weight:700;color:#fff;
+  border:2px solid rgba(0,245,255,0.3);
+}
+.online-ring{
+  position:absolute;bottom:2px;right:2px;
+  width:16px;height:16px;border-radius:50%;
+  background:var(--green);border:2px solid var(--bg);
+  box-shadow:0 0 8px var(--green);
+}
+.profile-name{font-size:20px;font-weight:700;margin-bottom:4px;color:var(--text)}
+.profile-handle{font-family:var(--mono);font-size:11px;color:var(--cyan);margin-bottom:8px}
+.profile-bio{font-family:var(--mono);font-size:11px;color:var(--text2);line-height:1.6;margin-bottom:14px}
+.profile-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:4px 12px;border-radius:999px;
+  background:linear-gradient(135deg,rgba(168,85,247,0.15),rgba(0,245,255,0.15));
+  border:1px solid rgba(168,85,247,0.3);
+  font-family:var(--mono);font-size:10px;color:var(--purple);
+}
+.profile-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
+.ps-item{text-align:center}
+.ps-val{font-family:var(--mono);font-size:18px;font-weight:700;color:var(--text)}
+.ps-lbl{font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:0.5px;text-transform:uppercase;margin-top:2px}
+
+/* ─── FAB ─── */
+#fab{
+  position:fixed;bottom:calc(var(--nav-h) + 16px);right:calc(50% - 215px + 16px);
+  width:52px;height:52px;border-radius:50%;
+  background:linear-gradient(135deg,var(--cyan),#0099bb);
+  border:none;color:#000;font-size:24px;
+  cursor:pointer;z-index:25;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 24px rgba(0,245,255,0.35);
+  transition:all 0.2s;
+}
+#fab:hover{transform:scale(1.08);box-shadow:0 6px 32px rgba(0,245,255,0.5)}
+#fab:active{transform:scale(0.95)}
+@media(max-width:430px){#fab{right:16px}}
+
+/* ─── Emulator Panel ─── */
+.emu{
+  flex-shrink:0;
+  background:rgba(6,8,16,0.88);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-top:1px solid var(--border);
+  padding:10px 16px 14px;
+  position:relative;z-index:10;
+}
+[data-theme="light"] .emu{background:rgba(240,242,248,0.88)}
+.emu-lbl{
+  font-family:var(--mono);font-size:9px;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--text3);margin-bottom:8px;
+  display:flex;align-items:center;gap:6px;
+}
+.emu-dot{width:5px;height:5px;border-radius:50%;background:var(--rose);box-shadow:0 0 5px var(--rose);flex-shrink:0}
+.emu-btns{display:flex;gap:8px}
+.emu-btn{
+  flex:1;padding:9px 6px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);
+  color:var(--text);font-family:var(--mono);font-size:11px;
+  cursor:pointer;transition:all 0.18s;
+  display:flex;align-items:center;justify-content:center;gap:5px;
+  user-select:none;
+}
+.emu-btn:hover.t-alert{border-color:rgba(168,85,247,0.4);background:var(--purple-dim);color:var(--purple)}
+.emu-btn:hover.t-urgent{border-color:rgba(244,63,94,0.4);background:var(--rose-dim);color:var(--rose)}
+.emu-btn:hover.t-clear{border-color:rgba(245,158,11,0.4);background:var(--amber-dim);color:var(--amber)}
+.emu-btn:active{transform:scale(0.97)}
+
+/* ─── Modal ─── */
+#overlay{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,0.7);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  z-index:100;display:none;align-items:flex-end;justify-content:center;
+}
+#overlay.open{display:flex}
+.modal{
+  background:var(--surface);border:1px solid var(--border2);
+  border-radius:22px 22px 0 0;padding:22px 20px 32px;
+  width:100%;max-width:430px;
+  animation:modal-up 0.3s cubic-bezier(0.16,1,0.3,1);
+}
+@keyframes modal-up{from{transform:translateY(50px);opacity:0}to{transform:none;opacity:1}}
+.modal-handle{width:36px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 18px}
+.modal-title{font-size:18px;font-weight:700;margin-bottom:4px}
+.modal-sub{font-family:var(--mono);font-size:11px;color:var(--text2);margin-bottom:16px}
+.m-input{
+  width:100%;background:var(--surface2);border:1px solid var(--border);
+  border-radius:var(--r);padding:12px 14px;margin-bottom:10px;
+  color:var(--text);font-family:var(--mono);font-size:13px;outline:none;
+  transition:border-color 0.2s;
+}
+.m-input:focus{border-color:var(--cyan)}
+.m-input::placeholder{color:var(--text3)}
+.m-hint{font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:16px;line-height:1.6}
+.m-actions{display:flex;gap:10px}
+.btn-primary{
+  flex:1;padding:12px;
+  background:linear-gradient(135deg,var(--cyan),#0099bb);
+  border:none;border-radius:var(--r);
+  color:#000;font-family:var(--sans);font-size:14px;font-weight:700;
+  cursor:pointer;transition:all 0.18s;
+}
+.btn-primary:hover{opacity:0.88}
+.btn-ghost{
+  padding:12px 18px;background:transparent;
+  border:1px solid var(--border);border-radius:var(--r);
+  color:var(--text2);font-family:var(--sans);font-size:14px;
+  cursor:pointer;transition:all 0.2s;
+}
+.btn-ghost:hover{border-color:var(--border2);color:var(--text)}
+
+/* Permission modal */
+#permOverlay{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,0.75);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  z-index:200;display:none;align-items:center;justify-content:center;padding:20px;
+}
+#permOverlay.open{display:flex}
+.perm-card{
+  background:var(--surface);border:1px solid var(--border2);
+  border-radius:22px;padding:32px 24px 26px;max-width:360px;width:100%;
+  text-align:center;
+  animation:perm-in 0.35s cubic-bezier(0.16,1,0.3,1);
+}
+@keyframes perm-in{from{opacity:0;transform:scale(0.9) translateY(20px)}to{opacity:1;transform:none}}
+.perm-icon{
+  width:72px;height:72px;margin:0 auto 18px;
+  background:var(--cyan-dim);border:1px solid rgba(0,245,255,0.2);
+  border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:30px;
+}
+.perm-title{font-size:18px;font-weight:700;margin-bottom:8px}
+.perm-desc{font-family:var(--mono);font-size:11px;color:var(--text2);line-height:1.65;margin-bottom:22px}
+.perm-features{display:flex;flex-direction:column;gap:8px;margin-bottom:22px;text-align:left}
+.perm-feat{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;color:var(--text2)}
+.pf-dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);flex-shrink:0}
+.btn-enable{
+  width:100%;padding:14px;
+  background:linear-gradient(135deg,var(--cyan),#0099bb);
+  border:none;border-radius:var(--r);
+  color:#000;font-family:var(--sans);font-size:14px;font-weight:700;
+  cursor:pointer;transition:all 0.18s;margin-bottom:10px;
+}
+.btn-enable:hover{opacity:0.88}
+.btn-skip{
+  width:100%;padding:10px;background:transparent;border:none;
+  color:var(--text3);font-family:var(--mono);font-size:11px;cursor:pointer;
+  transition:color 0.2s;
+}
+.btn-skip:hover{color:var(--text2)}
+
+/* Toast */
+#toast{
+  position:fixed;bottom:calc(var(--nav-h) + 12px);left:50%;
+  transform:translateX(-50%) translateY(10px);
+  background:var(--surface2);border:1px solid var(--border2);
+  border-radius:999px;padding:7px 18px;
+  font-family:var(--mono);font-size:11px;color:var(--text2);
+  z-index:300;pointer-events:none;opacity:0;
+  transition:opacity 0.22s,transform 0.22s;white-space:nowrap;
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Misc utilities */
+.glow-text{text-shadow:0 0 20px var(--cyan)}
+.divider{height:1px;background:var(--border);margin:14px 0}
+.label-tag{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 8px;border-radius:4px;
+  font-family:var(--mono);font-size:10px;
+}
+.tag-cyan{background:var(--cyan-dim);color:var(--cyan);border:1px solid rgba(0,245,255,0.2)}
+.tag-green{background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,0.2)}
+.tag-rose{background:var(--rose-dim);color:var(--rose);border:1px solid rgba(244,63,94,0.2)}
+.tag-purple{background:var(--purple-dim);color:var(--purple);border:1px solid rgba(168,85,247,0.2)}
+.tag-amber{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.2)}
+
+/* Activity timeline */
+.timeline{display:flex;flex-direction:column;gap:0}
+.tl-item{display:flex;gap:12px;padding:8px 0;position:relative}
+.tl-item::before{content:'';position:absolute;left:15px;top:32px;bottom:-4px;width:1px;background:var(--border)}
+.tl-item:last-child::before{display:none}
+.tl-dot{
+  width:30px;height:30px;border-radius:50%;
+  background:var(--surface2);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;flex-shrink:0;z-index:1;
+}
+.tl-content{flex:1;padding-top:4px}
+.tl-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px}
+.tl-time{font-family:var(--mono);font-size:10px;color:var(--text3)}
+
+/* System health */
+.health-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
+.health-row:last-child{border-bottom:none}
+.health-label{font-family:var(--mono);font-size:11px;color:var(--text2)}
+.health-val{font-family:var(--mono);font-size:11px;display:flex;align-items:center;gap:6px}
+.hv-ok{color:var(--green)}.hv-warn{color:var(--amber)}.hv-err{color:var(--rose)}
+
+/* Edit profile modal */
+#editOverlay{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,0.7);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  z-index:100;display:none;align-items:flex-end;justify-content:center;
+}
+#editOverlay.open{display:flex}
+
+/* Filter bar */
+.filter-row{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;padding-bottom:2px}
+.filter-row::-webkit-scrollbar{display:none}
+.f-chip{
+  padding:5px 12px;border-radius:999px;white-space:nowrap;
+  background:var(--surface);border:1px solid var(--border);
+  font-family:var(--mono);font-size:10px;color:var(--text2);
+  cursor:pointer;transition:all 0.18s;
+}
+.f-chip:hover{border-color:var(--border2);color:var(--text)}
+.f-chip.on{background:var(--cyan-dim);border-color:rgba(0,245,255,0.3);color:var(--cyan)}
+</style>
 </head>
 <body>
-    <div id="app">
-        <!-- Particle Canvas -->
-        <canvas id="particleCanvas"></canvas>
 
-        <!-- Header -->
-        <header>
-            <div class="header-inner">
-                <div class="logo-group" onclick="App.navigateTo('home')" title="JellyNotify Home">
-                    <div class="logo-mark" id="logoMark">📡
-                        <div class="logo-ring"></div>
-                    </div>
-                    <div class="logo-text">Jelly<span>Notify</span></div>
-                </div>
-                <div class="header-actions">
-                    <div class="status-chip" id="statusChip" title="Connection Status">
-                        <div class="status-dot-indicator" id="statusDot"></div>
-                        <span id="statusLabel">IDLE</span>
-                    </div>
-                    <button class="header-btn" id="notifBellBtn" title="Notifications" onclick="App.resetUnread()">
-                        🔔
-                        <div class="badge-dot" id="badgeDot"></div>
-                    </button>
-                    <button class="header-btn" title="Settings" onclick="App.navigateTo('settings')">⚙️</button>
-                </div>
-            </div>
-            <div class="topic-scroll" id="topicScroll">
-                <span class="topic-empty" id="topicEmptyHint">No channels subscribed</span>
-            </div>
-            <div class="scan-line" id="scanLine"></div>
-        </header>
+<canvas id="particles"></canvas>
 
-        <!-- Main Content -->
-        <div id="mainContent">
-            <!-- Home / Feed Page -->
-            <div class="page-panel active" id="page-home">
-                <div id="feedContainer">
-                    <div class="empty-state-wrap" id="emptyState">
-                        <div class="empty-icon">🔕</div>
-                        <div class="empty-label">No notifications yet.<br>Subscribe to a channel or trigger a test alert.</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Alerts Page -->
-            <div class="page-panel" id="page-alerts">
-                <div id="alertsFeedContainer">
-                    <div class="empty-state-wrap" id="alertsEmptyState">
-                        <div class="empty-icon">📋</div>
-                        <div class="empty-label">Alert history will appear here.<br>All notifications are logged.</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Activity Page -->
-            <div class="page-panel" id="page-activity">
-                <div id="activityContainer">
-                    <div class="empty-state-wrap">
-                        <div class="empty-icon">📊</div>
-                        <div class="empty-label">Realtime activity stream.<br>Live data will show here.</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Settings Page -->
-            <div class="page-panel" id="page-settings">
-                <div class="settings-section">
-                    <div class="settings-section-title">🎨 Appearance</div>
-                    <div class="settings-row">
-                        <div>
-                            <div class="settings-label">Dark Mode</div>
-                            <div class="settings-sublabel">Toggle between dark and light themes</div>
-                        </div>
-                        <div class="toggle-switch on" id="themeToggle" onclick="ThemeEngine.toggle()"></div>
-                    </div>
-                    <div class="settings-row">
-                        <div>
-                            <div class="settings-label">Accent Color</div>
-                            <div class="settings-sublabel">Choose your accent hue</div>
-                        </div>
-                        <div class="accent-dot-row" id="accentDots">
-                            <span class="accent-dot selected" style="background:#00e5ff;color:#00e5ff" data-accent="#00e5ff" onclick="ThemeEngine.setAccent(this)"></span>
-                            <span class="accent-dot" style="background:#ff6b35;color:#ff6b35" data-accent="#ff6b35" onclick="ThemeEngine.setAccent(this)"></span>
-                            <span class="accent-dot" style="background:#a855f7;color:#a855f7" data-accent="#a855f7" onclick="ThemeEngine.setAccent(this)"></span>
-                            <span class="accent-dot" style="background:#22d3ee;color:#22d3ee" data-accent="#22d3ee" onclick="ThemeEngine.setAccent(this)"></span>
-                            <span class="accent-dot" style="background:#f472b6;color:#f472b6" data-accent="#f472b6" onclick="ThemeEngine.setAccent(this)"></span>
-                        </div>
-                    </div>
-                    <div class="settings-row">
-                        <div>
-                            <div class="settings-label">Animations</div>
-                            <div class="settings-sublabel">Enable or disable UI animations</div>
-                        </div>
-                        <div class="toggle-switch on" id="animToggle" onclick="Settings.toggleAnimations()"></div>
-                    </div>
-                </div>
-                <div class="settings-section">
-                    <div class="settings-section-title">🔔 Notifications</div>
-                    <div class="settings-row">
-                        <div>
-                            <div class="settings-label">Sound Alerts</div>
-                            <div class="settings-sublabel">Play sounds for incoming notifications</div>
-                        </div>
-                        <div class="toggle-switch on" id="soundToggle" onclick="Settings.toggleSound()"></div>
-                    </div>
-                    <div class="settings-row">
-                        <div>
-                            <div class="settings-label">Desktop Push</div>
-                            <div class="settings-sublabel">Browser push notifications</div>
-                        </div>
-                        <div class="toggle-switch on" id="pushToggle" onclick="Settings.togglePush()"></div>
-                    </div>
-                </div>
-                <div class="settings-section">
-                    <div class="settings-section-title">💾 System</div>
-                    <div class="settings-row" onclick="App.clearLogs()" style="cursor:pointer;">
-                        <div>
-                            <div class="settings-label">Clear All Logs</div>
-                            <div class="settings-sublabel">Remove all notification history</div>
-                        </div>
-                        <span style="color:var(--err);font-family:var(--mono);font-size:10px;">CLEAR</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Profile Page -->
-            <div class="page-panel" id="page-profile">
-                <div style="text-align:center;padding:20px 0;">
-                    <div class="profile-avatar-wrap" id="profileAvatar">JN</div>
-                    <div style="font-family:var(--grotesk);font-weight:700;font-size:18px;" id="profileName">Jelly User</div>
-                    <div style="font-family:var(--mono);font-size:10px;color:var(--text-muted);" id="profileBio">Realtime notification operator</div>
-                    <div class="profile-stat-grid">
-                        <div class="profile-stat-card">
-                            <div class="profile-stat-value" id="statAlerts">0</div>
-                            <div class="profile-stat-label">Alerts</div>
-                        </div>
-                        <div class="profile-stat-card">
-                            <div class="profile-stat-value" id="statChannels">0</div>
-                            <div class="profile-stat-label">Channels</div>
-                        </div>
-                        <div class="profile-stat-card">
-                            <div class="profile-stat-value" id="statUptime">--</div>
-                            <div class="profile-stat-label">Uptime</div>
-                        </div>
-                    </div>
-                    <button class="btn-primary-action" style="width:100%;margin-top:8px;" onclick="NotifManager.showPermissionModal()">🔔 Manage Notifications</button>
-                    <button class="btn-ghost-action" style="width:100%;margin-top:8px;color:var(--err);border-color:#ff525230;" onclick="App.resetAll()">Reset App Data</button>
-                    <div style="margin-top:16px;font-family:var(--mono);font-size:9px;color:var(--text-dim);">
-                        <a href="https://t.me/jellyofficer" target="_blank" style="color:var(--accent);text-decoration:none;">📱 @jellyofficer</a>
-                    </div>
-                </div>
-            </div>
+<div id="root">
+  <!-- Header -->
+  <header class="hdr">
+    <div class="hdr-top">
+      <a class="logo" href="#" onclick="return false">
+        <div class="logo-mark">📡</div>
+        <div class="logo-name">Jelly<em>Notify</em></div>
+      </a>
+      <div class="hdr-right">
+        <div class="hdr-btn" id="bellBtn" title="Notifications" onclick="App.clearBadge()">
+          🔔
+          <div class="badge" id="bellBadge">0</div>
         </div>
-
-        <!-- Bottom Navigation -->
-        <nav id="bottomNav">
-            <button class="nav-item active" data-page="home" onclick="App.navigateTo('home')" title="Home">
-                🏠<span class="nav-label">Home</span>
-            </button>
-            <button class="nav-item" data-page="alerts" onclick="App.navigateTo('alerts')" title="Alerts">
-                📋<span class="nav-label">Alerts</span>
-            </button>
-            <button class="nav-item" data-page="activity" onclick="App.navigateTo('activity')" title="Activity">
-                📊<span class="nav-label">Activity</span>
-            </button>
-            <button class="nav-item" data-page="settings" onclick="App.navigateTo('settings')" title="Settings">
-                ⚙️<span class="nav-label">Settings</span>
-            </button>
-            <button class="nav-item" data-page="profile" onclick="App.navigateTo('profile')" title="Profile">
-                👤<span class="nav-label">Profile</span>
-            </button>
-        </nav>
-
-        <!-- FAB -->
-        <button id="fab" title="Subscribe to channel" onclick="App.openSubscribeModal()">+</button>
-
-        <!-- Subscribe Modal Overlay -->
-        <div id="overlay">
-            <div class="modal-sheet">
-                <div class="modal-handle-bar"></div>
-                <div class="modal-title-lg">Subscribe to Channel</div>
-                <div class="modal-subtitle">ntfy.sh / <span style="color:var(--accent);">your-channel</span></div>
-                <div class="input-row">
-                    <input class="modal-input-field" id="topicInput" type="text"
-                    placeholder="e.g. my-alerts-42" autocomplete="off"
-                    autocorrect="off" autocapitalize="none" spellcheck="false" />
-                </div>
-                <div style="font-family:var(--mono);font-size:10px;color:var(--text-dim);margin-bottom:14px;line-height:1.5;">
-                    Channel names are case-sensitive. Use unique names to avoid collisions.
-                </div>
-                <div class="btn-row">
-                    <button class="btn-ghost-action" onclick="App.closeSubscribeModal()">Cancel</button>
-                    <button class="btn-primary-action" onclick="App.subscribeChannel()">Subscribe</button>
-                </div>
-            </div>
+        <div class="status-pill" id="statusPill">
+          <div class="s-dot" id="sDot"></div>
+          <span id="sText">IDLE</span>
         </div>
+      </div>
+    </div>
+    <div class="chip-row" id="chipRow">
+      <span class="no-chips" id="noChips">No topics subscribed</span>
+    </div>
+  </header>
 
-        <!-- Permission Modal -->
-        <div id="permOverlay" style="position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;">
-            <div style="background:var(--bg-elevated);border:1px solid var(--border-default);border-radius:var(--radius-2xl);padding:28px 24px;max-width:380px;width:100%;text-align:center;animation:modalSlideUp 0.4s cubic-bezier(0.16,1,0.3,1);">
-                <div style="font-size:40px;margin-bottom:14px;">🔔</div>
-                <div style="font-family:var(--grotesk);font-weight:700;font-size:17px;margin-bottom:6px;">Stay Connected</div>
-                <div style="font-family:var(--mono);font-size:10px;color:var(--text-muted);line-height:1.6;margin-bottom:18px;">
-                    Enable push notifications for realtime alerts even when the tab is in the background.
-                </div>
-                <button class="btn-primary-action" style="width:100%;margin-bottom:8px;" onclick="NotifManager.requestPermission()">Enable Notifications</button>
-                <button style="width:100%;padding:10px;background:transparent;border:none;color:var(--text-dim);font-family:var(--mono);font-size:10px;cursor:pointer;" onclick="NotifManager.skipPermission()">Maybe later</button>
-            </div>
+  <!-- Pages container -->
+  <div class="pages">
+    <div class="live-bar" id="liveBar"></div>
+
+    <!-- HOME PAGE -->
+    <div class="page active" id="page-home">
+      <div class="feed-header">
+        <div>
+          <div class="feed-title">Live Feed</div>
+          <div class="feed-sub" id="feedSub">Waiting for events…</div>
         </div>
+        <div class="feed-actions">
+          <div class="icon-btn" title="Filter" onclick="App.toggleFilter()">⚡</div>
+          <div class="icon-btn" title="Clear" onclick="App.clearLogs()">🗑</div>
+        </div>
+      </div>
 
-        <!-- Toast -->
-        <div id="toast"></div>
+      <div class="filter-row" id="filterRow" style="display:none">
+        <div class="f-chip on" data-f="all" onclick="App.setFilter('all',this)">All</div>
+        <div class="f-chip" data-f="5" onclick="App.setFilter('5',this)">Urgent</div>
+        <div class="f-chip" data-f="4" onclick="App.setFilter('4',this)">High</div>
+        <div class="f-chip" data-f="test" onclick="App.setFilter('test',this)">Test</div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card c-cyan"><div class="stat-val" id="statTotal">0</div><div class="stat-lbl">Total</div></div>
+        <div class="stat-card c-rose"><div class="stat-val" id="statUrgent">0</div><div class="stat-lbl">Urgent</div></div>
+        <div class="stat-card c-purple"><div class="stat-val" id="statChannels">0</div><div class="stat-lbl">Channels</div></div>
+      </div>
+
+      <div id="feedWrap">
+        <div class="empty" id="emptyState">
+          <div class="empty-icon">🔕</div>
+          <div class="empty-text">No notifications yet.<br>Subscribe to a topic or fire a test alert.</div>
+        </div>
+      </div>
     </div>
 
-    <script>
-        /* ═══════════════════════════════════════════════════════════════
-           JellyNotify — Premium Realtime Notification Platform
-           Architecture: Vanilla JS + SSE (ntfy.sh) + Web Push
-        ═══════════════════════════════════════════════════════════════ */
+    <!-- ALERTS PAGE -->
+    <div class="page" id="page-alerts">
+      <div class="feed-header">
+        <div>
+          <div class="feed-title">Alerts</div>
+          <div class="feed-sub">Priority inbox</div>
+        </div>
+      </div>
+      <div class="section-title">Urgent & High Priority</div>
+      <div id="alertFeed">
+        <div class="empty"><div class="empty-icon">🚨</div><div class="empty-text">No priority alerts yet.</div></div>
+      </div>
+    </div>
 
-        /* ── Particle Background Engine ── */
-        const ParticleEngine = (() => {
-            const canvas = document.getElementById('particleCanvas');
-            const ctx = canvas.getContext('2d');
-            let particles = [];
-            let animId;
-            let w, h;
-
-            function resize() {
-                w = canvas.width = window.innerWidth;
-                h = canvas.height = window.innerHeight;
-            }
-
-            function createParticles() {
-                particles = [];
-                const count = Math.min(Math.floor((w * h) / 18000), 50);
-                for (let i = 0; i < count; i++) {
-                    particles.push({
-                        x: Math.random() * w,
-                        y: Math.random() * h,
-                        r: Math.random() * 1.6 + 0.4,
-                        vx: (Math.random() - 0.5) * 0.35,
-                        vy: (Math.random() - 0.5) * 0.35,
-                        alpha: Math.random() * 0.5 + 0.2,
-                        pulse: Math.random() * Math.PI * 2,
-                    });
-                }
-            }
-
-            function animate() {
-                ctx.clearRect(0, 0, w, h);
-                const accentHex = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() ||
-                    '#00e5ff';
-                particles.forEach(p => {
-                    p.x += p.vx;
-                    p.y += p.vy;
-                    p.pulse += 0.015;
-                    if (p.x < -20) p.x = w + 20;
-                    if (p.x > w + 20) p.x = -20;
-                    if (p.y < -20) p.y = h + 20;
-                    if (p.y > h + 20) p.y = -20;
-                    const alpha = p.alpha + Math.sin(p.pulse) * 0.2;
-                    ctx.beginPath();
-                    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-                    ctx.fillStyle = accentHex;
-                    ctx.globalAlpha = Math.max(0.05, alpha);
-                    ctx.fill();
-                });
-                ctx.globalAlpha = 1;
-                // Draw connecting lines for nearby particles
-                for (let i = 0; i < particles.length; i++) {
-                    for (let j = i + 1; j < particles.length; j++) {
-                        const dx = particles[i].x - particles[j].x;
-                        const dy = particles[i].y - particles[j].y;
-                        const dist = Math.sqrt(dx * dx + dy * dy);
-                        if (dist < 100) {
-                            ctx.beginPath();
-                            ctx.moveTo(particles[i].x, particles[i].y);
-                            ctx.lineTo(particles[j].x, particles[j].y);
-                            ctx.strokeStyle = accentHex;
-                            ctx.globalAlpha = (1 - dist / 100) * 0.12;
-                            ctx.lineWidth = 0.5;
-                            ctx.stroke();
-                        }
-                    }
-                }
-                ctx.globalAlpha = 1;
-                animId = requestAnimationFrame(animate);
-            }
-
-            function init() {
-                resize();
-                createParticles();
-                animate();
-                window.addEventListener('resize', () => {
-                    resize();
-                    createParticles();
-                });
-            }
-
-            return { init };
-        })();
-
-        /* ── Theme Engine ── */
-        const ThemeEngine = (() => {
-            const root = document.documentElement;
-            const themeToggle = document.getElementById('themeToggle');
-
-            function getStoredTheme() {
-                return localStorage.getItem('jn_theme') || 'dark';
-            }
-
-            function applyTheme(theme) {
-                root.setAttribute('data-theme', theme);
-                localStorage.setItem('jn_theme', theme);
-                if (themeToggle) {
-                    if (theme === 'dark') themeToggle.classList.add('on');
-                    else themeToggle.classList.remove('on');
-                }
-            }
-
-            function toggle() {
-                const current = root.getAttribute('data-theme');
-                const next = current === 'dark' ? 'light' : 'dark';
-                applyTheme(next);
-            }
-
-            function setAccent(dotEl) {
-                const color = dotEl.dataset.accent;
-                root.style.setProperty('--accent', color);
-                root.style.setProperty('--accent-glow', color + '44');
-                root.style.setProperty('--accent-dim', color + '14');
-                localStorage.setItem('jn_accent', color);
-                document.querySelectorAll('.accent-dot').forEach(d => d.classList.remove('selected'));
-                dotEl.classList.add('selected');
-            }
-
-            function loadAccent() {
-                const saved = localStorage.getItem('jn_accent');
-                if (saved) {
-                    root.style.setProperty('--accent', saved);
-                    root.style.setProperty('--accent-glow', saved + '44');
-                    root.style.setProperty('--accent-dim', saved + '14');
-                    document.querySelectorAll('.accent-dot').forEach(d => {
-                        d.classList.remove('selected');
-                        if (d.dataset.accent === saved) d.classList.add('selected');
-                    });
-                }
-            }
-
-            function init() {
-                applyTheme(getStoredTheme());
-                loadAccent();
-            }
-
-            return { init, toggle, setAccent, getStoredTheme, applyTheme };
-        })();
-
-        /* ── Settings ── */
-        const Settings = (() => {
-            function toggleSound() {
-                const btn = document.getElementById('soundToggle');
-                const on = btn.classList.toggle('on');
-                AudioEngine.setEnabled(on);
-                localStorage.setItem('jn_sound', on ? '1' : '0');
-                window.toastMsg(on ? 'Sound ON' : 'Sound OFF');
-            }
-
-            function togglePush() {
-                const btn = document.getElementById('pushToggle');
-                const on = btn.classList.toggle('on');
-                localStorage.setItem('jn_push', on ? '1' : '0');
-                if (on && Notification.permission === 'default') {
-                    NotifManager.showPermissionModal();
-                }
-                window.toastMsg(on ? 'Push notifications ON' : 'Push notifications OFF');
-            }
-
-            function toggleAnimations() {
-                const btn = document.getElementById('animToggle');
-                const on = btn.classList.toggle('on');
-                localStorage.setItem('jn_anim', on ? '1' : '0');
-                document.documentElement.style.setProperty('--transition-fast', on ? '0.18s cubic-bezier(0.4,0,0.2,1)' :
-                    '0s');
-                document.documentElement.style.setProperty('--transition-smooth', on ?
-                    '0.28s cubic-bezier(0.22,1,0.36,1)' : '0s');
-                document.documentElement.style.setProperty('--transition-spring', on ?
-                    '0.45s cubic-bezier(0.16,1,0.3,1)' : '0s');
-                window.toastMsg(on ? 'Animations ON' : 'Animations OFF');
-            }
-
-            function loadAll() {
-                const soundOn = localStorage.getItem('jn_sound') !== '0';
-                const pushOn = localStorage.getItem('jn_push') !== '0';
-                const animOn = localStorage.getItem('jn_anim') !== '0';
-                if (!soundOn) document.getElementById('soundToggle')?.classList.remove('on');
-                if (!pushOn) document.getElementById('pushToggle')?.classList.remove('on');
-                if (!animOn) {
-                    document.getElementById('animToggle')?.classList.remove('on');
-                    document.documentElement.style.setProperty('--transition-fast', '0s');
-                    document.documentElement.style.setProperty('--transition-smooth', '0s');
-                    document.documentElement.style.setProperty('--transition-spring', '0s');
-                }
-                AudioEngine.setEnabled(soundOn);
-            }
-
-            return { toggleSound, togglePush, toggleAnimations, loadAll };
-        })();
-
-        /* ── Audio Engine ── */
-        const AudioEngine = (() => {
-            let ctx = null;
-            let enabled = localStorage.getItem('jn_sound') !== '0';
-
-            function ensureCtx() {
-                if (!ctx) ctx = new(window.AudioContext || window.webkitAudioContext)();
-                if (ctx.state === 'suspended') ctx.resume();
-            }
-
-            function playDefaultTone() {
-                try {
-                    ensureCtx();
-                    const t = ctx.currentTime;
-                    [
-                        [880, 0, 0.06],
-                        [1100, 0.09, 0.06]
-                    ].forEach(([freq, delay, dur]) => {
-                        const osc = ctx.createOscillator();
-                        const gain = ctx.createGain();
-                        osc.connect(gain);
-                        gain.connect(ctx.destination);
-                        osc.type = 'sine';
-                        osc.frequency.setValueAtTime(freq, t + delay);
-                        gain.gain.setValueAtTime(0, t + delay);
-                        gain.gain.linearRampToValueAtTime(0.12, t + delay + 0.01);
-                        gain.gain.exponentialRampToValueAtTime(0.001, t + delay + dur);
-                        osc.start(t + delay);
-                        osc.stop(t + delay + dur + 0.01);
-                    });
-                } catch (e) { /* silent */ }
-            }
-
-            function playUrgentTone() {
-                try {
-                    ensureCtx();
-                    const t = ctx.currentTime;
-                    [0, 0.13, 0.26].forEach(delay => {
-                        const osc = ctx.createOscillator();
-                        const gain = ctx.createGain();
-                        osc.connect(gain);
-                        gain.connect(ctx.destination);
-                        osc.type = 'sine';
-                        osc.frequency.setValueAtTime(1320, t + delay);
-                        gain.gain.setValueAtTime(0, t + delay);
-                        gain.gain.linearRampToValueAtTime(0.14, t + delay + 0.01);
-                        gain.gain.exponentialRampToValueAtTime(0.001, t + delay + 0.10);
-                        osc.start(t + delay);
-                        osc.stop(t + delay + 0.12);
-                    });
-                } catch (e) { /* silent */ }
-            }
-
-            function play(urgent = false) {
-                if (!enabled) return;
-                if (urgent) playUrgentTone();
-                else playDefaultTone();
-            }
-
-            function setEnabled(v) { enabled = v; }
-
-            return { play, setEnabled };
-        })();
-
-        /* ── Notification Manager ── */
-        const NotifManager = (() => {
-            const permOverlay = document.getElementById('permOverlay');
-            let swReg = null;
-            let _permissionAsked = localStorage.getItem('jn_perm_asked') === '1';
-
-            async function registerSW() {
-                if (!('serviceWorker' in navigator)) return;
-                try {
-                    const swCode = `
-self.addEventListener('install', e => self.skipWaiting());
-self.addEventListener('activate', e => e.waitUntil(clients.claim()));
-self.addEventListener('push', function(e) {
-  const data = e.data ? e.data.json() : {};
-  const title = data.title || 'JellyNotify';
-  const options = {
-    body: data.body || '',
-    icon: data.icon || '',
-    badge: data.badge || '',
-    tag: data.tag || 'jn',
-    data: { url: data.url || '/' },
-    requireInteraction: data.urgent || false,
-  };
-  e.waitUntil(self.registration.showNotification(title, options));
-});
-self.addEventListener('notificationclick', function(e) {
-  e.notification.close();
-  e.waitUntil(clients.matchAll({ type: 'window' }).then(list => {
-    for (const c of list) { if (c.focus) return c.focus(); }
-    return clients.openWindow(e.notification.data.url || '/');
-  }));
-});`;
-                    const blob = new Blob([swCode], { type: 'application/javascript' });
-                    const url = URL.createObjectURL(blob);
-                    swReg = await navigator.serviceWorker.register(url, { scope: '/' });
-                } catch (e) { /* optional */ }
-            }
-
-            function showPermissionModal() {
-                if (_permissionAsked) return;
-                if (!('Notification' in window)) return;
-                if (Notification.permission !== 'default') return;
-                permOverlay.style.display = 'flex';
-            }
-
-            async function requestPermission() {
-                permOverlay.style.display = 'none';
-                _permissionAsked = true;
-                localStorage.setItem('jn_perm_asked', '1');
-                if (!('Notification' in window)) {
-                    window.toastMsg('⚠ Notifications not supported');
-                    return;
-                }
-                try {
-                    const result = await Notification.requestPermission();
-                    if (result === 'granted') {
-                        window.toastMsg('✓ Notifications enabled');
-                        if (!swReg) registerSW();
-                    } else {
-                        window.toastMsg('Notifications blocked — check browser settings');
-                    }
-                } catch (e) { /* */ }
-            }
-
-            function skipPermission() {
-                permOverlay.style.display = 'none';
-                _permissionAsked = true;
-                localStorage.setItem('jn_perm_asked', '1');
-            }
-
-            function sendNative(title, body, topic, urgent = false) {
-                const pushEnabled = localStorage.getItem('jn_push') !== '0';
-                if (!pushEnabled) return;
-                if (typeof cordova !== 'undefined' && cordova.plugins?.notification) {
-                    cordova.plugins.notification.local.schedule({ title, text: body, foreground: true });
-                    return;
-                }
-                if ('Notification' in window && Notification.permission === 'granted') {
-                    const n = new Notification(title, {
-                        body,
-                        tag: topic,
-                        requireInteraction: urgent,
-                        silent: true,
-                    });
-                    n.onclick = () => { window.focus();
-                        n.close(); };
-                }
-            }
-
-            function init() {
-                setTimeout(() => {
-                    if (Notification.permission === 'default' && !_permissionAsked) {
-                        showPermissionModal();
-                    }
-                }, 2000);
-                if (Notification.permission === 'granted') registerSW();
-            }
-
-            return { init, requestPermission, skipPermission, sendNative, showPermissionModal };
-        })();
-
-        /* ── Toast helper ── */
-        window.toastMsg = function(msg, dur = 2400) {
-            const el = document.getElementById('toast');
-            el.textContent = msg;
-            el.classList.add('show');
-            clearTimeout(window._toastTimer);
-            window._toastTimer = setTimeout(() => el.classList.remove('show'), dur);
-        };
-
-        /* ═══════════════════════════════════════════════════════════════
-           Main App Controller
-        ═══════════════════════════════════════════════════════════════ */
-        const App = (() => {
-            const state = {
-                topics: JSON.parse(localStorage.getItem('jn_topics') || '[]'),
-                connections: {},
-                logs: [],
-                unread: 0,
-                currentPage: 'home',
-                startTime: Date.now(),
-            };
-
-            const $ = id => document.getElementById(id);
-            const feedContainer = $('feedContainer');
-            const alertsFeedContainer = $('alertsFeedContainer');
-            const activityContainer = $('activityContainer');
-            const emptyState = $('emptyState');
-            const alertsEmptyState = $('alertsEmptyState');
-            const topicScroll = $('topicScroll');
-            const topicEmptyHint = $('topicEmptyHint');
-            const statusDot = $('statusDot');
-            const statusLabel = $('statusLabel');
-            const statusChip = $('statusChip');
-            const overlay = $('overlay');
-            const topicInput = $('topicInput');
-            const scanLine = $('scanLine');
-            const badgeDot = $('badgeDot');
-            const logoMark = $('logoMark');
-
-            /* ── Navigation ── */
-            function navigateTo(page) {
-                state.currentPage = page;
-                document.querySelectorAll('.page-panel').forEach(p => p.classList.remove('active'));
-                const target = document.getElementById('page-' + page);
-                if (target) target.classList.add('active');
-                document.querySelectorAll('#bottomNav .nav-item').forEach(b => b.classList.remove('active'));
-                const navBtn = document.querySelector(`#bottomNav [data-page="${page}"]`);
-                if (navBtn) navBtn.classList.add('active');
-                if (page === 'alerts') renderAlertsPage();
-                if (page === 'activity') renderActivityPage();
-                if (page === 'profile') updateProfileStats();
-                document.getElementById('mainContent').scrollTop = 0;
-            }
-
-            /* ── Unread badge ── */
-            function incrementUnread() {
-                state.unread++;
-                if (state.unread > 0) {
-                    badgeDot.classList.add('visible');
-                }
-                // Pulse logo
-                const ring = logoMark.querySelector('.logo-ring');
-                if (ring) {
-                    ring.style.animation = 'none';
-                    void ring.offsetWidth;
-                    ring.style.animation = 'logoPulse 2.4s ease-out infinite';
-                }
-            }
-
-            function resetUnread() {
-                state.unread = 0;
-                badgeDot.classList.remove('visible');
-            }
-
-            /* ── Status ── */
-            function updateStatus() {
-                const count = Object.keys(state.connections).length;
-                if (count === 0) {
-                    statusDot.className = 'status-dot-indicator';
-                    statusLabel.textContent = 'IDLE';
-                    statusChip.classList.remove('live');
-                    scanLine.classList.remove('active');
-                } else {
-                    statusDot.className = 'status-dot-indicator live';
-                    statusLabel.textContent = `LIVE ×${count}`;
-                    statusChip.classList.add('live');
-                    scanLine.classList.add('active');
-                }
-            }
-
-            /* ── Topic chips ── */
-            function renderTopicChips() {
-                topicScroll.innerHTML = '';
-                if (state.topics.length === 0) {
-                    topicScroll.appendChild(topicEmptyHint);
-                    topicEmptyHint.style.display = '';
-                    return;
-                }
-                state.topics.forEach(t => {
-                    const chip = document.createElement('div');
-                    chip.className = 'topic-chip' + (state.connections[t] ? ' active' : '');
-                    chip.innerHTML =
-                        `# ${t} <span class="chip-remove" data-topic="${t}" title="Unsubscribe">×</span>`;
-                    chip.querySelector('.chip-remove').addEventListener('click', e => {
-                        e.stopPropagation();
-                        unsubscribeChannel(e.target.dataset.topic);
-                    });
-                    chip.addEventListener('click', () => {
-                        if (state.connections[t]) {
-                            window.toastMsg(`Connected to #${t}`);
-                        } else {
-                            connectSSE(t);
-                        }
-                    });
-                    topicScroll.appendChild(chip);
-                });
-            }
-
-            /* ── SSE ── */
-            function subscribeAll() { state.topics.forEach(t => connectSSE(t)); }
-
-            function connectSSE(topic) {
-                if (state.connections[topic]) return;
-                const url = `https://ntfy.sh/${encodeURIComponent(topic)}/sse`;
-                const es = new EventSource(url);
-                es.addEventListener('message', e => {
-                    try {
-                        const msg = JSON.parse(e.data);
-                        if (msg.event === 'message') {
-                            const urgent = msg.priority >= 5;
-                            addNotificationCard({
-                                topic,
-                                title: msg.title || `📨 ${topic}`,
-                                body: msg.message || '',
-                                priority: msg.priority || 3,
-                                time: new Date(msg.time * 1000),
-                                type: 'live',
-                            }, true);
-                            AudioEngine.play(urgent);
-                            NotifManager.sendNative(msg.title || topic, msg.message || '', topic, urgent);
-                        }
-                    } catch (ex) { /* parse error */ }
-                });
-                es.onerror = () => updateStatus();
-                es.onopen = () => updateStatus();
-                state.connections[topic] = es;
-                updateStatus();
-                renderTopicChips();
-                updateProfileStats();
-            }
-
-            function unsubscribeChannel(topic) {
-                if (state.connections[topic]) {
-                    state.connections[topic].close();
-                    delete state.connections[topic];
-                }
-                state.topics = state.topics.filter(t => t !== topic);
-                localStorage.setItem('jn_topics', JSON.stringify(state.topics));
-                renderTopicChips();
-                updateStatus();
-                updateProfileStats();
-                window.toastMsg(`Unsubscribed from #${topic}`);
-            }
-
-            /* ── Notification Cards ── */
-            const PRIORITY_MAP = {
-                5: { label: 'URGENT', cls: 'priority-urgent', bcls: 'badge-urgent' },
-                4: { label: 'HIGH', cls: 'priority-high', bcls: 'badge-high' },
-                3: { label: 'DEFAULT', cls: '', bcls: 'badge-default' },
-                2: { label: 'LOW', cls: 'priority-low', bcls: 'badge-default' },
-                1: { label: 'MIN', cls: 'priority-low', bcls: 'badge-default' },
-            };
-
-            function createCardElement(entry, glow = false) {
-                const pinfo = PRIORITY_MAP[entry.priority] || PRIORITY_MAP[3];
-                const isTest = entry.type === 'test';
-                const hh = String(entry.time.getHours()).padStart(2, '0');
-                const mm = String(entry.time.getMinutes()).padStart(2, '0');
-                const ss = String(entry.time.getSeconds()).padStart(2, '0');
-                const card = document.createElement('div');
-                card.className = [
-                    'notif-card',
-                    pinfo.cls,
-                    isTest ? 'type-test' : '',
-                    glow ? 'new-glow' : '',
-                ].filter(Boolean).join(' ');
-                card.innerHTML = `
-          <div class="card-header-row">
-            <div class="card-meta-group">
-              <span class="card-topic-tag">#${entry.topic}</span>
-              <span class="card-badge-pill ${isTest ? 'badge-test' : pinfo.bcls}">
-                ${isTest ? 'TEST' : pinfo.label}
-              </span>
-            </div>
-            <div class="card-right-group">
-              <span class="card-time-text">${hh}:${mm}:${ss}</span>
-              <button class="card-dismiss-btn" title="Dismiss">×</button>
-            </div>
+    <!-- CHANNELS PAGE -->
+    <div class="page" id="page-channels">
+      <div class="feed-header">
+        <div>
+          <div class="feed-title">Channels</div>
+          <div class="feed-sub">Manage your subscriptions</div>
+        </div>
+        <div class="feed-actions">
+          <div class="icon-btn" title="Add channel" onclick="App.openModal()">＋</div>
+        </div>
+      </div>
+      <div class="section-title">Active</div>
+      <div id="channelList">
+        <div class="empty"><div class="empty-icon">📡</div><div class="empty-text">No channels. Tap + to subscribe.</div></div>
+      </div>
+      <div class="divider"></div>
+      <div class="section-title">System Health</div>
+      <div class="channel-card" style="cursor:default">
+        <div style="flex:1">
+          <div class="health-row">
+            <div class="health-label">ntfy.sh SSE</div>
+            <div class="health-val hv-ok" id="sseStatus">● Connected</div>
           </div>
-          <div class="card-title-text">${escHtml(entry.title)}</div>
-          ${entry.body ? `<div class="card-body-text">${escHtml(entry.body)}</div>` : ''}
-        `;
-                card.querySelector('.card-dismiss-btn').addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    dismissCard(card);
-                });
-                card.addEventListener('click', () => {
-                    const body = card.querySelector('.card-body-text');
-                    if (body) {
-                        body.style.display = body.style.display === 'none' ? '' : 'none';
-                    }
-                });
-                // Remove glow
-                if (glow) setTimeout(() => card.classList.remove('new-glow'), 1500);
-                return card;
-            }
+          <div class="health-row">
+            <div class="health-label">Notification API</div>
+            <div class="health-val" id="notifStatus">Checking…</div>
+          </div>
+          <div class="health-row">
+            <div class="health-label">Service Worker</div>
+            <div class="health-val" id="swStatus">Checking…</div>
+          </div>
+          <div class="health-row">
+            <div class="health-label">Audio Engine</div>
+            <div class="health-val hv-ok">● Ready</div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-            function addNotificationCard(entry, glow = false) {
-                // Add to home feed
-                if (emptyState) emptyState.style.display = 'none';
-                const card = createCardElement(entry, glow);
-                const firstCard = feedContainer.querySelector('.notif-card');
-                if (firstCard) feedContainer.insertBefore(card, firstCard);
-                else feedContainer.appendChild(card);
-                // Store
-                state.logs.push({ ...entry, id: Date.now() + Math.random() });
-                incrementUnread();
-                updateProfileStats();
-                // Also add to alerts page if visible
-                if (state.currentPage === 'alerts') renderAlertsPage();
-                if (state.currentPage === 'activity') renderActivityPage();
-            }
+    <!-- ANALYTICS PAGE -->
+    <div class="page" id="page-analytics">
+      <div class="feed-header">
+        <div>
+          <div class="feed-title">Analytics</div>
+          <div class="feed-sub">Session statistics</div>
+        </div>
+      </div>
+      <div class="analytics-grid">
+        <div class="a-card">
+          <div class="a-lbl">Total Events</div>
+          <div class="a-val" id="aTot">0</div>
+          <div class="a-trend up" id="aTrend">↑ session</div>
+        </div>
+        <div class="a-card">
+          <div class="a-lbl">Channels</div>
+          <div class="a-val" id="aCh">0</div>
+          <div class="a-trend" style="color:var(--text3)">active</div>
+        </div>
+        <div class="a-card full">
+          <div class="a-lbl">Priority breakdown</div>
+          <div class="a-bar-wrap" id="priorityBars">
+            <div class="a-bar-row"><span class="a-bar-lbl" style="color:var(--rose)">P5</span><div class="a-bar-track"><div class="a-bar-fill" style="background:var(--rose);width:0%" id="bar5"></div></div><span class="a-bar-val" id="bv5">0</span></div>
+            <div class="a-bar-row"><span class="a-bar-lbl" style="color:var(--amber)">P4</span><div class="a-bar-track"><div class="a-bar-fill" style="background:var(--amber);width:0%" id="bar4"></div></div><span class="a-bar-val" id="bv4">0</span></div>
+            <div class="a-bar-row"><span class="a-bar-lbl" style="color:var(--cyan)">P3</span><div class="a-bar-track"><div class="a-bar-fill" style="width:0%" id="bar3"></div></div><span class="a-bar-val" id="bv3">0</span></div>
+            <div class="a-bar-row"><span class="a-bar-lbl">P2</span><div class="a-bar-track"><div class="a-bar-fill" style="width:0%" id="bar2"></div></div><span class="a-bar-val" id="bv2">0</span></div>
+          </div>
+        </div>
+        <div class="a-card full">
+          <div class="a-lbl">Activity timeline</div>
+          <canvas class="sparkline" id="sparkCanvas"></canvas>
+        </div>
+      </div>
+      <div class="section-title">Recent activity</div>
+      <div id="activityLog"><div class="empty"><div class="empty-icon">📊</div><div class="empty-text">No activity recorded yet.</div></div></div>
+    </div>
 
-            function dismissCard(card) {
-                card.classList.add('dismissing');
-                card.addEventListener('animationend', () => {
-                    card.remove();
-                    checkEmptyStates();
-                }, { once: true });
-            }
+    <!-- SETTINGS PAGE -->
+    <div class="page" id="page-settings">
+      <div class="feed-header">
+        <div>
+          <div class="feed-title">Settings</div>
+          <div class="feed-sub">Customize your experience</div>
+        </div>
+      </div>
 
-            function checkEmptyStates() {
-                if (!feedContainer.querySelector('.notif-card') && emptyState) {
-                    feedContainer.appendChild(emptyState);
-                    emptyState.style.display = '';
-                }
-                if (!alertsFeedContainer.querySelector('.notif-card') && alertsEmptyState && state.currentPage ===
-                    'alerts') {
-                    alertsFeedContainer.appendChild(alertsEmptyState);
-                    alertsEmptyState.style.display = '';
-                }
-            }
+      <div class="setting-section">
+        <div class="section-title">Appearance</div>
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-label">Dark Mode</div>
+            <div class="setting-desc">Cyber dark interface</div>
+          </div>
+          <div class="toggle on" id="tog-dark" onclick="App.toggle('dark',this)"><div class="toggle-knob"></div></div>
+        </div>
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-label">Accent Color</div>
+            <div class="setting-desc">Choose your neon accent</div>
+          </div>
+        </div>
+        <div class="accent-row">
+          <div class="swatch active" style="background:#00f5ff;--swatch-color:#00f5ff" onclick="App.setAccent('#00f5ff',this)" title="Cyan"></div>
+          <div class="swatch" style="background:#a855f7;--swatch-color:#a855f7" onclick="App.setAccent('#a855f7',this)" title="Purple"></div>
+          <div class="swatch" style="background:#f43f5e;--swatch-color:#f43f5e" onclick="App.setAccent('#f43f5e',this)" title="Rose"></div>
+          <div class="swatch" style="background:#22c55e;--swatch-color:#22c55e" onclick="App.setAccent('#22c55e',this)" title="Green"></div>
+          <div class="swatch" style="background:#f59e0b;--swatch-color:#f59e0b" onclick="App.setAccent('#f59e0b',this)" title="Amber"></div>
+          <div class="swatch" style="background:#3b82f6;--swatch-color:#3b82f6" onclick="App.setAccent('#3b82f6',this)" title="Blue"></div>
+        </div>
+      </div>
 
-            function renderAlertsPage() {
-                alertsFeedContainer.innerHTML = '';
-                if (state.logs.length === 0) {
-                    alertsFeedContainer.appendChild(alertsEmptyState);
-                    alertsEmptyState.style.display = '';
-                    return;
-                }
-                [...state.logs].reverse().forEach(entry => {
-                    const card = createCardElement(entry, false);
-                    alertsFeedContainer.appendChild(card);
-                });
-            }
+      <div class="setting-section">
+        <div class="section-title">Notifications</div>
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-label">Sound Alerts</div>
+            <div class="setting-desc">Play tone on new events</div>
+          </div>
+          <div class="toggle on" id="tog-sound" onclick="App.toggle('sound',this)"><div class="toggle-knob"></div></div>
+        </div>
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-label">Browser Push</div>
+            <div class="setting-desc">Native OS notifications</div>
+          </div>
+          <div class="toggle on" id="tog-push" onclick="App.toggle('push',this)"><div class="toggle-knob"></div></div>
+        </div>
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-label">Urgent Vibration</div>
+            <div class="setting-desc">Vibrate on P5 alerts (mobile)</div>
+          </div>
+          <div class="toggle on" id="tog-vib" onclick="App.toggle('vib',this)"><div class="toggle-knob"></div></div>
+        </div>
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-label">Priority Filter</div>
+            <div class="setting-desc">Minimum priority to show</div>
+          </div>
+          <select class="setting-select" id="sel-priority" onchange="App.setPriorityFilter(this.value)">
+            <option value="1">Show all</option>
+            <option value="3">Normal +</option>
+            <option value="4">High +</option>
+            <option value="5">Urgent only</option>
+          </select>
+        </div>
+      </div>
 
-            function renderActivityPage() {
-                activityContainer.innerHTML = '';
-                if (state.logs.length === 0) {
-                    activityContainer.innerHTML =
-                        '<div class="empty-state-wrap"><div class="empty-icon">📊</div><div class="empty-label">No activity yet.<br>Realtime events will appear here.</div></div>';
-                    return;
-                }
-                const recent = state.logs.slice(-20).reverse();
-                recent.forEach(entry => {
-                    const item = document.createElement('div');
-                    item.style.cssText = `
-            padding:10px 12px;margin-bottom:4px;background:var(--bg-surface);
-            border:1px solid var(--border-subtle);border-radius:var(--radius);
-            font-family:var(--mono);font-size:10px;color:var(--text-secondary);
-            display:flex;align-items:center;gap:8px;
-          `;
-                    const hh = String(entry.time.getHours()).padStart(2, '0');
-                    const mm = String(entry.time.getMinutes()).padStart(2, '0');
-                    item.innerHTML =
-                        `<span style="color:var(--accent);">⬤</span> [${hh}:${mm}] <strong>${escHtml(entry.title)}</strong> · #${entry.topic}`;
-                    activityContainer.appendChild(item);
-                });
-            }
+      <div class="setting-section">
+        <div class="section-title">System</div>
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-label">Animations</div>
+            <div class="setting-desc">Card transitions & effects</div>
+          </div>
+          <div class="toggle on" id="tog-anim" onclick="App.toggle('anim',this)"><div class="toggle-knob"></div></div>
+        </div>
+        <div class="setting-item" style="cursor:pointer" onclick="App.reconnectAll()">
+          <div class="setting-info">
+            <div class="setting-label">Reconnect All</div>
+            <div class="setting-desc">Force reconnect SSE streams</div>
+          </div>
+          <div style="color:var(--cyan);font-size:16px">↻</div>
+        </div>
+        <div class="setting-item" style="cursor:pointer" onclick="App.clearStorage()">
+          <div class="setting-info">
+            <div class="setting-label">Clear Cache</div>
+            <div class="setting-desc">Remove all local data</div>
+          </div>
+          <div style="color:var(--rose);font-size:14px">🗑</div>
+        </div>
+      </div>
 
-            function updateProfileStats() {
-                const statAlerts = document.getElementById('statAlerts');
-                const statChannels = document.getElementById('statChannels');
-                const statUptime = document.getElementById('statUptime');
-                if (statAlerts) statAlerts.textContent = state.logs.length;
-                if (statChannels) statChannels.textContent = state.topics.length;
-                if (statUptime) {
-                    const mins = Math.floor((Date.now() - state.startTime) / 60000);
-                    statUptime.textContent = mins < 1 ? '<1m' : mins < 60 ? mins + 'm' : Math.floor(mins / 60) + 'h';
-                }
-            }
+      <div class="setting-section">
+        <div class="section-title">Security</div>
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-label">Session</div>
+            <div class="setting-desc" id="sessionInfo">Active • 1 device</div>
+          </div>
+          <span class="label-tag tag-green">Secure</span>
+        </div>
+        <div class="setting-item">
+          <div class="setting-info">
+            <div class="setting-label">Telegram Channel</div>
+            <div class="setting-desc">@jellyofficer</div>
+          </div>
+          <span class="label-tag tag-cyan" style="cursor:pointer" onclick="window.open('https://t.me/jellyofficer','_blank')">Open ↗</span>
+        </div>
+      </div>
+    </div>
 
-            function escHtml(str) {
-                return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g,
-                    '&quot;');
-            }
+    <!-- PROFILE PAGE -->
+    <div class="page" id="page-profile">
+      <div class="profile-hero">
+        <div class="avatar-wrap">
+          <div class="avatar" id="avatarInitials">JN</div>
+          <div class="online-ring"></div>
+        </div>
+        <div class="profile-name" id="profileName">Jelly User</div>
+        <div class="profile-handle" id="profileHandle">@jellynotify</div>
+        <div class="profile-bio" id="profileBio">Realtime notification enthusiast.<br>Monitoring all systems.</div>
+        <div class="profile-badge">⚡ Premium Member</div>
+        <div class="profile-stats">
+          <div class="ps-item"><div class="ps-val" id="psTotal">0</div><div class="ps-lbl">Events</div></div>
+          <div class="ps-item"><div class="ps-val" id="psChannels">0</div><div class="ps-lbl">Channels</div></div>
+          <div class="ps-item"><div class="ps-val" id="psUptime">0m</div><div class="ps-lbl">Uptime</div></div>
+        </div>
+      </div>
+      <div class="setting-item" style="cursor:pointer" onclick="App.openEditProfile()">
+        <div class="setting-info">
+          <div class="setting-label">Edit Profile</div>
+          <div class="setting-desc">Name, handle, bio</div>
+        </div>
+        <div style="color:var(--cyan)">✎</div>
+      </div>
+      <div class="divider"></div>
+      <div class="section-title">Recent Activity</div>
+      <div id="profileActivity">
+        <div class="empty"><div class="empty-icon">🕓</div><div class="empty-text">No activity yet.</div></div>
+      </div>
+    </div>
+  </div><!-- /pages -->
 
-            /* ── Subscribe Modal ── */
-            function openSubscribeModal() {
-                overlay.classList.add('open');
-                setTimeout(() => topicInput?.focus(), 300);
-            }
+  <!-- Bottom Nav -->
+  <nav class="bnav">
+    <div class="nav-item active" data-page="home" onclick="App.nav('home',this)">
+      <div class="nav-icon">🏠</div>
+      <div class="nav-label">Home</div>
+    </div>
+    <div class="nav-item" data-page="alerts" onclick="App.nav('alerts',this)">
+      <div class="nav-icon">🚨</div>
+      <div class="nav-label">Alerts</div>
+      <div class="nav-badge" id="alertBadge"></div>
+    </div>
+    <div class="nav-item" data-page="channels" onclick="App.nav('channels',this)">
+      <div class="nav-icon">📡</div>
+      <div class="nav-label">Channels</div>
+    </div>
+    <div class="nav-item" data-page="analytics" onclick="App.nav('analytics',this)">
+      <div class="nav-icon">📊</div>
+      <div class="nav-label">Analytics</div>
+    </div>
+    <div class="nav-item" data-page="settings" onclick="App.nav('settings',this)">
+      <div class="nav-icon">⚙️</div>
+      <div class="nav-label">Settings</div>
+    </div>
+    <div class="nav-item" data-page="profile" onclick="App.nav('profile',this)">
+      <div class="nav-icon">👤</div>
+      <div class="nav-label">Profile</div>
+    </div>
+  </nav>
 
-            function closeSubscribeModal() {
-                overlay.classList.remove('open');
-                if (topicInput) topicInput.value = '';
-            }
+  <!-- Emulator -->
+  <div class="emu">
+    <div class="emu-lbl"><div class="emu-dot"></div>Hardware Emulator</div>
+    <div class="emu-btns">
+      <button class="emu-btn t-alert"  onclick="App.triggerTest()">⚡ Test</button>
+      <button class="emu-btn t-urgent" onclick="App.triggerUrgent()">🚨 Urgent</button>
+      <button class="emu-btn t-clear"  onclick="App.clearLogs()">🗑 Clear</button>
+    </div>
+  </div>
+</div><!-- /root -->
 
-            function subscribeChannel() {
-                const raw = (topicInput?.value || '').trim().toLowerCase().replace(/[^a-z0-9_\-]/g, '');
-                if (!raw) { window.toastMsg('⚠ Enter a valid channel name'); return; }
-                if (state.topics.includes(raw)) { window.toastMsg('Already subscribed');
-                    closeSubscribeModal(); return; }
-                state.topics.push(raw);
-                localStorage.setItem('jn_topics', JSON.stringify(state.topics));
-                connectSSE(raw);
-                renderTopicChips();
-                closeSubscribeModal();
-                updateProfileStats();
-                window.toastMsg(`✓ Subscribed to #${raw}`);
-            }
+<!-- FAB -->
+<button id="fab" title="Subscribe to topic" onclick="App.openModal()">＋</button>
 
-            /* ── Test Alerts ── */
-            function triggerTestAlert() {
-                const activeTopic = state.topics[0] || 'test-channel';
-                const alerts = [
-                    { title: '🌡 Temperature Alert', body: 'Sensor reading: 87°C — threshold exceeded on Node-3.' },
-                    { title: '🔋 Battery Warning', body: 'Device BATT-07 at 12%. Charging recommended.' },
-                    { title: '🚨 Motion Detected', body: 'PIR sensor triggered at Zone B, Entry Point 2.' },
-                    { title: '📶 Signal Lost', body: 'Connection to remote unit HW-221 timed out (30s).' },
-                    { title: '✅ System OK', body: 'Health check passed. All 12 nodes nominal.' },
-                ];
-                const pick = alerts[Math.floor(Math.random() * alerts.length)];
-                addNotificationCard({ topic: activeTopic, title: pick.title, body: pick.body, priority: 3, time: new Date(),
-                    type: 'test' }, true);
-                AudioEngine.play(false);
-                NotifManager.sendNative(pick.title, pick.body, activeTopic, false);
-                window.toastMsg('⚡ Test alert fired');
-            }
+<!-- Subscribe Modal -->
+<div id="overlay">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Subscribe to Topic</div>
+    <div class="modal-sub">ntfy.sh / <span style="color:var(--cyan)">your-topic</span></div>
+    <input class="m-input" id="topicInput" type="text" placeholder="e.g. my-alerts-42"
+           autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"/>
+    <div class="m-hint">Case-sensitive. Use unique names to avoid accidental messages.</div>
+    <div class="m-actions">
+      <button class="btn-ghost" onclick="App.closeModal()">Cancel</button>
+      <button class="btn-primary" onclick="App.subscribe()">Subscribe</button>
+    </div>
+  </div>
+</div>
 
-            function triggerUrgentAlert() {
-                const activeTopic = state.topics[0] || 'test-channel';
-                const alerts = [
-                    { title: '🚨 Critical: Server Down',
-                        body: 'Production server PROD-01 is unreachable. Immediate action required.' },
-                    { title: '⚠️ Security Breach',
-                    body: 'Unauthorized access detected on API gateway. IP: 203.0.113.42.' },
-                    { title: '🔴 Data Loss Risk', body: 'RAID array degraded. Drive 4 failure detected. Backup NOW.' },
-                ];
-                const pick = alerts[Math.floor(Math.random() * alerts.length)];
-                addNotificationCard({ topic: activeTopic, title: pick.title, body: pick.body, priority: 5, time: new Date(),
-                    type: 'live' }, true);
-                AudioEngine.play(true);
-                NotifManager.sendNative(pick.title, pick.body, activeTopic, true);
-                window.toastMsg('🚨 Urgent alert fired');
-            }
+<!-- Edit Profile Modal -->
+<div id="editOverlay">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Edit Profile</div>
+    <div class="modal-sub">Update your display information</div>
+    <input class="m-input" id="editName" type="text" placeholder="Display name"/>
+    <input class="m-input" id="editHandle" type="text" placeholder="@handle"/>
+    <input class="m-input" id="editBio" type="text" placeholder="Short bio…"/>
+    <div class="m-actions">
+      <button class="btn-ghost" onclick="App.closeEditProfile()">Cancel</button>
+      <button class="btn-primary" onclick="App.saveProfile()">Save</button>
+    </div>
+  </div>
+</div>
 
-            /* ── Clear ── */
-            function clearLogs() {
-                feedContainer.querySelectorAll('.notif-card').forEach(c => c.remove());
-                alertsFeedContainer.querySelectorAll('.notif-card').forEach(c => c.remove());
-                activityContainer.innerHTML = '';
-                state.logs = [];
-                state.unread = 0;
-                badgeDot.classList.remove('visible');
-                checkEmptyStates();
-                updateProfileStats();
-                window.toastMsg('🗑 All logs cleared');
-            }
+<!-- Permission Modal -->
+<div id="permOverlay">
+  <div class="perm-card">
+    <div class="perm-icon">🔔</div>
+    <div class="perm-title">Stay in the loop</div>
+    <div class="perm-desc">Enable push notifications for realtime alerts even when the tab is minimized.</div>
+    <div class="perm-features">
+      <div class="perm-feat"><div class="pf-dot"></div>Background alerts when tab is minimized</div>
+      <div class="perm-feat"><div class="pf-dot"></div>Instant delivery for urgent notifications</div>
+      <div class="perm-feat"><div class="pf-dot"></div>Works on desktop and mobile browsers</div>
+      <div class="perm-feat"><div class="pf-dot"></div>Click notification to jump to feed</div>
+    </div>
+    <button class="btn-enable" onclick="NotifManager.requestPermission()">Enable Notifications</button>
+    <button class="btn-skip" onclick="NotifManager.skipPermission()">Maybe later</button>
+  </div>
+</div>
 
-            function resetAll() {
-                if (confirm('Reset all app data? This cannot be undone.')) {
-                    Object.keys(state.connections).forEach(t => {
-                        state.connections[t].close();
-                        delete state.connections[t];
-                    });
-                    state.topics = [];
-                    state.logs = [];
-                    state.unread = 0;
-                    localStorage.removeItem('jn_topics');
-                    localStorage.removeItem('jn_perm_asked');
-                    localStorage.removeItem('jn_theme');
-                    localStorage.removeItem('jn_accent');
-                    localStorage.removeItem('jn_sound');
-                    localStorage.removeItem('jn_push');
-                    localStorage.removeItem('jn_anim');
-                    renderTopicChips();
-                    updateStatus();
-                    clearLogs();
-                    badgeDot.classList.remove('visible');
-                    updateProfileStats();
-                    ThemeEngine.applyTheme('dark');
-                    window.toastMsg('App reset complete');
-                    location.reload();
-                }
-            }
+<!-- Toast -->
+<div id="toast"></div>
 
-            /* ── Keyboard ── */
-            document.addEventListener('keydown', e => {
-                if (e.key === 'Escape') closeSubscribeModal();
-                if (e.key === 'Enter' && overlay.classList.contains('open')) subscribeChannel();
-            });
+<!-- SW source (blob-registered) -->
+<script id="sw-src" type="text/plain">
+self.addEventListener('install',e=>self.skipWaiting());
+self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
+self.addEventListener('push',function(e){
+  const d=e.data?e.data.json():{};
+  e.waitUntil(self.registration.showNotification(d.title||'JellyNotify',{body:d.body||'',tag:d.tag||'jn',requireInteraction:d.urgent||false,data:{url:'/'}}));
+});
+self.addEventListener('notificationclick',function(e){
+  e.notification.close();
+  e.waitUntil(clients.matchAll({type:'window'}).then(l=>{
+    for(const c of l){if(c.focus)return c.focus();}
+    return clients.openWindow('/');
+  }));
+});
+</script>
 
-            /* ── Overlay click ── */
-            overlay.addEventListener('click', e => {
-                if (e.target === overlay) closeSubscribeModal();
-            });
+<script>
+/* ═══════════════════════════════════════
+   JELLY NOTIFY — CORE ENGINE
+═══════════════════════════════════════ */
 
-            /* ── FAB click ── */
-            document.getElementById('fab').addEventListener('click', openSubscribeModal);
+/* ── Particles ── */
+(function(){
+  const c=document.getElementById('particles');
+  const cx=c.getContext('2d');
+  let pts=[];
+  function resize(){c.width=window.innerWidth;c.height=window.innerHeight}
+  resize();window.addEventListener('resize',resize);
+  for(let i=0;i<55;i++){
+    pts.push({
+      x:Math.random()*window.innerWidth,
+      y:Math.random()*window.innerHeight,
+      r:Math.random()*1.2+0.3,
+      dx:(Math.random()-0.5)*0.25,
+      dy:(Math.random()-0.5)*0.25,
+      a:Math.random()
+    });
+  }
+  function frame(){
+    cx.clearRect(0,0,c.width,c.height);
+    const accent=getComputedStyle(document.documentElement).getPropertyValue('--cyan').trim()||'#00f5ff';
+    pts.forEach(p=>{
+      p.x+=p.dx;p.y+=p.dy;
+      if(p.x<0||p.x>c.width)p.dx*=-1;
+      if(p.y<0||p.y>c.height)p.dy*=-1;
+      cx.beginPath();
+      cx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      cx.fillStyle=accent;
+      cx.globalAlpha=p.a*0.6;
+      cx.fill();
+      cx.globalAlpha=1;
+    });
+    requestAnimationFrame(frame);
+  }
+  frame();
+})();
 
-            /* ── Emulator buttons via console or external ── */
-            // Expose for the emulator buttons (kept from original)
-            window.triggerTestAlert = triggerTestAlert;
-            window.triggerUrgentAlert = triggerUrgentAlert;
-            window.clearAllLogs = clearLogs;
+/* ── Audio Engine ── */
+const AudioEngine=(()=>{
+  let ctx=null;
+  let en=JSON.parse(localStorage.getItem('jn_sound')||'true');
+  function ensureCtx(){
+    if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();
+    if(ctx.state==='suspended')ctx.resume();
+  }
+  function tone(freqs,dur=0.08){
+    try{
+      ensureCtx();
+      const t=ctx.currentTime;
+      freqs.forEach(([f,delay])=>{
+        const o=ctx.createOscillator(),g=ctx.createGain();
+        o.connect(g);g.connect(ctx.destination);
+        o.type='sine';o.frequency.setValueAtTime(f,t+delay);
+        g.gain.setValueAtTime(0,t+delay);
+        g.gain.linearRampToValueAtTime(0.11,t+delay+0.01);
+        g.gain.exponentialRampToValueAtTime(0.001,t+delay+dur);
+        o.start(t+delay);o.stop(t+delay+dur+0.02);
+      });
+    }catch(e){}
+  }
+  function play(urgent=false){
+    if(!en)return;
+    if(urgent)tone([[1320,0],[1320,0.13],[1320,0.26]],0.10);
+    else tone([[880,0],[1100,0.09]],0.07);
+  }
+  function setEnabled(v){en=v;localStorage.setItem('jn_sound',JSON.stringify(v))}
+  function getEnabled(){return en}
+  return{play,setEnabled,getEnabled};
+})();
 
-            /* ── Init ── */
-            function init() {
-                ThemeEngine.init();
-                Settings.loadAll();
-                renderTopicChips();
-                subscribeAll();
-                updateStatus();
-                updateProfileStats();
-                NotifManager.init();
-                ParticleEngine.init();
-                // Add emulator button listeners if they exist
-                const emuAlert = document.querySelector('.emu-btn.alert');
-                const emuUrgent = document.querySelector('.emu-btn.urgent-btn');
-                const emuClear = document.querySelector('.emu-btn.clear');
-                if (emuAlert) emuAlert.addEventListener('click', triggerTestAlert);
-                if (emuUrgent) emuUrgent.addEventListener('click', triggerUrgentAlert);
-                if (emuClear) emuClear.addEventListener('click', clearLogs);
-            }
+/* ── Notification Manager ── */
+const NotifManager=(()=>{
+  const $=id=>document.getElementById(id);
+  let swReg=null;
+  let asked=localStorage.getItem('jn_perm_asked')==='1';
+  async function registerSW(){
+    if(!('serviceWorker' in navigator))return;
+    try{
+      const src=document.getElementById('sw-src').textContent;
+      const blob=new Blob([src],{type:'application/javascript'});
+      const url=URL.createObjectURL(blob);
+      swReg=await navigator.serviceWorker.register(url,{scope:'/'});
+    }catch(e){}
+  }
+  async function requestPermission(){
+    $('permOverlay').classList.remove('open');
+    asked=true;localStorage.setItem('jn_perm_asked','1');
+    if(!('Notification' in window)){toast('⚠ Not supported');return;}
+    try{
+      const r=await Notification.requestPermission();
+      if(r==='granted'){toast('✓ Notifications enabled');updateStatus();if(!swReg)registerSW();}
+      else toast('Notifications blocked in browser settings');
+      updateStatus();
+    }catch(e){}
+  }
+  function skipPermission(){
+    $('permOverlay').classList.remove('open');
+    asked=true;localStorage.setItem('jn_perm_asked','1');
+  }
+  function send(title,body,topic,urgent=false){
+    if(typeof cordova!=='undefined'&&cordova.plugins?.notification){
+      cordova.plugins.notification.local.schedule({title,text:body,foreground:true});return;
+    }
+    if('Notification' in window&&Notification.permission==='granted'){
+      const n=new Notification(title,{body,tag:topic,requireInteraction:urgent,silent:true});
+      n.onclick=()=>{window.focus();n.close()};
+    }
+    if(urgent&&navigator.vibrate)navigator.vibrate([200,100,200]);
+  }
+  function updateStatus(){
+    const s=$('notifStatus');
+    if(!s)return;
+    if(!('Notification' in window)){s.textContent='Not supported';s.className='health-val hv-err';return;}
+    if(Notification.permission==='granted'){s.textContent='● Granted';s.className='health-val hv-ok';}
+    else if(Notification.permission==='denied'){s.textContent='● Denied';s.className='health-val hv-err';}
+    else{s.textContent='○ Not asked';s.className='health-val hv-warn';}
+    const sw=$('swStatus');
+    if(sw){
+      if('serviceWorker' in navigator){sw.textContent='● Supported';sw.className='health-val hv-ok';}
+      else{sw.textContent='● Unavailable';sw.className='health-val hv-err';}
+    }
+  }
+  function init(){
+    updateStatus();
+    setTimeout(()=>{
+      if(!asked&&'Notification' in window&&Notification.permission==='default'){
+        $('permOverlay').classList.add('open');
+      }
+    },2000);
+    if(Notification.permission==='granted')registerSW();
+  }
+  return{init,requestPermission,skipPermission,send,updateStatus};
+})();
 
-            if (typeof cordova !== 'undefined') {
-                document.addEventListener('deviceready', init, false);
-            } else if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', init);
-            } else {
-                init();
-            }
+/* ═══════════════════════════════════════
+   MAIN APP
+═══════════════════════════════════════ */
+const App=(()=>{
+  const state={
+    topics:JSON.parse(localStorage.getItem('jn_topics')||'[]'),
+    connections:{},
+    logs:[],
+    unread:0,
+    urgentCount:0,
+    prefs:{
+      sound:JSON.parse(localStorage.getItem('jn_sound')||'true'),
+      push:true,vib:true,anim:true,
+      priorityFilter:parseInt(localStorage.getItem('jn_pf')||'1'),
+      theme:localStorage.getItem('jn_theme')||'dark',
+      accent:localStorage.getItem('jn_accent')||'#00f5ff',
+    },
+    profile:{
+      name:localStorage.getItem('jn_pname')||'Jelly User',
+      handle:localStorage.getItem('jn_phandle')||'@jellynotify',
+      bio:localStorage.getItem('jn_pbio')||'Realtime notification enthusiast.',
+    },
+    filter:'all',
+    filterVisible:false,
+    startTime:Date.now(),
+  };
 
-            return {
-                navigateTo,
-                openSubscribeModal,
-                closeSubscribeModal,
-                subscribeChannel,
-                triggerTestAlert,
-                triggerUrgentAlert,
-                clearLogs,
-                resetAll,
-                resetUnread,
-                updateProfileStats,
-            };
-        })();
+  const $=id=>document.getElementById(id);
+  let toastTimer,uptimeTimer,sparkData=[];
 
-        // Keep legacy emulator buttons functional if present in modified HTML
-        document.addEventListener('DOMContentLoaded', () => {
-            const emuAlert = document.querySelector('.emu-btn.alert');
-            const emuUrgent = document.querySelector('.emu-btn.urgent-btn');
-            const emuClear = document.querySelector('.emu-btn.clear');
-            if (emuAlert) emuAlert.addEventListener('click', () => App.triggerTestAlert());
-            if (emuUrgent) emuUrgent.addEventListener('click', () => App.triggerUrgentAlert());
-            if (emuClear) emuClear.addEventListener('click', () => App.clearLogs());
-        });
-    </script>
+  /* Toast */
+  window.toast=function(msg,dur=2500){
+    const t=$('toast');t.textContent=msg;t.classList.add('show');
+    clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),dur);
+  };
+
+  /* Escape HTML */
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+
+  /* Time format */
+  function ts(d){
+    return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;
+  }
+
+  /* Apply theme */
+  function applyTheme(){
+    document.documentElement.setAttribute('data-theme',state.prefs.theme==='light'?'light':'');
+    const darkTog=$('tog-dark');
+    if(darkTog){if(state.prefs.theme==='dark')darkTog.classList.add('on');else darkTog.classList.remove('on');}
+  }
+  function applyAccent(){
+    document.documentElement.style.setProperty('--cyan',state.prefs.accent);
+    const hex=state.prefs.accent;
+    const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+    document.documentElement.style.setProperty('--cyan-dim',`rgba(${r},${g},${b},0.08)`);
+    document.documentElement.style.setProperty('--cyan-mid',`rgba(${r},${g},${b},0.18)`);
+    document.documentElement.style.setProperty('--cyan-glow',`rgba(${r},${g},${b},0.35)`);
+  }
+
+  /* Nav */
+  function nav(page,el){
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    $('page-'+page).classList.add('active');
+    el.classList.add('active');
+    if(page==='analytics')updateAnalytics();
+    if(page==='profile')updateProfile();
+    if(page==='channels')renderChannels();
+    if(page==='alerts')renderAlertFeed();
+  }
+
+  /* Status */
+  function updateStatus(){
+    const count=Object.keys(state.connections).length;
+    const dot=$('sDot'),txt=$('sText'),pill=$('statusPill'),bar=$('liveBar');
+    if(count===0){
+      dot.className='s-dot';txt.textContent='IDLE';
+      pill.classList.remove('live');if(bar)bar.classList.remove('on');
+      $('sseStatus').textContent='○ Disconnected';$('sseStatus').className='health-val hv-warn';
+    } else {
+      dot.className='s-dot live';txt.textContent=`LIVE ×${count}`;
+      pill.classList.add('live');if(bar)bar.classList.add('on');
+      $('sseStatus').textContent='● Connected';$('sseStatus').className='health-val hv-ok';
+    }
+    $('statChannels').textContent=count;
+    $('aCh').textContent=count;
+  }
+
+  /* Chips */
+  function renderChips(){
+    const row=$('chipRow'),noChips=$('noChips');
+    row.innerHTML='';
+    if(state.topics.length===0){row.appendChild(noChips);noChips.style.display='';return;}
+    state.topics.forEach(t=>{
+      const c=document.createElement('div');
+      c.className='chip'+(state.connections[t]?' active':'');
+      c.innerHTML=`# ${esc(t)} <span class="chip-x" data-t="${esc(t)}" title="Unsubscribe">×</span>`;
+      c.querySelector('.chip-x').addEventListener('click',e=>{e.stopPropagation();unsubscribe(e.target.dataset.t)});
+      row.appendChild(c);
+    });
+  }
+
+  /* Channels Page */
+  function renderChannels(){
+    const list=$('channelList');
+    if(state.topics.length===0){
+      list.innerHTML='<div class="empty"><div class="empty-icon">📡</div><div class="empty-text">No channels. Tap + to subscribe.</div></div>';
+      return;
+    }
+    list.innerHTML='';
+    const icons=['📡','🌐','⚡','🔥','💡','🛰️','📲','🔮'];
+    state.topics.forEach((t,i)=>{
+      const live=!!state.connections[t];
+      const c=document.createElement('div');
+      c.className='channel-card';
+      c.innerHTML=`
+        <div class="ch-icon">${icons[i%icons.length]}</div>
+        <div class="ch-info">
+          <div class="ch-name">#${esc(t)}</div>
+          <div class="ch-meta ch-status"><div class="ch-dot${live?' live':''}"></div>${live?'Live':'Disconnected'}</div>
+        </div>
+        <div class="label-tag ${live?'tag-cyan':'tag-rose'}" style="cursor:pointer" onclick="App.unsubscribe('${esc(t)}')">${live?'Unsub':'Remove'}</div>
+      `;
+      list.appendChild(c);
+    });
+  }
+
+  /* SSE */
+  function subscribeAll(){state.topics.forEach(t=>connectSSE(t))}
+  function connectSSE(topic){
+    if(state.connections[topic])return;
+    const es=new EventSource(`https://ntfy.sh/${encodeURIComponent(topic)}/sse`);
+    es.addEventListener('message',e=>{
+      try{
+        const msg=JSON.parse(e.data);
+        if(msg.event==='message'){
+          const urgent=msg.priority>=5;
+          addCard({topic,title:msg.title||`📨 ${topic}`,body:msg.message||'',priority:msg.priority||3,time:new Date(msg.time*1000),type:'live'});
+          AudioEngine.play(urgent);
+          NotifManager.send(msg.title||topic,msg.message||'',topic,urgent);
+        }
+      }catch(e){}
+    });
+    es.onerror=()=>updateStatus();
+    es.onopen=()=>updateStatus();
+    state.connections[topic]=es;
+    updateStatus();renderChips();renderChannels();
+  }
+  function unsubscribe(topic){
+    if(state.connections[topic]){state.connections[topic].close();delete state.connections[topic];}
+    state.topics=state.topics.filter(t=>t!==topic);
+    localStorage.setItem('jn_topics',JSON.stringify(state.topics));
+    renderChips();updateStatus();renderChannels();
+    toast(`Unsubscribed from #${topic}`);
+  }
+
+  /* Card rendering */
+  const PMAP={
+    5:{label:'URGENT',pcls:'p5',bcls:'nb-urgent'},
+    4:{label:'HIGH',pcls:'p4',bcls:'nb-high'},
+    3:{label:'NORMAL',pcls:'p3',bcls:'nb-norm'},
+    2:{label:'LOW',pcls:'p2',bcls:'nb-norm'},
+    1:{label:'MIN',pcls:'p1',bcls:'nb-norm'},
+  };
+
+  function addCard({topic,title,body,priority=3,time=new Date(),type='live'}){
+    if(priority<state.prefs.priorityFilter)return;
+    const p=PMAP[priority]||PMAP[3];
+    const isTest=type==='test';
+    const urgent=priority>=5;
+    const entry={topic,title,body,priority,time,type,id:Date.now()+Math.random()};
+    state.logs.unshift(entry);
+    sparkData.push({t:Date.now(),v:priority});
+    if(sparkData.length>30)sparkData.shift();
+
+    // Stats
+    state.unread++;
+    if(urgent)state.urgentCount++;
+    $('statTotal').textContent=state.logs.length;
+    $('statUrgent').textContent=state.urgentCount;
+    updateBell();
+    if(urgent)$('alertBadge').classList.add('show');
+
+    // Feed sub
+    $('feedSub').textContent=`${state.logs.length} event${state.logs.length!==1?'s':''} • Last: ${ts(time)}`;
+
+    // Build card
+    const card=document.createElement('div');
+    card.className=['notif',p.pcls,isTest?'test':'',urgent?'urgent-glow':'new-glow'].filter(Boolean).join(' ');
+    card.dataset.priority=String(priority);card.dataset.type=type;
+    card.innerHTML=`
+      <div class="n-head">
+        <div class="n-meta">
+          <span class="n-topic">#${esc(topic)}</span>
+          <span class="n-badge ${isTest?'nb-test':p.bcls}">${isTest?'TEST':p.label}</span>
+        </div>
+        <div class="n-right">
+          <span class="n-time">${ts(time)}</span>
+          <span class="n-close" title="Dismiss">×</span>
+        </div>
+      </div>
+      <div class="n-title">${esc(title)}</div>
+      ${body?`<div class="n-body">${esc(body)}</div>`:''}
+    `;
+    card.querySelector('.n-close').addEventListener('click',()=>dismissCard(card));
+
+    // Insert into home feed
+    const wrap=$('feedWrap');
+    $('emptyState').style.display='none';
+    const first=wrap.querySelector('.notif');
+    if(first)wrap.insertBefore(card,first);else wrap.appendChild(card);
+    setTimeout(()=>card.classList.remove('new-glow','urgent-glow'),1400);
+
+    // Filter
+    applyFilter();
+  }
+
+  function dismissCard(card){
+    card.classList.add('out');
+    card.addEventListener('animationend',()=>{
+      card.remove();
+      if(!$('feedWrap').querySelector('.notif')){
+        $('emptyState').style.display='';
+      }
+    },{once:true});
+  }
+
+  /* Alert Feed */
+  function renderAlertFeed(){
+    const feed=$('alertFeed');
+    const priority=state.logs.filter(l=>l.priority>=4);
+    if(priority.length===0){
+      feed.innerHTML='<div class="empty"><div class="empty-icon">🚨</div><div class="empty-text">No priority alerts yet.</div></div>';
+      return;
+    }
+    feed.innerHTML='';
+    priority.forEach(l=>{
+      const p=PMAP[l.priority]||PMAP[3];
+      const d=document.createElement('div');
+      d.className=`notif ${p.pcls}`;
+      d.innerHTML=`
+        <div class="n-head">
+          <div class="n-meta"><span class="n-topic">#${esc(l.topic)}</span><span class="n-badge ${p.bcls}">${p.label}</span></div>
+          <span class="n-time">${ts(l.time)}</span>
+        </div>
+        <div class="n-title">${esc(l.title)}</div>
+        ${l.body?`<div class="n-body">${esc(l.body)}</div>`:''}
+      `;
+      feed.appendChild(d);
+    });
+  }
+
+  /* Analytics */
+  function updateAnalytics(){
+    $('aTot').textContent=state.logs.length;
+    $('aCh').textContent=Object.keys(state.connections).length;
+    const counts={1:0,2:0,3:0,4:0,5:0};
+    state.logs.forEach(l=>counts[l.priority]=(counts[l.priority]||0)+1);
+    const max=Math.max(...Object.values(counts),1);
+    [5,4,3,2].forEach(p=>{
+      const bar=$('bar'+p),bv=$('bv'+p);
+      if(bar){bar.style.width=(counts[p]/max*100)+'%';}
+      if(bv)bv.textContent=counts[p];
+    });
+    drawSparkline();
+    renderActivityLog();
+  }
+
+  function drawSparkline(){
+    const canvas=$('sparkCanvas');if(!canvas)return;
+    const ctx=canvas.getContext('2d');
+    canvas.width=canvas.offsetWidth||360;canvas.height=60;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    if(sparkData.length<2)return;
+    const w=canvas.width,h=canvas.height;
+    const vals=sparkData.map(d=>d.v);
+    const min=1,max=5;
+    const pts=vals.map((v,i)=>({x:(i/(vals.length-1))*w,y:h-((v-min)/(max-min))*(h-10)-5}));
+    const accent=getComputedStyle(document.documentElement).getPropertyValue('--cyan').trim()||'#00f5ff';
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x,pts[0].y);
+    pts.forEach((p,i)=>{if(i>0){const pp=pts[i-1];ctx.bezierCurveTo((pp.x+p.x)/2,pp.y,(pp.x+p.x)/2,p.y,p.x,p.y);}});
+    ctx.strokeStyle=accent;ctx.lineWidth=2;ctx.stroke();
+    // Fill
+    ctx.lineTo(pts[pts.length-1].x,h);ctx.lineTo(pts[0].x,h);ctx.closePath();
+    const grad=ctx.createLinearGradient(0,0,0,h);
+    grad.addColorStop(0,'rgba(0,245,255,0.18)');grad.addColorStop(1,'rgba(0,245,255,0)');
+    ctx.fillStyle=grad;ctx.fill();
+  }
+
+  function renderActivityLog(){
+    const el=$('activityLog');if(!el)return;
+    if(state.logs.length===0){
+      el.innerHTML='<div class="empty"><div class="empty-icon">📊</div><div class="empty-text">No activity yet.</div></div>';return;
+    }
+    el.innerHTML='';
+    const icons={5:'🔴',4:'🟡',3:'🔵',2:'⚪',1:'⚪','test':'🟣'};
+    state.logs.slice(0,12).forEach(l=>{
+      const d=document.createElement('div');
+      d.className='tl-item';
+      const ic=l.type==='test'?icons.test:(icons[l.priority]||'🔵');
+      d.innerHTML=`
+        <div class="tl-dot">${ic}</div>
+        <div class="tl-content">
+          <div class="tl-title">${esc(l.title)}</div>
+          <div class="tl-time">#${esc(l.topic)} • ${ts(l.time)}</div>
+        </div>
+      `;
+      el.appendChild(d);
+    });
+  }
+
+  /* Profile */
+  function updateProfile(){
+    $('profileName').textContent=state.profile.name;
+    $('profileHandle').textContent=state.profile.handle;
+    $('profileBio').textContent=state.profile.bio;
+    const initials=state.profile.name.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase()||'JN';
+    $('avatarInitials').textContent=initials;
+    $('psTotal').textContent=state.logs.length;
+    $('psChannels').textContent=state.topics.length;
+    const elapsed=Math.floor((Date.now()-state.startTime)/60000);
+    $('psUptime').textContent=elapsed+'m';
+    // Activity
+    const act=$('profileActivity');
+    if(state.logs.length===0){
+      act.innerHTML='<div class="empty"><div class="empty-icon">🕓</div><div class="empty-text">No activity yet.</div></div>';return;
+    }
+    act.innerHTML='';
+    state.logs.slice(0,6).forEach(l=>{
+      const d=document.createElement('div');
+      d.className='tl-item';
+      d.innerHTML=`<div class="tl-dot">📩</div><div class="tl-content"><div class="tl-title">${esc(l.title)}</div><div class="tl-time">#${esc(l.topic)} • ${ts(l.time)}</div></div>`;
+      act.appendChild(d);
+    });
+  }
+
+  /* Bell badge */
+  function updateBell(){
+    const b=$('bellBadge');
+    b.textContent=state.unread>99?'99+':state.unread;
+    b.classList.toggle('show',state.unread>0);
+    b.classList.remove('bump');void b.offsetWidth;b.classList.add('bump');
+  }
+
+  /* Filter */
+  function toggleFilter(){
+    state.filterVisible=!state.filterVisible;
+    $('filterRow').style.display=state.filterVisible?'flex':'none';
+  }
+  function setFilter(f,el){
+    state.filter=f;
+    document.querySelectorAll('.f-chip').forEach(c=>c.classList.remove('on'));
+    el.classList.add('on');
+    applyFilter();
+  }
+  function applyFilter(){
+    document.querySelectorAll('#feedWrap .notif').forEach(card=>{
+      if(state.filter==='all'){card.style.display='';return;}
+      if(state.filter==='test'){card.style.display=card.dataset.type==='test'?'':'none';return;}
+      card.style.display=card.dataset.priority===state.filter?'':'none';
+    });
+  }
+
+  /* Toggle settings */
+  function toggle(key,el){
+    el.classList.toggle('on');
+    const on=el.classList.contains('on');
+    if(key==='dark'){state.prefs.theme=on?'dark':'light';localStorage.setItem('jn_theme',state.prefs.theme);applyTheme();}
+    if(key==='sound'){AudioEngine.setEnabled(on);}
+    if(key==='push'){state.prefs.push=on;}
+    if(key==='vib'){state.prefs.vib=on;}
+    if(key==='anim'){state.prefs.anim=on;document.documentElement.style.setProperty('--anim-speed',on?'1':'0');}
+    toast(on?'Setting enabled':'Setting disabled');
+  }
+  function setAccent(color,el){
+    state.prefs.accent=color;
+    localStorage.setItem('jn_accent',color);
+    document.querySelectorAll('.swatch').forEach(s=>s.classList.remove('active'));
+    el.classList.add('active');
+    applyAccent();
+    toast('Accent updated');
+  }
+  function setPriorityFilter(v){
+    state.prefs.priorityFilter=parseInt(v);
+    localStorage.setItem('jn_pf',v);
+    toast('Priority filter updated');
+  }
+  function reconnectAll(){
+    Object.values(state.connections).forEach(es=>es.close());
+    state.connections={};
+    updateStatus();
+    setTimeout(()=>subscribeAll(),300);
+    toast('Reconnecting…');
+  }
+  function clearStorage(){
+    if(!confirm('Clear all local data?'))return;
+    localStorage.clear();
+    toast('Cache cleared');
+    setTimeout(()=>location.reload(),800);
+  }
+
+  /* Modal */
+  function openModal(){
+    $('overlay').classList.add('open');
+    setTimeout(()=>$('topicInput').focus(),320);
+  }
+  function closeModal(){$('overlay').classList.remove('open');$('topicInput').value='';}
+  function subscribe(){
+    const raw=$('topicInput').value.trim().toLowerCase().replace(/[^a-z0-9_\-]/g,'');
+    if(!raw){toast('⚠ Enter a valid topic');return;}
+    if(state.topics.includes(raw)){toast('Already subscribed');closeModal();return;}
+    state.topics.push(raw);
+    localStorage.setItem('jn_topics',JSON.stringify(state.topics));
+    connectSSE(raw);renderChips();closeModal();
+    toast(`✓ Subscribed to #${raw}`);
+  }
+
+  /* Edit profile */
+  function openEditProfile(){
+    $('editName').value=state.profile.name;
+    $('editHandle').value=state.profile.handle;
+    $('editBio').value=state.profile.bio;
+    $('editOverlay').classList.add('open');
+    setTimeout(()=>$('editName').focus(),320);
+  }
+  function closeEditProfile(){$('editOverlay').classList.remove('open');}
+  function saveProfile(){
+    state.profile.name=$('editName').value.trim()||state.profile.name;
+    state.profile.handle=$('editHandle').value.trim()||state.profile.handle;
+    state.profile.bio=$('editBio').value.trim()||state.profile.bio;
+    localStorage.setItem('jn_pname',state.profile.name);
+    localStorage.setItem('jn_phandle',state.profile.handle);
+    localStorage.setItem('jn_pbio',state.profile.bio);
+    closeEditProfile();updateProfile();toast('Profile saved');
+  }
+
+  /* Clear */
+  function clearLogs(){
+    $('feedWrap').querySelectorAll('.notif').forEach(c=>c.remove());
+    $('emptyState').style.display='';
+    state.logs=[];state.unread=0;state.urgentCount=0;sparkData=[];
+    $('statTotal').textContent='0';$('statUrgent').textContent='0';
+    $('feedSub').textContent='Waiting for events…';
+    $('bellBadge').classList.remove('show','bump');
+    $('alertBadge').classList.remove('show');
+    toast('🗑 Logs cleared');
+  }
+
+  /* Test alerts */
+  function triggerTest(){
+    const t=state.topics[0]||'test-channel';
+    const alerts=[
+      {title:'🌡 Temperature Alert',body:'Sensor reading: 87°C — threshold exceeded on Node-3.'},
+      {title:'🔋 Battery Warning',body:'Device BATT-07 at 12%. Charging recommended.'},
+      {title:'📶 Signal Lost',body:'Connection to remote unit HW-221 timed out (30s).'},
+      {title:'✅ System OK',body:'Health check passed. All 12 nodes nominal.'},
+      {title:'💾 Disk Space',body:'Storage at 89% capacity on primary volume.'},
+    ];
+    const p=alerts[Math.floor(Math.random()*alerts.length)];
+    addCard({topic:t,title:p.title,body:p.body,priority:3,time:new Date(),type:'test'});
+    AudioEngine.play(false);NotifManager.send(p.title,p.body,t,false);
+    toast('⚡ Test alert fired');
+  }
+  function triggerUrgent(){
+    const t=state.topics[0]||'test-channel';
+    const alerts=[
+      {title:'🔴 Critical: Server Down',body:'Production server PROD-01 is unreachable. Immediate action required.'},
+      {title:'⚠️ Security Breach',body:'Unauthorized access detected on API gateway. IP: 203.0.113.42.'},
+      {title:'🔴 Data Loss Risk',body:'RAID array degraded. Drive 4 failure detected. Backup immediately.'},
+    ];
+    const p=alerts[Math.floor(Math.random()*alerts.length)];
+    addCard({topic:t,title:p.title,body:p.body,priority:5,time:new Date(),type:'live'});
+    AudioEngine.play(true);NotifManager.send(p.title,p.body,t,true);
+    toast('🚨 Urgent alert fired');
+  }
+
+  function clearBadge(){
+    state.unread=0;
+    $('bellBadge').textContent='0';
+    $('bellBadge').classList.remove('show','bump');
+  }
+
+  /* Keyboard */
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'){closeModal();closeEditProfile();}
+    if(e.key==='Enter'){
+      if($('overlay').classList.contains('open'))subscribe();
+      if($('editOverlay').classList.contains('open'))saveProfile();
+    }
+  });
+  $('overlay').addEventListener('click',e=>{if(e.target===$('overlay'))closeModal()});
+  $('editOverlay').addEventListener('click',e=>{if(e.target===$('editOverlay'))closeEditProfile()});
+
+  /* Uptime ticker */
+  function startUptime(){
+    uptimeTimer=setInterval(()=>{
+      const el=$('psUptime');
+      if(el){const elapsed=Math.floor((Date.now()-state.startTime)/60000);el.textContent=elapsed+'m';}
+    },30000);
+  }
+
+  /* Init */
+  function init(){
+    applyTheme();applyAccent();
+    // Sync toggles with stored prefs
+    if(!AudioEngine.getEnabled())$('tog-sound')?.classList.remove('on');
+    const pf=state.prefs.priorityFilter;
+    if($('sel-priority'))$('sel-priority').value=String(pf===1?'1':pf===3?'3':pf===4?'4':'5');
+    renderChips();subscribeAll();updateStatus();
+    NotifManager.init();startUptime();
+  }
+
+  if(typeof cordova!=='undefined'){document.addEventListener('deviceready',init,false);}
+  else{document.addEventListener('DOMContentLoaded',init);}
+
+  return{nav,openModal,closeModal,subscribe,triggerTest,triggerUrgent,clearLogs,toggle,setAccent,setPriorityFilter,reconnectAll,clearStorage,toggleFilter,setFilter,clearBadge,unsubscribe,openEditProfile,closeEditProfile,saveProfile,updateAnalytics,updateProfile,renderChannels};
+})();
+</script>
 </body>
 </html>
