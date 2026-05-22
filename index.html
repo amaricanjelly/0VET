@@ -416,56 +416,56 @@ html, body {
   margin-bottom: 4px;
 }
 .empty-icon-wrap svg { width: 28px; height: 28px; color: var(--text-tertiary); }
-.empty-title {
-  font-family: var(--font-display); font-size: 16px; font-weight: 600;
-  color: var(--text-secondary);
-}
-.empty-sub {
-  font-family: var(--font-mono); font-size: 10px;
-  color: var(--text-tertiary); line-height: 1.7;
-}
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+  import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-messaging.js";
 
-.notif {
-  background: var(--surface-0);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--r-lg); padding: 13px 14px;
-  margin-bottom: 7px; position: relative; overflow: hidden;
-  animation: card-enter 0.3s cubic-bezier(0.16,1,0.3,1) forwards;
-  transition: border-color 0.2s, transform 0.2s;
-}
-.notif:hover { border-color: var(--border-default); transform: translateX(2px); }
-@keyframes card-enter {
-  from { opacity: 0; transform: translateY(-6px) scale(0.98); }
-  to   { opacity: 1; transform: none; }
-}
-.notif.out {
-  animation: card-exit 0.25s cubic-bezier(0.4,0,1,1) forwards;
-}
-@keyframes card-exit {
-  from { opacity: 1; transform: none; max-height: 200px; margin-bottom: 7px; }
-  60%  { opacity: 0; transform: translateX(20px); }
-  to   { opacity: 0; max-height: 0; margin-bottom: 0; padding: 0; }
-}
-/* Priority stripe */
-.notif::before {
-  content: ''; position: absolute;
-  left: 0; top: 0; bottom: 0; width: 3px;
-  border-radius: 3px 0 0 3px;
-}
-.notif.p5::before { background: var(--red); box-shadow: 1px 0 8px rgba(240,64,96,0.3); }
-.notif.p4::before { background: var(--amber); box-shadow: 1px 0 8px rgba(232,160,32,0.3); }
-.notif.p3::before { background: var(--accent); }
-.notif.p2::before,.notif.p1::before { background: var(--text-tertiary); }
-.notif.p-test::before { background: var(--purple); }
-/* New glow overlay */
-.notif.new-glow { animation: card-enter 0.3s cubic-bezier(0.16,1,0.3,1), card-glow 1.5s ease-out forwards; }
-.notif.urgent-glow { animation: card-enter 0.3s cubic-bezier(0.16,1,0.3,1), urgent-glow 1.5s ease-out forwards; }
-@keyframes card-glow {
-  0%   { box-shadow: 0 0 0 1px rgba(0,200,255,0.3), 0 4px 20px rgba(0,200,255,0.1); }
-  100% { box-shadow: none; }
-}
-@keyframes urgent-glow {
-  0%   { box-shadow: 0 0 0 1px rgba(240,64,96,0.4), 0 4px 20px rgba(240,64,96,0.12); }
+  const firebaseConfig = {
+    apiKey: "AIzaSyAD-VLPWD1dPdt6jquYSVJ-AzO68FzxRAQ",
+    authDomain: "jelly-notify.firebaseapp.com",
+    projectId: "jelly-notify",
+    storageBucket: "jelly-notify.firebasestorage.app",
+    messagingSenderId: "901828999016",
+    appId: "1:901828999016:web:a0d94df5417e4bef3ac8dd",
+    measurementId: "G-H4P415087V"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const messaging = getMessaging(app);
+
+  async function initNotification() {
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission === 'granted') {
+        console.log("Permission granted!");
+        const token = await getToken(messaging, { 
+          vapidKey: 'BL--DPqtQeDDyCCkL4raOYEGpd8ennkzvioObDy-QZPmKuVRyPRJ2dTKmk86GjecF-tKMBO5E-o0kLHtpPHV5Wc' 
+        });
+        if (token) {
+          console.log("FCM Token:", token);
+        }
+      } else {
+        console.log("Permission denied!");
+      }
+    } catch (error) {
+      console.error("Error during token retrieval:", error);
+    }
+  }
+
+  // Listen for foreground messages
+  onMessage(messaging, (payload) => {
+    console.log("Foreground message received:", payload);
+    alert(`নতুন নোটিফিকেশন:\n${payload.notification.title}\n${payload.notification.body}`);
+  });
+
+  // Bind the function to the custom UI button click event
+  document.addEventListener("DOMContentLoaded", () => {
+    const notifyBtn = document.getElementById('enable-notify-btn');
+    if (notifyBtn) {
+      notifyBtn.addEventListener('click', initNotification);
+    }
+  });
+</script>
   100% { box-shadow: none; }
 }
 
@@ -1466,7 +1466,7 @@ html, body {
         Works on desktop and mobile browsers
       </div>
     </div>
-    <button class="btn-enable" onclick="NotifManager.requestPermission()">Enable Notifications</button>
+    <button id="enable-notify-btn" class="btn-enable" onclick="NotifManager.requestPermission()">Enable Notifications</button>
     <button class="btn-skip" onclick="NotifManager.skipPermission()">Maybe later</button>
   </div>
 </div>
@@ -2365,6 +2365,68 @@ const App=(()=>{
   }
 </script>
 <!-- ▲▲▲ END FCM INTEGRATION ▲▲▲ -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+  import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-messaging.js";
 
+  // Using the exact config you just provided
+  const firebaseConfig = {
+    apiKey: "AIzaSyAD-VLPWD1dPdt6jquYSVJ-AzO68FzxRAQ",
+    authDomain: "jelly-notify.firebaseapp.com",
+    projectId: "jelly-notify",
+    storageBucket: "jelly-notify.firebasestorage.app",
+    messagingSenderId: "901828999016",
+    appId: "1:901828999016:web:a0d94df5417e4bef3ac8dd",
+    measurementId: "G-H4P415087V"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const messaging = getMessaging(app);
+
+  async function initNotification() {
+    try {
+      console.log("Requesting token with verified config...");
+      if ('serviceWorker' in navigator) {
+        // Registering the service worker cleanly
+        const registration = await navigator.serviceWorker.register('./firebase-messaging-sw.js?v=' + Date.now());
+        
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+          const token = await getToken(messaging, { 
+            vapidKey: 'BL--DPqtQeDDyCCkL4raOYEGpd8ennkzvioObDy-QZPmKuVRyPRJ2dTKmk86GjecF-tKMBO5E-o0kLHtpPHV5Wc',
+            serviceWorkerRegistration: registration
+          });
+
+          if (token) {
+            console.log("====================================");
+            console.log("SUCCESS! YOUR FCM TOKEN IS:");
+            console.log(token);
+            console.log("====================================");
+          } else {
+            console.log("No token available.");
+          }
+        } else {
+          console.log("Notification permission denied.");
+        }
+      }
+    } catch (error) {
+      console.error("FCM Error:", error.message);
+    }
+  }
+
+  // Handle foreground messages
+  onMessage(messaging, (payload) => {
+    console.log("Foreground message:", payload);
+    alert(`নতুন নোটিফিকেশন:\n${payload.notification.title}\n${payload.notification.body}`);
+  });
+
+  // Bind to the custom UI button
+  document.addEventListener("DOMContentLoaded", () => {
+    const notifyBtn = document.getElementById('enable-notify-btn');
+    if (notifyBtn) {
+      notifyBtn.addEventListener('click', initNotification);
+    }
+  });
+</script>
 </body>
 </html>
