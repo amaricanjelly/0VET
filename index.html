@@ -13,6 +13,8 @@
     await OneSignal.init({ appId: "5f7f7bfc-3980-4906-8dd3-0f1314c20d95" });
   });
 </script>
+<!-- Google Sign-In -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 /* ═══════════════════════════════════════════════════
    JELLYNOTIFY PREMIUM — DESIGN SYSTEM
@@ -98,7 +100,7 @@ html,body{
 @keyframes load-fill{to{width:100%}}
 .load-txt{font-family:var(--font-mono);font-size:10px;color:var(--text-tertiary);letter-spacing:1px}
 
-/* ═══════════ AUTH WALL ═══════════ */
+/* ═══════════ AUTH WALL (Google) ═══════════ */
 #authWall{
   position:fixed;inset:0;z-index:500;
   background:var(--bg);
@@ -110,52 +112,46 @@ html,body{
   width:100%;max-width:360px;
   background:var(--surface-0);
   border:1px solid var(--border-default);
-  border-radius:20px;padding:28px 22px 22px;
+  border-radius:20px;padding:36px 22px 28px;
   animation:card-rise 0.4s cubic-bezier(0.16,1,0.3,1);
+  text-align:center;
 }
 @keyframes card-rise{from{opacity:0;transform:translateY(32px)} to{opacity:1;transform:none}}
-.auth-logo-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:20px}
+.auth-logo-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:24px}
 .auth-logo-icon{
-  width:40px;height:40px;border-radius:11px;
+  width:44px;height:44px;border-radius:12px;
   background:linear-gradient(135deg,#00c8ff,#0055aa);
   display:flex;align-items:center;justify-content:center;
   box-shadow:0 0 24px rgba(0,200,255,0.3);
 }
-.auth-logo-icon svg{width:20px;height:20px}
-.auth-logo-name{font-family:var(--font-display);font-size:18px;font-weight:700}
+.auth-logo-icon svg{width:22px;height:22px}
+.auth-logo-name{font-family:var(--font-display);font-size:20px;font-weight:700}
 .auth-logo-name span{color:var(--accent)}
-.auth-title{font-family:var(--font-display);font-size:20px;font-weight:700;margin-bottom:5px;text-align:center}
-.auth-sub{font-family:var(--font-mono);font-size:11px;color:var(--text-secondary);text-align:center;margin-bottom:22px}
-.auth-tabs{display:flex;background:var(--surface-1);border-radius:var(--r-lg);padding:4px;gap:4px;margin-bottom:18px}
-.auth-tab{
-  flex:1;padding:8px;border-radius:10px;
-  font-family:var(--font-mono);font-size:11px;
-  text-align:center;cursor:pointer;transition:all 0.2s;
-  color:var(--text-tertiary);user-select:none;
+.auth-title{font-family:var(--font-display);font-size:22px;font-weight:700;margin-bottom:8px}
+.auth-sub{font-family:var(--font-mono);font-size:11px;color:var(--text-secondary);margin-bottom:32px;line-height:1.6}
+.google-signin-btn{
+  width:100%;padding:13px 20px;
+  background:#fff;border:1.5px solid #e0e0e0;
+  border-radius:var(--r-lg);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:12px;
+  font-family:var(--font-body);font-size:14px;font-weight:600;color:#1f1f1f;
+  transition:all 0.18s;box-shadow:0 2px 8px rgba(0,0,0,0.12);
 }
-.auth-tab.on{background:var(--surface-2);color:var(--text-primary);box-shadow:0 1px 6px rgba(0,0,0,0.3)}
-.auth-input{
-  width:100%;background:var(--surface-1);
-  border:1px solid var(--border-default);
-  border-radius:var(--r-lg);padding:12px 14px;margin-bottom:10px;
-  color:var(--text-primary);font-family:var(--font-mono);font-size:13px;
-  outline:none;transition:border-color 0.2s;
+.google-signin-btn:hover{box-shadow:0 4px 16px rgba(0,0,0,0.18);transform:translateY(-1px)}
+.google-signin-btn:active{transform:scale(0.98)}
+.google-signin-btn svg{width:20px;height:20px;flex-shrink:0}
+.auth-divider{
+  display:flex;align-items:center;gap:12px;margin:20px 0;
+  font-family:var(--font-mono);font-size:10px;color:var(--text-tertiary);
 }
-.auth-input:focus{border-color:var(--border-focus)}
-.auth-input::placeholder{color:var(--text-tertiary)}
-.auth-btn{
-  width:100%;padding:13px;margin-top:4px;
-  background:linear-gradient(135deg,var(--accent),var(--accent-2));
-  border:none;border-radius:var(--r-lg);
-  color:#000;font-family:var(--font-body);font-size:14px;font-weight:600;
-  cursor:pointer;transition:opacity 0.15s,transform 0.15s;
-}
-.auth-btn:hover{opacity:0.88;transform:translateY(-1px)}
-.auth-btn:active{transform:scale(0.98)}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border-default)}
+.auth-note{font-family:var(--font-mono);font-size:10px;color:var(--text-tertiary);line-height:1.6;margin-top:16px}
 .auth-err{
   font-family:var(--font-mono);font-size:11px;color:var(--red);
-  text-align:center;margin-top:8px;min-height:16px;
+  text-align:center;margin-top:12px;min-height:16px;
 }
+/* Google One Tap positioning override */
+#g_id_onload{position:absolute;top:0;left:0;width:0;height:0;overflow:hidden}
 
 /* ═══════════ CANVAS ═══════════ */
 #ambient{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:0.5}
@@ -485,8 +481,9 @@ html,body{
   background:linear-gradient(135deg,var(--accent),var(--purple));
   display:flex;align-items:center;justify-content:center;
   font-family:var(--font-display);font-size:24px;font-weight:700;color:#fff;
-  border:2px solid rgba(0,200,255,0.2);
+  border:2px solid rgba(0,200,255,0.2);overflow:hidden;
 }
+.avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
 .avatar.premium-avatar{
   border-color:rgba(240,180,41,0.5);
   box-shadow:0 0 20px rgba(240,180,41,0.2);
@@ -521,6 +518,16 @@ html,body{
 .ps-item{text-align:center}
 .ps-value{font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--text-primary)}
 .ps-label{font-family:var(--font-mono);font-size:9px;letter-spacing:0.5px;text-transform:uppercase;color:var(--text-tertiary);margin-top:2px}
+
+/* Google account badge in profile */
+.google-account-tag{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:4px 10px;border-radius:var(--r-full);
+  background:rgba(66,133,244,0.08);border:1px solid rgba(66,133,244,0.2);
+  font-family:var(--font-mono);font-size:9px;color:#4285f4;
+  margin-bottom:10px;
+}
+.google-account-tag svg{width:10px;height:10px}
 
 /* ═══════════ SUBSCRIPTION CARD IN PROFILE ═══════════ */
 .sub-info-card{
@@ -845,7 +852,6 @@ html,body{
   cursor:pointer;transition:opacity 0.15s;
 }
 .btn-success:hover{opacity:0.88}
-/* confetti dots */
 .confetti-wrap{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:24px}
 .confetti-dot{
   position:absolute;width:6px;height:6px;border-radius:50%;
@@ -920,8 +926,15 @@ html,body{
   <div class="load-txt" id="loadTxt">Initializing…</div>
 </div>
 
-<!-- ── AUTH WALL ── -->
+<!-- ── AUTH WALL (Google Sign-In) ── -->
 <div id="authWall" style="display:none">
+  <!-- Google One Tap (hidden, auto-prompts when loaded) -->
+  <div id="g_id_onload"
+    data-client_id="YOUR_GOOGLE_CLIENT_ID"
+    data-callback="handleGoogleCredential"
+    data-auto_prompt="false">
+  </div>
+
   <div class="auth-card">
     <div class="auth-logo-row">
       <div class="auth-logo-icon">
@@ -931,17 +944,24 @@ html,body{
       </div>
       <div class="auth-logo-name">Jelly<span>Notify</span></div>
     </div>
-    <div class="auth-title" id="authTitle">Welcome back</div>
-    <div class="auth-sub" id="authSub">Sign in to continue</div>
-    <div class="auth-tabs">
-      <div class="auth-tab on" id="loginTab" onclick="Auth.switchTab('login')">Sign In</div>
-      <div class="auth-tab" id="registerTab" onclick="Auth.switchTab('register')">Register</div>
-    </div>
-    <input class="auth-input" id="authEmail" type="email" placeholder="Email address" autocomplete="email"/>
-    <input class="auth-input" id="authPass" type="password" placeholder="Password" autocomplete="current-password"/>
-    <input class="auth-input" id="authName" type="text" placeholder="Display name" style="display:none" autocomplete="name"/>
-    <button class="auth-btn" id="authBtn" onclick="Auth.submit()">Sign In</button>
+    <div class="auth-title">Welcome</div>
+    <div class="auth-sub">Sign in to receive realtime notifications<br>and manage your premium channels.</div>
+
+    <!-- Google Sign-In Button -->
+    <button class="google-signin-btn" onclick="Auth.signInWithGoogle()">
+      <!-- Google "G" logo SVG -->
+      <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+        <path fill="none" d="M0 0h48v48H0z"/>
+      </svg>
+      Continue with Google
+    </button>
+
     <div class="auth-err" id="authErr"></div>
+    <div class="auth-note">By signing in you agree to our terms of service. Your account is secured with Google authentication.</div>
   </div>
 </div>
 
@@ -1161,6 +1181,11 @@ html,body{
         </div>
         <div class="profile-name" id="profileName">Jelly User</div>
         <div class="profile-handle" id="profileHandle">@jellynotify</div>
+        <!-- Google account tag -->
+        <div class="google-account-tag" id="googleAccountTag" style="display:none">
+          <svg viewBox="0 0 48 48" width="10" height="10"><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/></svg>
+          <span id="googleEmailTag">Signed in with Google</span>
+        </div>
         <div class="profile-bio" id="profileBio">Realtime notification enthusiast.</div>
         <div class="profile-badge" id="profileBadge">
           <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
@@ -1289,9 +1314,7 @@ html,body{
       <div class="sub-modal-title">Unlock <span class="shine">Premium</span></div>
       <div class="sub-modal-desc">Get unlimited channels, priority alerts, and full analytics access with a JellyNotify premium plan.</div>
     </div>
-    <div class="sub-plans-grid" id="plansGrid">
-      <!-- Plans injected by JS -->
-    </div>
+    <div class="sub-plans-grid" id="plansGrid"></div>
     <button class="sub-skip" onclick="SubManager.closeModal()">Maybe later</button>
   </div>
 </div>
@@ -1376,8 +1399,8 @@ self.addEventListener('notificationclick',function(e){
 
 <script>
 /* ═══════════════════════════════════════════════
-   JELLYNOTIFY PREMIUM — CORE ENGINE v4
-   Production · Subscription System · Auth
+   JELLYNOTIFY PREMIUM — CORE ENGINE v5
+   Google Auth · Notification Persistence · Premium
 ═══════════════════════════════════════════════ */
 
 /* ── Ambient particles ── */
@@ -1411,106 +1434,210 @@ const AudioEngine=(()=>{
   return{play,playSuccess,setEnabled,getEnabled};
 })();
 
-/* ── Key Validator (obfuscated) ── */
+/* ── Key Validator ── */
 const KeyValidator=(()=>{
-  // Keys stored as encoded tokens — do not log or expose raw values
   const _t=(s)=>btoa(unescape(encodeURIComponent(s)));
   const _r=(s)=>decodeURIComponent(escape(atob(s)));
-  // Table: encoded plan id → encoded key hash
   const _tbl={
     [_t('7d')]:  _t('6716673666day'),
     [_t('1m')]:  _t('6716673666month'),
     [_t('1y')]:  _t('6716673666year'),
     [_t('life')]:_t('6716673666lifetime'),
   };
-  function validate(planId, rawKey){
-    try{
-      const ek=_tbl[_t(planId)];
-      if(!ek)return false;
-      return _r(ek)===rawKey.trim();
-    }catch(e){return false;}
+  function validate(planId,rawKey){
+    try{const ek=_tbl[_t(planId)];if(!ek)return false;return _r(ek)===rawKey.trim();}catch(e){return false;}
   }
   return{validate};
 })();
 
-/* ── Auth System ── */
+/* ══════════════════════════════════════
+   GOOGLE AUTH SYSTEM
+   Replaces email/password auth entirely
+══════════════════════════════════════ */
 const Auth=(()=>{
-  const $=id=>document.getElementById(id);
-  let currentUser=null;
-  const STORE_KEY='jn_users_v2';
   const SESSION_KEY='jn_session_v2';
+  const USERS_KEY='jn_users_v2';
+  let currentUser=null;
 
-  function getUsers(){try{return JSON.parse(localStorage.getItem(STORE_KEY)||'{}')}catch(e){return{}}}
-  function saveUsers(u){localStorage.setItem(STORE_KEY,JSON.stringify(u))}
+  /* ── Parse Google JWT (id_token) without a library ── */
+  function parseJwt(token){
+    try{
+      const base64Url=token.split('.')[1];
+      const base64=base64Url.replace(/-/g,'+').replace(/_/g,'/');
+      const json=decodeURIComponent(atob(base64).split('').map(c=>'%'+('00'+c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+      return JSON.parse(json);
+    }catch(e){return null;}
+  }
 
-  function getSession(){try{const s=JSON.parse(localStorage.getItem(SESSION_KEY)||'null');if(s&&s.email&&s.exp>Date.now())return s;localStorage.removeItem(SESSION_KEY);return null;}catch(e){return null;}}
-  function saveSession(email,name){const s={email,name,exp:Date.now()+86400000*30};localStorage.setItem(SESSION_KEY,JSON.stringify(s));return s;}
+  /* ── Save / load session ── */
+  function saveSession(data){
+    const s={...data,exp:Date.now()+86400000*30};
+    localStorage.setItem(SESSION_KEY,JSON.stringify(s));
+    return s;
+  }
+  function getSession(){
+    try{
+      const s=JSON.parse(localStorage.getItem(SESSION_KEY)||'null');
+      if(s&&s.email&&s.exp>Date.now())return s;
+      localStorage.removeItem(SESSION_KEY);return null;
+    }catch(e){return null;}
+  }
 
+  /* ── User store helpers (mirror old structure for SubManager) ── */
+  function getUsers(){try{return JSON.parse(localStorage.getItem(USERS_KEY)||'{}')}catch(e){return{}}}
+  function saveUsers(u){localStorage.setItem(USERS_KEY,JSON.stringify(u))}
+  function ensureUser(email,name,picture){
+    const users=getUsers();
+    if(!users[email]){
+      users[email]={name,picture,created:Date.now(),subs:[],usedKeys:[]};
+      saveUsers(users);
+    } else {
+      // Update name/picture from Google on each login
+      users[email].name=name;
+      if(picture)users[email].picture=picture;
+      saveUsers(users);
+    }
+    return users[email];
+  }
+
+  /* ── Init: check saved session ── */
   function init(){
     const sess=getSession();
     if(sess){currentUser=sess;return true;}
     return false;
   }
 
-  function switchTab(tab){
-    const isLogin=tab==='login';
-    $('loginTab').classList.toggle('on',isLogin);
-    $('registerTab').classList.toggle('on',!isLogin);
-    $('authTitle').textContent=isLogin?'Welcome back':'Create account';
-    $('authSub').textContent=isLogin?'Sign in to continue':'Join JellyNotify Premium';
-    $('authBtn').textContent=isLogin?'Sign In':'Register';
-    $('authName').style.display=isLogin?'none':'block';
-    $('authErr').textContent='';
-  }
+  /* ── Google Sign-In button click → use GIS popup ── */
+  function signInWithGoogle(){
+    document.getElementById('authErr').textContent='';
 
-  function submit(){
-    const email=$('authEmail').value.trim().toLowerCase();
-    const pass=$('authPass').value;
-    const isLogin=$('loginTab').classList.contains('on');
-    $('authErr').textContent='';
+    // If running in Capacitor, use the plugin
+    if(window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.GoogleAuth){
+      window.Capacitor.Plugins.GoogleAuth.signIn()
+        .then(gUser=>{
+          const name=gUser.displayName||gUser.name||'Google User';
+          const email=gUser.email||'';
+          const picture=gUser.imageUrl||gUser.picture||'';
+          _finishGoogleLogin({name,email,picture});
+        })
+        .catch(err=>{
+          document.getElementById('authErr').textContent='Google sign-in failed. Please try again.';
+        });
+      return;
+    }
 
-    if(!email||!email.includes('@')){$('authErr').textContent='Enter a valid email';return;}
-    if(pass.length<6){$('authErr').textContent='Password must be at least 6 characters';return;}
-
-    const users=getUsers();
-
-    if(isLogin){
-      if(!users[email]){$('authErr').textContent='Account not found';return;}
-      if(users[email].pass!==btoa(pass)){$('authErr').textContent='Incorrect password';return;}
-      const sess=saveSession(email,users[email].name);
-      currentUser=sess;
-      showApp();
+    // Web: use GIS (Google Identity Services) credential flow
+    // Requires google identity services script loaded
+    if(window.google&&window.google.accounts){
+      google.accounts.id.initialize({
+        client_id:'YOUR_GOOGLE_CLIENT_ID',
+        callback:handleGoogleCredential,
+        auto_select:false,
+        cancel_on_tap_outside:true,
+      });
+      google.accounts.id.prompt((notification)=>{
+        if(notification.isNotDisplayed()||notification.isSkippedMoment()){
+          // Fallback: open popup
+          _openGoogleOAuthPopup();
+        }
+      });
     } else {
-      const name=$('authName').value.trim()||'Jelly User';
-      if(users[email]){$('authErr').textContent='Email already registered';return;}
-      users[email]={name,pass:btoa(pass),created:Date.now(),subs:[]};
-      saveUsers(users);
-      const sess=saveSession(email,name);
-      currentUser=sess;
-      showApp();
+      // Google script not yet loaded — show helpful message
+      document.getElementById('authErr').textContent='Google Sign-In loading… please wait a moment and try again.';
     }
   }
 
+  /* ── Fallback OAuth popup (when One Tap is unavailable) ── */
+  function _openGoogleOAuthPopup(){
+    const clientId='YOUR_GOOGLE_CLIENT_ID';
+    const redirectUri=encodeURIComponent(window.location.origin+window.location.pathname);
+    const scope=encodeURIComponent('openid email profile');
+    const state=btoa(Math.random().toString());
+    const url=`https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=${scope}&state=${state}`;
+
+    const popup=window.open(url,'google-signin','width=500,height=600,scrollbars=yes');
+    if(!popup){
+      document.getElementById('authErr').textContent='Popup blocked. Please allow popups and try again.';
+      return;
+    }
+
+    // Poll popup for redirect with access token
+    const poll=setInterval(()=>{
+      try{
+        if(popup.closed){clearInterval(poll);return;}
+        const hash=popup.location.hash;
+        if(hash&&hash.includes('access_token')){
+          clearInterval(poll);
+          popup.close();
+          const params=new URLSearchParams(hash.slice(1));
+          const accessToken=params.get('access_token');
+          if(accessToken)_fetchGoogleProfile(accessToken);
+        }
+      }catch(e){/* Cross-origin, keep polling */}
+    },500);
+  }
+
+  /* ── Fetch Google profile with access token ── */
+  function _fetchGoogleProfile(accessToken){
+    fetch('https://www.googleapis.com/oauth2/v3/userinfo',{headers:{Authorization:'Bearer '+accessToken}})
+      .then(r=>r.json())
+      .then(profile=>{
+        _finishGoogleLogin({
+          name:profile.name||'Google User',
+          email:profile.email||'',
+          picture:profile.picture||'',
+        });
+      })
+      .catch(()=>{
+        document.getElementById('authErr').textContent='Could not fetch Google profile. Please try again.';
+      });
+  }
+
+  /* ── Called by google.accounts callback (One Tap / GIS) ── */
+  function handleGoogleCredential(response){
+    const payload=parseJwt(response.credential);
+    if(!payload){
+      document.getElementById('authErr').textContent='Invalid Google token. Please try again.';
+      return;
+    }
+    _finishGoogleLogin({
+      name:payload.name||'Google User',
+      email:payload.email||'',
+      picture:payload.picture||'',
+    });
+  }
+
+  /* ── Final step: save session & show app ── */
+  function _finishGoogleLogin({name,email,picture}){
+    ensureUser(email,name,picture);
+    const sess=saveSession({name,email,picture,provider:'google'});
+    currentUser=sess;
+    _showApp();
+  }
+
+  function _showApp(){
+    document.getElementById('authWall').style.display='none';
+    document.getElementById('root').style.display='flex';
+    App.init();
+    setTimeout(()=>{
+      const sub=SubManager.getActiveSub();
+      if(!sub)SubManager.openModal();
+    },1500);
+  }
+
+  /* ── Logout ── */
   function logout(){
     if(!confirm('Sign out?'))return;
     localStorage.removeItem(SESSION_KEY);
     currentUser=null;
+    // Sign out from Google GIS silently
+    if(window.google&&window.google.accounts)google.accounts.id.disableAutoSelect();
     document.getElementById('root').style.display='none';
     document.getElementById('authWall').style.display='flex';
-    toast('Signed out');
+    window.toast('Signed out');
   }
 
-  function showApp(){
-    $('authWall').style.display='none';
-    document.getElementById('root').style.display='flex';
-    App.init();
-    // Show subscription modal after a delay if no active sub
-    setTimeout(()=>{
-      const sub=SubManager.getActiveSub();
-      if(!sub){SubManager.openModal();}
-    },1500);
-  }
-
+  /* ── Getters ── */
   function getUser(){return currentUser;}
   function getUserData(){
     if(!currentUser)return null;
@@ -1525,12 +1652,41 @@ const Auth=(()=>{
     saveUsers(users);
   }
 
-  // Key press enter
-  document.addEventListener('keydown',e=>{
-    if(e.key==='Enter'&&$('authWall')?.style.display!=='none')submit();
-  });
+  return{init,signInWithGoogle,handleGoogleCredential,logout,getUser,getUserData,updateUserData};
+})();
 
-  return{init,submit,logout,switchTab,getUser,getUserData,updateUserData};
+/* ── Global callback for Google GIS ── */
+function handleGoogleCredential(response){Auth.handleGoogleCredential(response);}
+
+/* ═══════════════════════════════════════════════
+   NOTIFICATION PERSISTENCE
+   Saves/restores all logs to/from localStorage
+═══════════════════════════════════════════════ */
+const LogStore=(()=>{
+  const KEY='jn_logs';
+  const MAX=100;
+
+  function save(logs){
+    try{
+      // Keep only last MAX entries; serialize time as ISO string
+      const toStore=logs.slice(0,MAX).map(l=>({...l,time:l.time instanceof Date?l.time.toISOString():l.time}));
+      localStorage.setItem(KEY,JSON.stringify(toStore));
+    }catch(e){}
+  }
+
+  function load(){
+    try{
+      const raw=JSON.parse(localStorage.getItem(KEY)||'[]');
+      // Re-hydrate Date objects
+      return raw.map(l=>({...l,time:new Date(l.time)}));
+    }catch(e){return[];}
+  }
+
+  function clear(){
+    localStorage.removeItem(KEY);
+  }
+
+  return{save,load,clear};
 })();
 
 /* ── Subscription Manager ── */
@@ -1572,19 +1728,14 @@ const SubManager=(()=>{
     });
   }
 
-  function openModal(){
-    renderPlans();
-    $('subOverlay').classList.add('open');
-  }
+  function openModal(){renderPlans();$('subOverlay').classList.add('open');}
   function closeModal(){$('subOverlay').classList.remove('open')}
 
   function openKeyModal(plan){
-    selectedPlan=plan;
-    closeModal();
+    selectedPlan=plan;closeModal();
     $('keyPlanName').textContent=plan.name+' Plan';
     $('keyPlanPrice').textContent=plan.price+' TAKA';
-    $('keyInput').value='';
-    $('keyErr').textContent='';
+    $('keyInput').value='';$('keyErr').textContent='';
     $('keyOverlay').classList.add('open');
     setTimeout(()=>$('keyInput').focus(),300);
   }
@@ -1595,55 +1746,19 @@ const SubManager=(()=>{
     $('keyErr').textContent='';
     if(!rawKey.trim()){$('keyErr').textContent='Please enter your activation key';return;}
     if(!selectedPlan){$('keyErr').textContent='No plan selected';return;}
-
     const valid=KeyValidator.validate(selectedPlan.id,rawKey);
-    if(!valid){
-      $('keyErr').textContent='Invalid key. Please check and try again.';
-      $('keyInput').value='';
-      return;
-    }
-
-    // Check if this key was already used for THIS user (per-user key usage tracking)
+    if(!valid){$('keyErr').textContent='Invalid key. Please check and try again.';$('keyInput').value='';return;}
     const userData=Auth.getUserData();
     const usedKeys=userData?.usedKeys||[];
-    // Store a hash of used keys, not the raw key
     const keyHash=btoa(selectedPlan.id+':'+rawKey.length+':'+rawKey.charCodeAt(0));
-    if(usedKeys.includes(keyHash)){
-      $('keyErr').textContent='This key has already been used on your account.';
-      $('keyInput').value='';
-      return;
-    }
-
-    // Activate subscription
-    const now=new Date();
-    const expire=new Date();
-    if(selectedPlan.days>0)expire.setDate(expire.getDate()+selectedPlan.days);
-    else expire.setFullYear(2099);// lifetime
-
-    const subRecord={
-      planId:selectedPlan.id,
-      planName:selectedPlan.name,
-      price:selectedPlan.price,
-      startDate:now.toISOString(),
-      expireDate:expire.toISOString(),
-      activatedAt:Date.now(),
-      keyHash,
-    };
-
-    // Save to user data
-    const subs=userData?.subs||[];
-    subs.unshift(subRecord);
+    if(usedKeys.includes(keyHash)){$('keyErr').textContent='This key has already been used on your account.';$('keyInput').value='';return;}
+    const now=new Date();const expire=new Date();
+    if(selectedPlan.days>0)expire.setDate(expire.getDate()+selectedPlan.days);else expire.setFullYear(2099);
+    const subRecord={planId:selectedPlan.id,planName:selectedPlan.name,price:selectedPlan.price,startDate:now.toISOString(),expireDate:expire.toISOString(),activatedAt:Date.now(),keyHash};
+    const subs=userData?.subs||[];subs.unshift(subRecord);
     Auth.updateUserData({subs,usedKeys:[...usedKeys,keyHash],activeSub:subRecord});
-
-    // Clear key from input immediately
-    $('keyInput').value='ACTIVATED';
-    setTimeout(()=>closeKeyModal(),50);
-
-    // Show success
-    showSuccess(subRecord);
-    AudioEngine.playSuccess();
-
-    // Update UI
+    $('keyInput').value='ACTIVATED';setTimeout(()=>closeKeyModal(),50);
+    showSuccess(subRecord);AudioEngine.playSuccess();
     updatePremiumBadge();
     if(document.getElementById('page-profile').classList.contains('active'))App.updateProfile();
     renderSubStatus();
@@ -1653,123 +1768,43 @@ const SubManager=(()=>{
     const userData=Auth.getUserData();
     if(!userData?.activeSub)return null;
     const sub=userData.activeSub;
-    const now=new Date();
-    const exp=new Date(sub.expireDate);
-    if(exp<=now)return null;// expired
+    if(new Date(sub.expireDate)<=new Date())return null;
     return sub;
   }
 
   function showSuccess(sub){
-    const exp=new Date(sub.expireDate);
-    const isLifetime=sub.planId==='life';
-    $('successDetails').textContent=isLifetime
-      ?'Lifetime access activated. All premium features unlocked forever!'
-      :`Your ${sub.planName} plan is active. Expires ${exp.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})}.`;
+    const exp=new Date(sub.expireDate);const isLifetime=sub.planId==='life';
+    $('successDetails').textContent=isLifetime?'Lifetime access activated. All premium features unlocked forever!':`Your ${sub.planName} plan is active. Expires ${exp.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})}.`;
     $('successPlanName').textContent=sub.planName+' Activated';
-    spawnConfetti();
-    $('successOverlay').classList.add('open');
+    spawnConfetti();$('successOverlay').classList.add('open');
   }
-
-  function closeSuccess(){
-    $('successOverlay').classList.remove('open');
-    toast('✓ Premium activated!',3000);
-  }
+  function closeSuccess(){$('successOverlay').classList.remove('open');toast('✓ Premium activated!',3000);}
 
   function spawnConfetti(){
-    const wrap=$('confettiWrap');if(!wrap)return;
-    wrap.innerHTML='';
+    const wrap=$('confettiWrap');if(!wrap)return;wrap.innerHTML='';
     const colors=['#f0b429','#18c97a','#9b6dff','#00c8ff','#f04060'];
-    for(let i=0;i<18;i++){
-      const d=document.createElement('div');
-      d.className='confetti-dot';
-      d.style.cssText=`left:${5+Math.random()*90}%;top:${10+Math.random()*30}%;background:${colors[i%colors.length]};animation-delay:${Math.random()*0.5}s;animation-duration:${0.8+Math.random()*0.8}s`;
-      wrap.appendChild(d);
-    }
+    for(let i=0;i<18;i++){const d=document.createElement('div');d.className='confetti-dot';d.style.cssText=`left:${5+Math.random()*90}%;top:${10+Math.random()*30}%;background:${colors[i%colors.length]};animation-delay:${Math.random()*0.5}s;animation-duration:${0.8+Math.random()*0.8}s`;wrap.appendChild(d);}
   }
 
   function updatePremiumBadge(){
-    const sub=getActiveSub();
-    const badge=$('premiumTopBadge');
-    if(!badge)return;
-    badge.style.display=sub?'flex':'none';
+    const sub=getActiveSub();const badge=$('premiumTopBadge');if(!badge)return;badge.style.display=sub?'flex':'none';
   }
 
   function renderSubStatus(){
     const section=$('subStatusSection');if(!section)return;
-    const sub=getActiveSub();
-    const userData=Auth.getUserData();
-
+    const sub=getActiveSub();const userData=Auth.getUserData();
     if(!sub){
-      section.innerHTML=`
-        <div class="no-sub-card">
-          <div class="no-sub-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
-          <div class="no-sub-title">No Active Subscription</div>
-          <div class="no-sub-sub">Upgrade to unlock unlimited channels, advanced analytics, and premium support.</div>
-          <button class="btn-upgrade" onclick="SubManager.openModal()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            View Plans
-          </button>
-        </div>
-      `;
+      section.innerHTML=`<div class="no-sub-card"><div class="no-sub-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><div class="no-sub-title">No Active Subscription</div><div class="no-sub-sub">Upgrade to unlock unlimited channels, advanced analytics, and premium support.</div><button class="btn-upgrade" onclick="SubManager.openModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>View Plans</button></div>`;
     } else {
-      const start=new Date(sub.startDate);
-      const exp=new Date(sub.expireDate);
-      const isLifetime=sub.planId==='life';
-      const now=Date.now();
-      const totalMs=exp.getTime()-start.getTime();
-      const usedMs=now-start.getTime();
+      const start=new Date(sub.startDate);const exp=new Date(sub.expireDate);const isLifetime=sub.planId==='life';
+      const now=Date.now();const totalMs=exp.getTime()-start.getTime();const usedMs=now-start.getTime();
       const progressPct=isLifetime?99:Math.min(99,Math.round((usedMs/totalMs)*100));
-      const remainMs=exp.getTime()-now;
-      const remainDays=Math.ceil(remainMs/86400000);
-
+      const remainMs=exp.getTime()-now;const remainDays=Math.ceil(remainMs/86400000);
       const fmt=d=>new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-
-      // Countdown
-      const days=Math.floor(remainMs/86400000);
-      const hrs=Math.floor((remainMs%86400000)/3600000);
-      const mins=Math.floor((remainMs%3600000)/60000);
-
-      section.innerHTML=`
-        <div class="sub-info-card">
-          <div class="sub-card-row">
-            <div class="sub-plan-name">⭐ ${sub.planName} Plan</div>
-            <div class="sub-status-badge active"><div class="dot"></div>Active</div>
-          </div>
-          <div class="sub-detail-grid">
-            <div class="sub-detail">
-              <div class="sub-detail-lbl">Start Date</div>
-              <div class="sub-detail-val">${fmt(sub.startDate)}</div>
-            </div>
-            <div class="sub-detail">
-              <div class="sub-detail-lbl">Expire Date</div>
-              <div class="sub-detail-val highlight">${isLifetime?'Never ♾️':fmt(sub.expireDate)}</div>
-            </div>
-            <div class="sub-detail">
-              <div class="sub-detail-lbl">Status</div>
-              <div class="sub-detail-val text-green">● Active</div>
-            </div>
-            <div class="sub-detail">
-              <div class="sub-detail-lbl">Remaining</div>
-              <div class="sub-detail-val highlight">${isLifetime?'Lifetime':remainDays+' days'}</div>
-            </div>
-          </div>
-          ${!isLifetime?`
-          <div class="sub-progress-wrap">
-            <div class="sub-progress-lbl"><span>Used</span><span>${100-progressPct}% remaining</span></div>
-            <div class="sub-progress-track"><div class="sub-progress-fill" id="subProgressFill" style="width:${progressPct}%"></div></div>
-          </div>
-          <div class="sub-countdown">
-            <span>Expires in:</span>
-            <span class="cnt-val" id="subCountdown">${days}d ${hrs}h ${mins}m</span>
-          </div>`:'<div class="sub-countdown" style="margin-top:12px"><span class="cnt-val">♾️ Lifetime Access — Never Expires</span></div>'}
-        </div>
-      `;
-
-      // Start countdown timer
+      const days=Math.floor(remainMs/86400000);const hrs=Math.floor((remainMs%86400000)/3600000);const mins=Math.floor((remainMs%3600000)/60000);
+      section.innerHTML=`<div class="sub-info-card"><div class="sub-card-row"><div class="sub-plan-name">⭐ ${sub.planName} Plan</div><div class="sub-status-badge active"><div class="dot"></div>Active</div></div><div class="sub-detail-grid"><div class="sub-detail"><div class="sub-detail-lbl">Start Date</div><div class="sub-detail-val">${fmt(sub.startDate)}</div></div><div class="sub-detail"><div class="sub-detail-lbl">Expire Date</div><div class="sub-detail-val highlight">${isLifetime?'Never ♾️':fmt(sub.expireDate)}</div></div><div class="sub-detail"><div class="sub-detail-lbl">Status</div><div class="sub-detail-val text-green">● Active</div></div><div class="sub-detail"><div class="sub-detail-lbl">Remaining</div><div class="sub-detail-val highlight">${isLifetime?'Lifetime':remainDays+' days'}</div></div></div>${!isLifetime?`<div class="sub-progress-wrap"><div class="sub-progress-lbl"><span>Used</span><span>${100-progressPct}% remaining</span></div><div class="sub-progress-track"><div class="sub-progress-fill" id="subProgressFill" style="width:${progressPct}%"></div></div></div><div class="sub-countdown"><span>Expires in:</span><span class="cnt-val" id="subCountdown">${days}d ${hrs}h ${mins}m</span></div>`:'<div class="sub-countdown" style="margin-top:12px"><span class="cnt-val">♾️ Lifetime Access — Never Expires</span></div>'}</div>`;
       if(!isLifetime)startCountdown(exp);
     }
-
-    // History
     renderSubHistory(userData?.subs||[]);
   }
 
@@ -1780,47 +1815,24 @@ const SubManager=(()=>{
       const el=document.getElementById('subCountdown');if(!el){clearInterval(countdownTimer);return;}
       const remainMs=expDate.getTime()-Date.now();
       if(remainMs<=0){el.textContent='Expired';clearInterval(countdownTimer);renderSubStatus();return;}
-      const d=Math.floor(remainMs/86400000);
-      const h=Math.floor((remainMs%86400000)/3600000);
-      const m=Math.floor((remainMs%3600000)/60000);
-      const s=Math.floor((remainMs%60000)/1000);
+      const d=Math.floor(remainMs/86400000);const h=Math.floor((remainMs%86400000)/3600000);const m=Math.floor((remainMs%3600000)/60000);const s=Math.floor((remainMs%60000)/1000);
       el.textContent=`${d}d ${h}h ${m}m ${s}s`;
     },1000);
   }
 
   function renderSubHistory(subs){
     const el=$('subHistorySection');if(!el)return;
-    if(!subs||subs.length===0){
-      el.innerHTML=`<div class="empty-state"><div class="empty-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div><div class="empty-title">No subscription history</div><div class="empty-sub">Upgrade to unlock premium features.</div></div>`;
-      return;
-    }
+    if(!subs||subs.length===0){el.innerHTML=`<div class="empty-state"><div class="empty-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div><div class="empty-title">No subscription history</div><div class="empty-sub">Upgrade to unlock premium features.</div></div>`;return;}
     el.innerHTML='';
     subs.forEach((s,i)=>{
-      const exp=new Date(s.expireDate);
-      const now=new Date();
-      const isActive=exp>now;
-      const isLifetime=s.planId==='life';
-      const d=document.createElement('div');
-      d.className='history-item';
-      d.innerHTML=`
-        <div class="history-row">
-          <div class="history-plan">${i===0&&isActive?'⭐ ':''} ${s.planName} Plan</div>
-          <div class="sub-status-badge ${isActive?'active':'expired'}" style="padding:2px 8px;font-size:9px">
-            <div class="dot"></div>${isActive?'Active':'Expired'}
-          </div>
-        </div>
-        <div class="history-dates">Start: ${new Date(s.startDate).toLocaleDateString()} · Expire: ${isLifetime?'Lifetime':exp.toLocaleDateString()}</div>
-      `;
+      const exp=new Date(s.expireDate);const now=new Date();const isActive=exp>now;const isLifetime=s.planId==='life';
+      const d=document.createElement('div');d.className='history-item';
+      d.innerHTML=`<div class="history-row"><div class="history-plan">${i===0&&isActive?'⭐ ':''} ${s.planName} Plan</div><div class="sub-status-badge ${isActive?'active':'expired'}" style="padding:2px 8px;font-size:9px"><div class="dot"></div>${isActive?'Active':'Expired'}</div></div><div class="history-dates">Start: ${new Date(s.startDate).toLocaleDateString()} · Expire: ${isLifetime?'Lifetime':exp.toLocaleDateString()}</div>`;
       el.appendChild(d);
     });
   }
 
-  function getSubHealthStatus(){
-    const sub=getActiveSub();
-    return sub?{text:'● Active · '+sub.planName,cls:'hv-ok'}:{text:'○ Free Plan',cls:'hv-warn'};
-  }
-
-  // Block premium features if no active sub
+  function getSubHealthStatus(){const sub=getActiveSub();return sub?{text:'● Active · '+sub.planName,cls:'hv-ok'}:{text:'○ Free Plan',cls:'hv-warn'};}
   function isPremium(){return !!getActiveSub();}
 
   return{openModal,closeModal,openKeyModal,closeKeyModal,activateKey,getActiveSub,updatePremiumBadge,renderSubStatus,isPremium,getSubHealthStatus,closeSuccess};
@@ -1869,7 +1881,9 @@ const NotifManager=(()=>{
 ═══════════════════════════════════════ */
 const App=(()=>{
   const state={
-    topics:[], connections:{}, logs:[], unread:0, urgentCount:0,
+    topics:[],connections:{},
+    logs:[],          // in-memory log array (also persisted via LogStore)
+    unread:0,urgentCount:0,
     prefs:{
       sound:JSON.parse(localStorage.getItem('jn_sound')||'true'),
       push:true,vib:true,anim:true,
@@ -1892,7 +1906,10 @@ const App=(()=>{
   };
 
   function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
-  function ts(d){return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`}
+  function ts(d){
+    if(!(d instanceof Date)||isNaN(d))return '--:--:--';
+    return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;
+  }
 
   function applyAccent(){
     const h=state.prefs.accent;
@@ -1962,30 +1979,82 @@ const App=(()=>{
 
   const PMAP={5:{label:'Urgent',pcls:'p5',tagCls:'tag-urgent'},4:{label:'High',pcls:'p4',tagCls:'tag-high'},3:{label:'Normal',pcls:'p3',tagCls:'tag-normal'},2:{label:'Low',pcls:'p2',tagCls:'tag-normal'},1:{label:'Min',pcls:'p1',tagCls:'tag-normal'}};
 
+  /* ── Render a single card into the DOM (no persistence side-effects) ── */
+  function _renderCard(entry,glow=false){
+    const p=PMAP[entry.priority]||PMAP[3];
+    const isTest=entry.type==='test';
+    const urgent=entry.priority>=5;
+    const card=document.createElement('div');
+    const glowClass=glow?(urgent?'urgent-glow':'new-glow'):'';
+    card.className=`notif ${p.pcls}${isTest?' p-test':''} ${glowClass}`.trim();
+    card.dataset.priority=String(entry.priority);card.dataset.type=entry.type;
+    const tagCls=isTest?'tag-test':p.tagCls;const tagLabel=isTest?'Test':p.label;
+    card.innerHTML=`<div class="n-row1"><div class="n-meta"><span class="n-channel">#${esc(entry.topic)}</span><span class="n-tag ${tagCls}">${tagLabel}</span></div><div class="n-right"><span class="n-time">${ts(entry.time)}</span><span class="n-dismiss" title="Dismiss"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span></div></div><div class="n-title">${esc(entry.title)}</div>${entry.body?`<div class="n-body">${esc(entry.body)}</div>`:''}`;
+    card.querySelector('.n-dismiss').addEventListener('click',()=>dismissCard(card));
+    if(glow)setTimeout(()=>card.classList.remove('new-glow','urgent-glow'),1600);
+    return card;
+  }
+
+  /* ── Add a new notification: update state, persist, render ── */
   function addCard({topic,title,body,priority=3,time=new Date(),type='live'}){
     if(priority<state.prefs.priorityFilter)return;
-    const p=PMAP[priority]||PMAP[3];const isTest=type==='test';const urgent=priority>=5;
+    const urgent=priority>=5;
     const entry={topic,title,body,priority,time,type,id:Date.now()+Math.random()};
-    state.logs.unshift(entry);sparkData.push({t:Date.now(),v:priority});if(sparkData.length>30)sparkData.shift();
+
+    // Prepend to in-memory array and persist (cap at 100)
+    state.logs.unshift(entry);
+    if(state.logs.length>100)state.logs=state.logs.slice(0,100);
+    LogStore.save(state.logs);
+
+    sparkData.push({t:Date.now(),v:priority});if(sparkData.length>30)sparkData.shift();
     state.unread++;if(urgent)state.urgentCount++;
-    $('statTotal').textContent=state.logs.length;$('statUrgent').textContent=state.urgentCount;
-    updateBell();if(urgent)$('alertBadge').classList.add('show');
+
+    $('statTotal').textContent=state.logs.length;
+    $('statUrgent').textContent=state.urgentCount;
+    updateBell();
+    if(urgent)$('alertBadge').classList.add('show');
     $('feedSub').textContent=`${state.logs.length} event${state.logs.length!==1?'s':''} · Last: ${ts(time)}`;
-    const card=document.createElement('div');
-    const glowClass=urgent?'urgent-glow':'new-glow';
-    card.className=`notif ${p.pcls}${isTest?' p-test':''} ${glowClass}`;
-    card.dataset.priority=String(priority);card.dataset.type=type;
-    const tagCls=isTest?'tag-test':p.tagCls;const tagLabel=isTest?'Test':p.label;
-    card.innerHTML=`<div class="n-row1"><div class="n-meta"><span class="n-channel">#${esc(topic)}</span><span class="n-tag ${tagCls}">${tagLabel}</span></div><div class="n-right"><span class="n-time">${ts(time)}</span><span class="n-dismiss" title="Dismiss"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span></div></div><div class="n-title">${esc(title)}</div>${body?`<div class="n-body">${esc(body)}</div>`:''}`;
-    card.querySelector('.n-dismiss').addEventListener('click',()=>dismissCard(card));
-    const wrap=$('feedWrap');$('emptyState').style.display='none';
-    const first=wrap.querySelector('.notif');if(first)wrap.insertBefore(card,first);else wrap.appendChild(card);
-    setTimeout(()=>card.classList.remove('new-glow','urgent-glow'),1600);applyFilter();
+
+    // Render card into feed
+    const card=_renderCard(entry,true);
+    const wrap=$('feedWrap');
+    $('emptyState').style.display='none';
+    const first=wrap.querySelector('.notif');
+    if(first)wrap.insertBefore(card,first);else wrap.appendChild(card);
+    applyFilter();
+  }
+
+  /* ── Restore persisted logs on load (no sound/push/badges) ── */
+  function restoreLogs(){
+    const saved=LogStore.load();
+    if(!saved||saved.length===0)return;
+
+    state.logs=saved;
+    // Rebuild urgentCount from saved data
+    state.urgentCount=saved.filter(l=>l.priority>=5).length;
+    sparkData=saved.slice(0,30).reverse().map(l=>({t:l.time instanceof Date?l.time.getTime():new Date(l.time).getTime(),v:l.priority}));
+
+    $('statTotal').textContent=state.logs.length;
+    $('statUrgent').textContent=state.urgentCount;
+    $('feedSub').textContent=`${state.logs.length} event${state.logs.length!==1?'s':''} · Restored`;
+
+    const wrap=$('feedWrap');
+    $('emptyState').style.display='none';
+
+    // Render all saved cards (oldest last = top of array = newest first)
+    saved.forEach(entry=>{
+      const card=_renderCard(entry,false);
+      wrap.appendChild(card); // append in order (newest first in array → prepend order restored)
+    });
+    applyFilter();
   }
 
   function dismissCard(card){
     card.classList.add('out');
-    card.addEventListener('animationend',()=>{card.remove();if(!$('feedWrap').querySelector('.notif'))$('emptyState').style.display='';},{once:true});
+    card.addEventListener('animationend',()=>{
+      card.remove();
+      if(!$('feedWrap').querySelector('.notif'))$('emptyState').style.display='';
+    },{once:true});
   }
 
   function renderAlertFeed(){
@@ -2033,6 +2102,8 @@ const App=(()=>{
     const userData=Auth.getUserData();
     const user=Auth.getUser();
     const name=userData?.name||user?.name||'Jelly User';
+    const googleEmail=user?.email||'';
+    const googlePicture=userData?.picture||user?.picture||'';
     const sub=SubManager.getActiveSub();
     const handle=state.profile.handle;
     const bio=state.profile.bio;
@@ -2042,8 +2113,22 @@ const App=(()=>{
     $('profileBio').textContent=bio;
     $('profileSubLine').textContent=sub?`Premium · ${sub.planName} Active`:'Free Plan';
 
-    const initials=name.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase()||'JN';
-    const av=$('avatarEl');av.textContent=initials;
+    // Show Google account tag
+    const googleTag=$('googleAccountTag');
+    const googleEmailEl=$('googleEmailTag');
+    if(googleTag&&googleEmail){
+      googleTag.style.display='inline-flex';
+      if(googleEmailEl)googleEmailEl.textContent=googleEmail;
+    }
+
+    // Avatar: show Google profile photo if available, otherwise initials
+    const av=$('avatarEl');
+    if(googlePicture){
+      av.innerHTML=`<img src="${googlePicture}" alt="${esc(name)}" onerror="this.parentElement.innerHTML='${name.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase()||'JN'}'"/>`;
+    } else {
+      const initials=name.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase()||'JN';
+      av.textContent=initials;
+    }
     if(sub){av.classList.add('premium-avatar');}else{av.classList.remove('premium-avatar');}
 
     const badge=$('profileBadge');
@@ -2058,13 +2143,12 @@ const App=(()=>{
     $('psChannels').textContent=state.topics.length;
     const elapsed=Math.floor((Date.now()-state.startTime)/60000);
     $('psUptime').textContent=elapsed+'m';
-
     SubManager.renderSubStatus();
   }
 
   function updateBell(){
     const b=$('bellBadge');b.textContent=state.unread>99?'99+':state.unread;
-    b.classList.toggle('show',state.unread>0);b.classList.remove('bump');void b.offsetWidth;b.classList.add('bump');
+    b.classList.toggle('show',state.unread>0);
   }
   function toggleFilter(){state.filterVisible=!state.filterVisible;$('filterRow').style.display=state.filterVisible?'flex':'none';}
   function setFilter(f,el){state.filter=f;document.querySelectorAll('.f-pill').forEach(c=>c.classList.remove('on'));el.classList.add('on');applyFilter();}
@@ -2121,13 +2205,15 @@ const App=(()=>{
     closeEditProfile();updateProfile();toast('Profile saved');
   }
 
+  /* ── Clear logs: remove from DOM, memory, and localStorage ── */
   function clearLogs(){
     $('feedWrap').querySelectorAll('.notif').forEach(c=>c.remove());
     $('emptyState').style.display='';
     state.logs=[];state.unread=0;state.urgentCount=0;sparkData=[];
+    LogStore.clear(); // <-- also wipe from localStorage
     $('statTotal').textContent='0';$('statUrgent').textContent='0';
     $('feedSub').textContent='Waiting for events…';
-    $('bellBadge').classList.remove('show','bump');$('alertBadge').classList.remove('show');
+    $('bellBadge').classList.remove('show');$('alertBadge').classList.remove('show');
     toast('Logs cleared');
   }
 
@@ -2146,7 +2232,7 @@ const App=(()=>{
     AudioEngine.play(true);NotifManager.send(p.title,p.body,t,true);toast('Urgent alert fired');
   }
 
-  function clearBadge(){state.unread=0;$('bellBadge').textContent='0';$('bellBadge').classList.remove('show','bump');}
+  function clearBadge(){state.unread=0;$('bellBadge').textContent='0';$('bellBadge').classList.remove('show');}
 
   document.addEventListener('keydown',e=>{
     if(e.key==='Escape'){closeModal();closeEditProfile();$('subOverlay').classList.remove('open');$('keyOverlay').classList.remove('open');}
@@ -2174,31 +2260,23 @@ const App=(()=>{
     const pf=state.prefs.priorityFilter;
     if($('sel-priority'))$('sel-priority').value=String(pf===1?'1':pf===3?'3':pf===4?'4':'5');
 
-    // Load topics from storage
     state.topics=JSON.parse(localStorage.getItem('jn_topics')||'[]');
     state.profile.name=localStorage.getItem('jn_pname')||state.profile.name;
     state.profile.handle=localStorage.getItem('jn_phandle')||state.profile.handle;
     state.profile.bio=localStorage.getItem('jn_pbio')||state.profile.bio;
 
-    // Load user name from auth
     const userData=Auth.getUserData();
     if(userData?.name)state.profile.name=userData.name;
+
+    // ── Restore persisted notifications ──
+    restoreLogs();
 
     renderChips();subscribeAll();updateStatus();
     SubManager.updatePremiumBadge();
     NotifManager.init();startUptime();
     const osEl=$('onesignalStatus');if(osEl){osEl.textContent='● Loaded';osEl.className='health-val hv-ok';}
-
-    // Update profile nav if premium
-    const sub=SubManager.getActiveSub();
-    if(sub){
-      // Add crown to profile nav
-      const profileNav=document.querySelector('[data-page="profile"] .nav-icon');
-      if(profileNav)profileNav.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
-    }
   }
 
-  // expose addCard publicly for Capacitor push integration
   return{nav,init,openModal,closeModal,subscribe,triggerTest,triggerUrgent,clearLogs,toggle,setAccent,setPriorityFilter,reconnectAll,clearStorage,toggleFilter,setFilter,clearBadge,unsubscribe,openEditProfile,closeEditProfile,saveProfile,updateAnalytics,updateProfile,addCard};
 })();
 
@@ -2220,17 +2298,14 @@ window.addEventListener('DOMContentLoaded',()=>{
       loadScreen.style.display='none';
       const loggedIn=Auth.init();
       if(loggedIn){
-        // User is logged in — show app
         document.getElementById('authWall').style.display='none';
         document.getElementById('root').style.display='flex';
         App.init();
-        // Show subscription modal if no active subscription, after short delay
         setTimeout(()=>{
           const sub=SubManager.getActiveSub();
-          if(!sub){SubManager.openModal();}
+          if(!sub)SubManager.openModal();
         },1200);
       } else {
-        // Show auth wall
         document.getElementById('root').style.display='none';
         document.getElementById('authWall').style.display='flex';
       }
@@ -2241,19 +2316,19 @@ window.addEventListener('DOMContentLoaded',()=>{
 
 <!-- ══════════════════════════════════
    CAPACITOR PUSH NOTIFICATION
-   Native Android/iOS push support
 ══════════════════════════════════ -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  // Capacitor না থাকলে (web browser) এই block skip করো
   if (!window.Capacitor) return;
 
+  // Google Auth via Capacitor plugin
+  // The GoogleAuth plugin is initialised automatically; sign-in is triggered by Auth.signInWithGoogle()
+
+  // Push Notifications
   const { PushNotifications } = Capacitor.Plugins;
 
-  // Push permission চাও
   PushNotifications.requestPermissions().then(function(result) {
     if (result.receive === 'granted') {
-      // Permission পেলে FCM/APNS-এ register করো
       PushNotifications.register();
     } else {
       console.warn('JellyNotify: Push permission denied');
@@ -2262,25 +2337,20 @@ document.addEventListener('DOMContentLoaded', function() {
     console.warn('JellyNotify: Push permission error', err);
   });
 
-  // FCM/APNS token পেলে localStorage-এ save করো
   PushNotifications.addListener('registration', function(token) {
     localStorage.setItem('fcm_token', token.value);
     console.log('JellyNotify FCM Token:', token.value);
   });
 
-  // Token registration error
   PushNotifications.addListener('registrationError', function(err) {
     console.error('JellyNotify: FCM registration error', err);
   });
 
-  // App foreground-এ থাকলে push notification আসলে in-app feed-এ দেখাও
   PushNotifications.addListener('pushNotificationReceived', function(notification) {
-    // notification.data থেকে priority ও topic বের করো
     var priority = parseInt((notification.data && notification.data.priority) || '3', 10);
     var topic    = (notification.data && notification.data.topic) || 'push';
     var urgent   = priority >= 5;
 
-    // App-এর Live Feed-এ card যোগ করো
     if (typeof App !== 'undefined' && App.addCard) {
       App.addCard({
         topic:    topic,
@@ -2292,22 +2362,17 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     }
 
-    // Sound ও vibration trigger করো
     if (typeof AudioEngine !== 'undefined') {
       AudioEngine.play(urgent);
     }
 
-    // Urgent হলে vibrate করো
     if (urgent && navigator.vibrate) {
       navigator.vibrate([200, 100, 200]);
     }
   });
 
-  // Notification tap করলে app focus করো
   PushNotifications.addListener('pushNotificationActionPerformed', function(action) {
     window.focus();
-    // যদি notification-এ specific page data থাকে navigate করা যাবে
-    // e.g.: if (action.notification.data.page) App.nav(action.notification.data.page, ...)
   });
 });
 </script>
