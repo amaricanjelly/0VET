@@ -2198,7 +2198,8 @@ const App=(()=>{
     }
   }
 
-  return{nav,init,openModal,closeModal,subscribe,triggerTest,triggerUrgent,clearLogs,toggle,setAccent,setPriorityFilter,reconnectAll,clearStorage,toggleFilter,setFilter,clearBadge,unsubscribe,openEditProfile,closeEditProfile,saveProfile,updateAnalytics,updateProfile};
+  // expose addCard publicly for Capacitor push integration
+  return{nav,init,openModal,closeModal,subscribe,triggerTest,triggerUrgent,clearLogs,toggle,setAccent,setPriorityFilter,reconnectAll,clearStorage,toggleFilter,setFilter,clearBadge,unsubscribe,openEditProfile,closeEditProfile,saveProfile,updateAnalytics,updateProfile,addCard};
 })();
 
 /* ══════════════════════════════════
@@ -2235,6 +2236,79 @@ window.addEventListener('DOMContentLoaded',()=>{
       }
     },700);
   },2200);
+});
+</script>
+
+<!-- ══════════════════════════════════
+   CAPACITOR PUSH NOTIFICATION
+   Native Android/iOS push support
+══════════════════════════════════ -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Capacitor না থাকলে (web browser) এই block skip করো
+  if (!window.Capacitor) return;
+
+  const { PushNotifications } = Capacitor.Plugins;
+
+  // Push permission চাও
+  PushNotifications.requestPermissions().then(function(result) {
+    if (result.receive === 'granted') {
+      // Permission পেলে FCM/APNS-এ register করো
+      PushNotifications.register();
+    } else {
+      console.warn('JellyNotify: Push permission denied');
+    }
+  }).catch(function(err) {
+    console.warn('JellyNotify: Push permission error', err);
+  });
+
+  // FCM/APNS token পেলে localStorage-এ save করো
+  PushNotifications.addListener('registration', function(token) {
+    localStorage.setItem('fcm_token', token.value);
+    console.log('JellyNotify FCM Token:', token.value);
+  });
+
+  // Token registration error
+  PushNotifications.addListener('registrationError', function(err) {
+    console.error('JellyNotify: FCM registration error', err);
+  });
+
+  // App foreground-এ থাকলে push notification আসলে in-app feed-এ দেখাও
+  PushNotifications.addListener('pushNotificationReceived', function(notification) {
+    // notification.data থেকে priority ও topic বের করো
+    var priority = parseInt((notification.data && notification.data.priority) || '3', 10);
+    var topic    = (notification.data && notification.data.topic) || 'push';
+    var urgent   = priority >= 5;
+
+    // App-এর Live Feed-এ card যোগ করো
+    if (typeof App !== 'undefined' && App.addCard) {
+      App.addCard({
+        topic:    topic,
+        title:    notification.title  || 'JellyNotify',
+        body:     notification.body   || '',
+        priority: priority,
+        time:     new Date(),
+        type:     'live'
+      });
+    }
+
+    // Sound ও vibration trigger করো
+    if (typeof AudioEngine !== 'undefined') {
+      AudioEngine.play(urgent);
+    }
+
+    // Urgent হলে vibrate করো
+    if (urgent && navigator.vibrate) {
+      navigator.vibrate([200, 100, 200]);
+    }
+  });
+
+  // Notification tap করলে app focus করো
+  PushNotifications.addListener('pushNotificationActionPerformed', function(action) {
+    window.focus();
+    // যদি notification-এ specific page data থাকে navigate করা যাবে
+    // e.g.: if (action.notification.data.page) App.nav(action.notification.data.page, ...)
+  });
 });
 </script>
 
