@@ -1431,7 +1431,7 @@ const SubManager=(()=>{
     $('keyOverlay').classList.add('open');
     setTimeout(()=>$('keyInput').focus(),300);
   }
-  function closeKeyModal(){$('keyOverlay').classList.remove('open');selectedPlan=null;$('keyInput').value=''}
+  function closeKeyModal(){$('keyOverlay').classList.remove('open');selectedPlan=null;$('keyInput').value='';}
 
   function activateKey(){
     const rawKey=$('keyInput').value;
@@ -2003,15 +2003,28 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   PushNotifications.addListener('pushNotificationReceived', function(notification) {
-    var priority = parseInt((notification.data && notification.data.priority) || '3', 10);
-    var topic    = (notification.data && notification.data.topic) || 'push';
-    var urgent   = priority >= 5;
+    const priority = parseInt((notification.data && notification.data.priority) || '3');
+    const urgent   = priority >= 5;
 
+    // System notification bar এ দেখাও
+    const { LocalNotifications } = Capacitor.Plugins;
+    LocalNotifications.schedule({
+      notifications: [{
+        title:     notification.title || 'JellyNotify',
+        body:      notification.body  || '',
+        id:        Math.floor(Math.random() * 10000),
+        sound:     'default',
+        smallIcon: 'ic_launcher',
+        iconColor: '#00c8ff',
+      }]
+    });
+
+    // App feed এও দেখাও
     if (typeof App !== 'undefined' && App.addCard) {
       App.addCard({
-        topic:    topic,
-        title:    notification.title  || 'JellyNotify',
-        body:     notification.body   || '',
+        topic:    (notification.data && notification.data.topic) || 'push',
+        title:    notification.title || 'JellyNotify',
+        body:     notification.body  || '',
         priority: priority,
         time:     new Date(),
         type:     'live'
@@ -2032,6 +2045,21 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 </script>
+
+<!-- ══════════════════════════════════
+   LOADING SCREEN HTML (injected before root)
+══════════════════════════════════ -->
+<div id="loadScreen">
+  <div class="load-logo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round">
+      <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/>
+      <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+    </svg>
+  </div>
+  <div class="load-name">Jelly<span>Notify</span></div>
+  <div class="load-bar-wrap"><div class="load-bar"></div></div>
+  <div class="load-txt" id="loadTxt">Initializing…</div>
+</div>
 
 </body>
 </html>
