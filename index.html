@@ -1853,6 +1853,7 @@ const App=(()=>{
     if(state.topics.includes(raw)){toast('Already subscribed');closeModal();return;}
     state.topics.push(raw);localStorage.setItem('jn_topics',JSON.stringify(state.topics));
     connectSSE(raw);renderChips();closeModal();toast(`✓ Subscribed to #${raw}`);
+    document.dispatchEvent(new CustomEvent('jn:topicAdded', {detail:{topic:raw}}));
   }
 
   function openEditProfile(){
@@ -1981,8 +1982,43 @@ window.addEventListener('DOMContentLoaded',()=>{
 document.addEventListener('DOMContentLoaded', function() {
   if (!window.Capacitor) return;
 
-  const { PushNotifications } = Capacitor.Plugins;
+  const { PushNotifications, LocalNotifications } = Capacitor.Plugins;
 
+  // ── Notification Channels (ntfy.sh style) ──
+  async function createNotifChannel(channelId, channelName, importance) {
+    try {
+      await LocalNotifications.createChannel({
+        id:          channelId,
+        name:        channelName,
+        importance:  importance || 4,
+        sound:       'default',
+        vibration:   true,
+        lights:      true,
+        lightColor:  '#00c8ff',
+      });
+    } catch(e) {}
+  }
+
+  // Default channels তৈরি করো
+  async function setupChannels() {
+    await createNotifChannel('default',  'Default',      3);
+    await createNotifChannel('high',     'High Priority',4);
+    await createNotifChannel('max',      'Max Priority', 5);
+    await createNotifChannel('low',      'Low Priority', 2);
+    await createNotifChannel('min',      'Min Priority', 1);
+  }
+  setupChannels();
+
+  // Subscribe করা topic গুলোর জন্য channel তৈরি করো
+  async function ensureTopicChannel(topic) {
+    await createNotifChannel(
+      'topic_' + topic,
+      topic,
+      4
+    );
+  }
+
+  // ── FCM Permission & Register ──
   PushNotifications.requestPermissions().then(function(result) {
     if (result.receive === 'granted') {
       PushNotifications.register();
@@ -2002,27 +2038,41 @@ document.addEventListener('DOMContentLoaded', function() {
     console.error('JellyNotify: FCM registration error', err);
   });
 
+  // ── Foreground Push (App খোলা থাকলে) ──
   PushNotifications.addListener('pushNotificationReceived', function(notification) {
     const priority = parseInt((notification.data && notification.data.priority) || '3');
     const urgent   = priority >= 5;
+    const topic    = (notification.data && notification.data.topic) || 'push';
 
-    // System notification bar এ দেখাও
-    const { LocalNotifications } = Capacitor.Plugins;
+    // Topic channel নিশ্চিত করো
+    ensureTopicChannel(topic);
+
+    // System notification দেখাও
+    const channelId = priority >= 5 ? 'max' :
+                      priority >= 4 ? 'high' :
+                      priority <= 1 ? 'min'  :
+                      priority === 2 ? 'low' : 'topic_' + topic;
+
     LocalNotifications.schedule({
       notifications: [{
         title:     notification.title || 'JellyNotify',
         body:      notification.body  || '',
-        id:        Math.floor(Math.random() * 10000),
+        id:        Math.floor(Math.random() * 100000),
+        channelId: channelId,
         sound:     'default',
         smallIcon: 'ic_launcher',
         iconColor: '#00c8ff',
+        extra: {
+          topic:    topic,
+          priority: priority,
+        }
       }]
     });
 
     // App feed এও দেখাও
     if (typeof App !== 'undefined' && App.addCard) {
       App.addCard({
-        topic:    (notification.data && notification.data.topic) || 'push',
+        topic:    topic,
         title:    notification.title || 'JellyNotify',
         body:     notification.body  || '',
         priority: priority,
@@ -2031,17 +2081,24 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     }
 
-    if (typeof AudioEngine !== 'undefined') {
-      AudioEngine.play(urgent);
-    }
+    if (typeof AudioEngine !== 'undefined') AudioEngine.play(urgent);
+    if (urgent && navigator.vibrate) navigator.vibrate([200, 100, 200]);
+  });
 
-    if (urgent && navigator.vibrate) {
-      navigator.vibrate([200, 100, 200]);
+  // ── Background/Killed Push (App বন্ধ থাকলে notification tap) ──
+  PushNotifications.addListener('pushNotificationActionPerformed', function(action) {
+    window.focus();
+    const topic = action.notification.data && action.notification.data.topic;
+    if (topic && typeof App !== 'undefined') {
+      setTimeout(() => App.nav('home', document.querySelector('[data-page="home"]')), 500);
     }
   });
 
-  PushNotifications.addListener('pushNotificationActionPerformed', function(action) {
-    window.focus();
+  // ── নতুন topic subscribe হলে channel তৈরি করো ──
+  document.addEventListener('jn:topicAdded', function(e) {
+    if (e.detail && e.detail.topic) {
+      ensureTopicChannel(e.detail.topic);
+    }
   });
 });
 </script>
