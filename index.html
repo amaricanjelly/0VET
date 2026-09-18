@@ -473,6 +473,9 @@
     }
 
     /* ---------- HIDDEN MUSIC IFRAME ---------- */
+    /* The iframe is pushed completely off-screen and made invisible.
+       No YouTube UI (logo, title, controls, thumbnail) can ever be
+       seen by the visitor. */
     .music-iframe-hidden {
       position: fixed !important;
       left: -9999px !important;
@@ -485,6 +488,7 @@
       z-index: -9999 !important;
       overflow: hidden !important;
       visibility: hidden !important;
+      display: block !important;
     }
 
     /* ---------- RESPONSIVE ---------- */
@@ -684,10 +688,11 @@
       //   fatal errors, never creates duplicate players.
       // - Uses the official YouTube IFrame Player API.
       // - Visually hidden and fully background.
+      // - YouTube UI (logo, title, controls, thumbnail) is never visible.
       // ============================================================
       (function initBackgroundMusic() {
         // ---- Configuration ----
-        var VIDEO_ID = '3W4WLcAOBh8';            // Updated YouTube video ID
+        var VIDEO_ID = '3W4WLcAOBh8';            // Song used as background music
         var TARGET_VOLUME = 100;                  // Near-maximum volume
         var musicContainer = document.getElementById('music-container');
 
@@ -700,7 +705,7 @@
         var apiLoadStarted = false;               // Prevent duplicate API loads
 
         // ---- Utility: safe postMessage to the YouTube iframe ----
-        // Used only if the YT.Player API is unavailable.
+        // Used only as a fallback if the YT.Player API is unavailable.
         function postToIframe(iframe, func, args) {
           try {
             if (!iframe || !iframe.contentWindow) return;
@@ -713,6 +718,7 @@
 
         // ---- Build the hidden iframe that hosts the YouTube player ----
         // This iframe is fully off-screen and cannot affect layout.
+        // No YouTube UI is ever visible to the visitor.
         function createHiddenPlayerIframe() {
           var iframe = document.createElement('iframe');
           iframe.setAttribute('frameborder', '0');
@@ -725,6 +731,7 @@
           // enablejsapi=1 so we can control it via postMessage / YT API
           // playsinline=1 for iOS
           // loop=1 + playlist=VIDEO_ID to loop the single video
+          // controls=0, modestbranding=1, rel=0, showinfo=0 to suppress UI
           iframe.src =
             'https://www.youtube.com/embed/' + VIDEO_ID +
             '?enablejsapi=1' +
@@ -780,7 +787,7 @@
 
           var gestureEvents = ['click', 'touchstart', 'pointerdown', 'keydown'];
           var onFirstGesture = function() {
-            // Remove all listeners immediately
+            // Remove all listeners immediately to prevent duplicates
             gestureEvents.forEach(function(ev) {
               window.removeEventListener(ev, onFirstGesture, true);
             });
@@ -890,6 +897,7 @@
                 },
                 onError: function() {
                   // Video unavailable / blocked — fail silently.
+                  // The rest of the website remains fully functional.
                 }
               }
             });
