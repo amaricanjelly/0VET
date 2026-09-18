@@ -12,30 +12,22 @@
        NEW COLOR THEME — Cherry Blossom + Light Pink + Sky Blue + Deep Blue
        ------------------------------------------------------------
        Soft, romantic, elegant, dreamy, premium.
-       Palette:
-         --cb-pink        : Cherry Blossom Pink
-         --soft-pink      : Soft Pink
-         --light-pink     : Light Pink
-         --sky-blue       : Sky Blue
-         --deep-blue      : Deep / Heavy Blue
-         --white-tone     : Soft white / very light
-         --bg-1..3        : Background gradient stops
        ============================================================ */
     :root {
-      --cb-pink:      #ffd6e7;   /* cherry blossom pink */
-      --soft-pink:    #ffe8f2;   /* soft pink */
-      --light-pink:   #fff2f8;   /* light pink, near white */
-      --sky-blue:     #a7d3f0;   /* sky blue */
-      --sky-blue-2:   #cfe7f7;   /* lighter sky blue */
-      --deep-blue:    #1a2c4e;   /* deep blue */
-      --deep-blue-2:  #0e1a30;   /* deeper blue for background base */
-      --white-tone:   #fdfbff;   /* very light white tone */
-      --ink:          #2a1f3d;   /* dark ink for contrast, slightly blue-violet */
+      --cb-pink:      #ffd6e7;
+      --soft-pink:    #ffe8f2;
+      --light-pink:   #fff2f8;
+      --sky-blue:     #a7d3f0;
+      --sky-blue-2:   #cfe7f7;
+      --deep-blue:    #1a2c4e;
+      --deep-blue-2:  #0e1a30;
+      --white-tone:   #fdfbff;
+      --ink:          #2a1f3d;
 
-      --bg-1: #fdf4fa;           /* near-white with pink hint */
-      --bg-2: #eaf3fc;           /* sky-blue tint */
-      --bg-3: #d6e6f7;           /* deeper sky-blue tint */
-      --bg-4: #1a2c4e;           /* deep blue for edges */
+      --bg-1: #fdf4fa;
+      --bg-2: #eaf3fc;
+      --bg-3: #d6e6f7;
+      --bg-4: #1a2c4e;
 
       --glow-pink:    rgba(255, 200, 220, 0.55);
       --glow-blue:    rgba(150, 200, 240, 0.45);
@@ -64,8 +56,6 @@
     }
 
     /* ---------- BACKGROUND ---------- */
-    /* Cherry-blossom + sky-blue inspired soft gradient.
-       Edges gently deepen into blue for a premium, dreamy feel. */
     .bg-layer {
       position: fixed;
       inset: 0;
@@ -80,7 +70,6 @@
       overflow: hidden;
     }
 
-    /* Very soft pink-white glow that pulses slowly */
     .bg-glow {
       position: absolute;
       width: 130vmax;
@@ -100,7 +89,6 @@
       100% { opacity: 0.95; transform: scale(1.06); }
     }
 
-    /* Soft sky-blue secondary glow on the right side for balance */
     .bg-layer::after {
       content: '';
       position: absolute;
@@ -116,7 +104,6 @@
       pointer-events: none;
     }
 
-    /* petals — cherry blossom pink, slow, calm */
     .petal {
       position: absolute;
       width: 10px;
@@ -185,7 +172,7 @@
       font-weight: 400;
       letter-spacing: 0.04em;
       line-height: 1.15;
-      color: #b0487a;                 /* deeper cherry pink for contrast on light bg */
+      color: #b0487a;
       text-shadow:
         0 0 24px rgba(255, 190, 220, 0.55),
         0 2px 12px rgba(120, 160, 210, 0.18);
@@ -567,9 +554,6 @@
     }
 
     /* ---------- HIDDEN MUSIC IFRAME ---------- */
-    /* The iframe is pushed completely off-screen and made invisible.
-       No YouTube UI (logo, title, controls, thumbnail) can ever be
-       seen by the visitor. */
     .music-iframe-hidden {
       position: fixed !important;
       left: -9999px !important;
@@ -587,7 +571,6 @@
 
     /* ============================================================
        TEASER TIMELINE — small / medium transition moments
-       Non-blocking, purely visual, never blocks reading.
        ============================================================ */
     .teaser-overlay {
       position: fixed;
@@ -941,7 +924,7 @@
   <!-- NEW GARDEN SCREEN -->
   <div class="garden-screen" id="gardenScreen">
     <div class="garden-intro" id="gardenIntro">
-      <div class="garden-title">Hey my future wife, Aishu.</div>
+      <div class="garden-title">Hey my future wife, Ayshuu.</div>
       <div class="divider-line"></div>
       <div class="garden-msg">
         আমার একটা ছোট্ট একটা GARDEN আছে, তুমি কি দেখছো?<br>
@@ -1010,11 +993,35 @@
        CONFIG — easy editing area
        ============================================================ -->
   <script>
+    // ============================================================
     // FINAL IMAGE — configuration
+    // ============================================================
     window.CLOSING_CONFIG = {
-      // Option 1: Provide a direct image URL
+      // ============================================================
+      // IMAGE SOURCE PRIORITY
+      // ------------------------------------------------------------
+      // 1. If AUTO_USE_VIDEO_THUMBNAIL = true, the system will try
+      //    to automatically fetch a thumbnail from the YouTube video
+      //    configured below (VIDEO_ID_FOR_THUMBNAIL), in this order:
+      //      maxresdefault.jpg → sddefault.jpg → hqdefault.jpg → mqdefault.jpg
+      //    The first one that loads successfully will be used.
+      //
+      // 2. If the automatic fetch fails (network / region / removed),
+      //    the system falls back to CLOSING_PHOTO_URL (below).
+      //
+      // 3. If CLOSING_PHOTO_URL is also empty, the built-in
+      //    placeholder is used, and the user can still call
+      //    window.setClosingPhoto(fileOrUrl) at any time.
+      // ============================================================
+      AUTO_USE_VIDEO_THUMBNAIL: true,
+
+      // The YouTube video ID whose thumbnail will be used as the
+      // final closing image when AUTO_USE_VIDEO_THUMBNAIL is true.
+      VIDEO_ID_FOR_THUMBNAIL: '3W4WLcAOBh8',
+
+      // Manual fallback: provide a direct image URL here.
       // Example: 'https://example.com/my-girlfriend-photo.jpg'
-      CLOSING_PHOTO_URL: '',
+      CLOSING_PHOTO_URL: ''
     };
   </script>
 
@@ -1046,17 +1053,17 @@
       (function initBackgroundMusic() {
         // ---- Configuration ----
         var VIDEO_ID = '3W4WLcAOBh8';
-        var TARGET_VOLUME = 100;   // Near-maximum; browser policy still applies
+        var TARGET_VOLUME = 100;
         var musicContainer = document.getElementById('music-container');
         if (!musicContainer) return;
 
         // ---- Module-scoped state (clean per page load) ----
-        var ytApiState = 'idle';        // 'idle' | 'loading' | 'ready'
-        var playerInstance = null;      // YT.Player instance
-        var playerReady = false;        // onReady fired
-        var rawIframe = null;           // the underlying iframe element
-        var pendingPlay = false;        // a play request is queued
-        var musicStarted = false;       // audible playback has been requested
+        var ytApiState = 'idle';
+        var playerInstance = null;
+        var playerReady = false;
+        var rawIframe = null;
+        var pendingPlay = false;
+        var musicStarted = false;
         var firstGestureAttached = false;
         var bootScheduled = false;
         var apiScriptInjected = false;
@@ -1073,7 +1080,6 @@
         }
 
         // ---- Create the single hidden iframe ----
-        // Called at most once per page load.
         function createHiddenIframe() {
           if (rawIframe) return rawIframe;
           var iframe = document.createElement('iframe');
@@ -1084,8 +1090,6 @@
           iframe.setAttribute('aria-hidden', 'true');
           iframe.className = 'music-iframe-hidden';
           iframe.id = 'bg-music-iframe';
-          // Start unmuted so the browser can decide whether to allow
-          // audible autoplay. If blocked, we retry on first gesture.
           iframe.src =
             'https://www.youtube.com/embed/' + VIDEO_ID +
             '?enablejsapi=1' +
@@ -1108,15 +1112,10 @@
         }
 
         // ---- Request audible playback ----
-        // Works whether the player is ready or not:
-        //  - If YT.Player exists and is ready → command it directly.
-        //  - Else if raw iframe exists → postMessage fallback.
-        //  - Else → queue the request (pendingPlay) for later.
         function requestAudiblePlay() {
           if (musicStarted) return;
 
           if (playerInstance && playerReady && typeof playerInstance.playVideo === 'function') {
-            // Preferred: official API, player is ready
             try {
               playerInstance.unMute();
               playerInstance.setVolume(TARGET_VOLUME);
@@ -1128,7 +1127,6 @@
           }
 
           if (rawIframe) {
-            // Fallback: drive the raw iframe via postMessage
             try {
               postToIframe('unMute');
               postToIframe('setVolume', [TARGET_VOLUME]);
@@ -1139,12 +1137,10 @@
             return;
           }
 
-          // Nothing ready yet — remember the intent.
           pendingPlay = true;
         }
 
         // ---- One-time first-user-gesture handler ----
-        // Only attached if audible autoplay was blocked.
         function attachFirstGestureListener() {
           if (firstGestureAttached) return;
           firstGestureAttached = true;
@@ -1154,7 +1150,6 @@
             events.forEach(function(ev) {
               window.removeEventListener(ev, onFirst, true);
             });
-            // Try once more now that we have a user gesture.
             requestAudiblePlay();
           };
           events.forEach(function(ev) {
@@ -1169,7 +1164,6 @@
             return;
           }
           if (ytApiState === 'loading') {
-            // Chain: append callback to be run once ready.
             var prev = window.__ytApiReadyCallbacks || [];
             prev.push(onReady);
             window.__ytApiReadyCallbacks = prev;
@@ -1178,7 +1172,6 @@
           ytApiState = 'loading';
           window.__ytApiReadyCallbacks = [onReady];
 
-          // Define the global callback expected by the API.
           var prevGlobal = window.onYouTubeIframeAPIReady;
           window.onYouTubeIframeAPIReady = function() {
             ytApiState = 'ready';
@@ -1198,7 +1191,6 @@
           tag.src = 'https://www.youtube.com/iframe_api';
           tag.async = true;
           tag.onerror = function() {
-            // API failed — the raw iframe fallback still works.
             ytApiState = 'idle';
           };
           var firstScript = document.getElementsByTagName('script')[0];
@@ -1223,7 +1215,6 @@
                   try {
                     event.target.setVolume(TARGET_VOLUME);
                   } catch (e) { /* silent */ }
-                  // If a play was queued before ready, fire it now.
                   if (pendingPlay || musicStarted) {
                     requestAudiblePlay();
                   }
@@ -1237,7 +1228,6 @@
               }
             });
           } catch (e) {
-            // If YT.Player fails, keep the raw iframe fallback.
             playerInstance = null;
           }
         }
@@ -1247,31 +1237,15 @@
           if (bootScheduled === false && rawIframe) return;
           bootScheduled = true;
           try {
-            // 1. Create the single hidden iframe.
             createHiddenIframe();
-
-            // 2. Attempt audible autoplay immediately.
-            //    If the browser allows it, music starts now.
-            //    If not, the request is harmlessly ignored and we
-            //    fall back to first-user-gesture.
             requestAudiblePlay();
-
-            // 3. Attach first-gesture fallback (idempotent).
-            //    Harmless if autoplay already succeeded because
-            //    requestAudiblePlay() early-returns when musicStarted.
             attachFirstGestureListener();
-
-            // 4. Lazily load the API for reliable control.
             loadYTAPI(initYTPlayer);
 
-            // 5. Safety retry: some browsers need a short moment
-            //    after page load before autoplay is evaluated.
-            //    This is non-blocking and harmless if already playing.
             setTimeout(function() {
               if (!musicStarted) requestAudiblePlay();
             }, 1500);
 
-            // 6. Final safety retry after API has had time to boot.
             setTimeout(function() {
               if (!musicStarted) requestAudiblePlay();
             }, 4000);
@@ -1296,7 +1270,6 @@
         }
 
         // ---- Smooth fade-out for the closing stage ----
-        // Never abruptly stops music. Called by the closing sequence.
         window.fadeOutBackgroundMusic = function(durationMs) {
           durationMs = (typeof durationMs === 'number' && durationMs > 0) ? durationMs : 4000;
           var steps = 40;
@@ -1353,8 +1326,7 @@
         petal.style.animationDelay = (Math.random() * 20) + 's';
         petal.style.opacity = Math.random() * 0.55 + 0.25;
 
-        // Cherry blossom pink with a subtle sky-blue tint variation
-        const hue = Math.random() * 25 + 335; // 335..360 → pink range
+        const hue = Math.random() * 25 + 335;
         petal.style.background = 'hsla(' + hue + ', 85%, 88%, ' + (Math.random() * 0.35 + 0.25) + ')';
 
         petalsContainer.appendChild(petal);
@@ -1546,6 +1518,15 @@
 
       // ============================================================
       // FINAL IMAGE — closing photo, cinematic soft display
+      // ------------------------------------------------------------
+      // AUTO-SELECT IMAGE SOURCE:
+      //   1. Try YouTube thumbnail (maxres → sd → hq → mq)
+      //   2. Fall back to CLOSING_PHOTO_URL
+      //   3. Fall back to built-in placeholder
+      //   4. window.setClosingPhoto() always overrides
+      //
+      // All candidates are validated with a hidden <img> preloader
+      // so we never show a broken image. Fully async & non-blocking.
       // ============================================================
       const closingScreen = document.getElementById('closingScreen');
       const closingPhotoFrame = document.getElementById('closingPhotoFrame');
@@ -1569,48 +1550,145 @@
           "</svg>"
         );
 
-      function resolveClosingPhotoSrc() {
+      // ---- Build the ordered list of candidate image URLs ----
+      function buildClosingImageCandidates() {
+        var candidates = [];
+
+        // 1. Automatic YouTube thumbnail candidates (highest → lowest quality)
+        try {
+          if (window.CLOSING_CONFIG &&
+              window.CLOSING_CONFIG.AUTO_USE_VIDEO_THUMBNAIL === true &&
+              typeof window.CLOSING_CONFIG.VIDEO_ID_FOR_THUMBNAIL === 'string' &&
+              window.CLOSING_CONFIG.VIDEO_ID_FOR_THUMBNAIL.trim() !== '') {
+            var vid = window.CLOSING_CONFIG.VIDEO_ID_FOR_THUMBNAIL.trim();
+            // YouTube auto-generated thumbnails, ordered by quality.
+            candidates.push('https://i.ytimg.com/vi/' + vid + '/maxresdefault.jpg');
+            candidates.push('https://i.ytimg.com/vi/' + vid + '/sddefault.jpg');
+            candidates.push('https://i.ytimg.com/vi/' + vid + '/hqdefault.jpg');
+            candidates.push('https://i.ytimg.com/vi/' + vid + '/mqdefault.jpg');
+            // Alternate CDN host as a fallback for some regions/networks.
+            candidates.push('https://img.youtube.com/vi/' + vid + '/maxresdefault.jpg');
+            candidates.push('https://img.youtube.com/vi/' + vid + '/hqdefault.jpg');
+          }
+        } catch (e) { /* silent */ }
+
+        // 2. User-configured URL (if provided)
         try {
           if (window.CLOSING_CONFIG &&
               typeof window.CLOSING_CONFIG.CLOSING_PHOTO_URL === 'string' &&
               window.CLOSING_CONFIG.CLOSING_PHOTO_URL.trim() !== '') {
-            return window.CLOSING_CONFIG.CLOSING_PHOTO_URL.trim();
+            candidates.push(window.CLOSING_CONFIG.CLOSING_PHOTO_URL.trim());
           }
         } catch (e) { /* silent */ }
+
+        // 3. Manually set source via setClosingPhoto()
         if (window.__closingPhotoSrc && typeof window.__closingPhotoSrc === 'string') {
-          return window.__closingPhotoSrc;
+          candidates.push(window.__closingPhotoSrc);
         }
-        return CLOSING_PLACEHOLDER;
+
+        // 4. Built-in placeholder (always succeeds)
+        candidates.push(CLOSING_PLACEHOLDER);
+
+        return candidates;
       }
 
-      function preloadClosingPhoto(src) {
-        try {
-          const img = new Image();
-          img.decoding = 'async';
-          img.src = src;
-        } catch (e) { /* silent */ }
+      // ---- Asynchronously find the first candidate that loads ----
+      // Uses a hidden Image() to test each URL without touching the DOM.
+      // Never throws, never blocks. Calls onResolved(src) with the
+      // first successful URL (or the placeholder if all fail).
+      function resolveClosingImageAsync(onResolved) {
+        var candidates = buildClosingImageCandidates();
+        var index = 0;
+
+        function tryNext() {
+          if (index >= candidates.length) {
+            // Should not happen since placeholder is last, but be safe.
+            try { onResolved(CLOSING_PLACEHOLDER); } catch (e) { /* silent */ }
+            return;
+          }
+          var url = candidates[index++];
+
+          // Data URIs are always available.
+          if (url.indexOf('data:') === 0) {
+            try { onResolved(url); } catch (e) { /* silent */ }
+            return;
+          }
+
+          var probe = new Image();
+          probe.decoding = 'async';
+          var settled = false;
+
+          var done = function(ok) {
+            if (settled) return;
+            settled = true;
+            probe.onload = null;
+            probe.onerror = null;
+            if (ok) {
+              try { onResolved(url); } catch (e) { /* silent */ }
+            } else {
+              // Try the next candidate.
+              tryNext();
+            }
+          };
+
+          probe.onload = function() {
+            // Some CDNs return a tiny placeholder; ensure it's real.
+            if (probe.naturalWidth && probe.naturalWidth > 10) {
+              done(true);
+            } else {
+              done(false);
+            }
+          };
+          probe.onerror = function() { done(false); };
+
+          // Safety timeout: if the network hangs, move on.
+          setTimeout(function() { done(false); }, 4000);
+
+          try {
+            probe.src = url;
+          } catch (e) {
+            done(false);
+          }
+        }
+
+        tryNext();
       }
 
+      // ---- Public helper: user-selected photo (URL or File) ----
+      // Overrides everything else. Safe to call at any time.
       window.setClosingPhoto = function(fileOrUrl) {
         try {
           if (typeof fileOrUrl === 'string' && fileOrUrl.trim() !== '') {
             window.__closingPhotoSrc = fileOrUrl.trim();
-            preloadClosingPhoto(window.__closingPhotoSrc);
+            closingPhoto.src = window.__closingPhotoSrc;
             return true;
           }
-          if (fileOrUrl && typeof fileOrUrl === 'object' && typeof URL !== 'undefined' && URL.createObjectURL) {
-            const url = URL.createObjectURL(fileOrUrl);
-            window.__closingPhotoSrc = url;
-            preloadClosingPhoto(url);
+          if (fileOrUrl && typeof fileOrUrl === 'object' &&
+              typeof URL !== 'undefined' && URL.createObjectURL) {
+            var objUrl = URL.createObjectURL(fileOrUrl);
+            window.__closingPhotoSrc = objUrl;
+            closingPhoto.src = objUrl;
             return true;
           }
         } catch (e) { /* silent */ }
         return false;
       };
 
-      const resolvedSrc = resolveClosingPhotoSrc();
-      closingPhoto.src = resolvedSrc;
-      preloadClosingPhoto(resolvedSrc);
+      // ---- Kick off async resolution ----
+      // While resolving, show the built-in placeholder so the DOM
+      // always has a valid image (no broken-icon flash).
+      closingPhoto.src = CLOSING_PLACEHOLDER;
+
+      resolveClosingImageAsync(function(resolvedSrc) {
+        // Only swap in the resolved image if the user hasn't
+        // already manually selected a photo in the meantime.
+        if (window.__closingPhotoSrc && typeof window.__closingPhotoSrc === 'string') {
+          return;
+        }
+        try {
+          closingPhoto.src = resolvedSrc;
+        } catch (e) { /* silent */ }
+      });
 
       // ============================================================
       // CLOSING ANIMATION — cinematic reveal of the final photo
