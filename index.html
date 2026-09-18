@@ -674,19 +674,44 @@
       'use strict';
 
       // ============================================================
-      // BACKGROUND MUSIC SYSTEM — completely non-blocking / async
-      // Uses YouTube IFrame API loaded lazily in the background.
-      // The main website renders and runs BEFORE this even starts.
+      // NON-BLOCKING BACKGROUND MUSIC
+      // ------------------------------------------------------------
+      // Robust, cross-browser, event-driven background music system.
+      // - Attempts audible autoplay immediately on page load.
+      // - If blocked by browser policy, waits for the first user
+      //   interaction (click, touch, pointer, key) and starts then.
+      // - Never blocks UI, never shows alerts/modals, never throws
+      //   fatal errors, never creates duplicate players.
+      // - Uses the official YouTube IFrame Player API.
+      // - Visually hidden and fully background.
       // ============================================================
       (function initBackgroundMusic() {
-        var VIDEO_ID = 'h9ZDHSYvyVI';
+        // ---- Configuration ----
+        var VIDEO_ID = '3W4WLcAOBh8';            // Updated YouTube video ID
+        var TARGET_VOLUME = 100;                  // Near-maximum volume
         var musicContainer = document.getElementById('music-container');
-        var playerInstance = null;
-        var apiReady = false;
-        var playerReady = false;
-        var hasAttemptedPlay = false;
 
-        // ---- Build a hidden iframe that hosts the YouTube player ----
+        // ---- State flags (prevent duplicate work) ----
+        var playerInstance = null;                // YT.Player instance
+        var playerReady = false;                  // Player fully initialized
+        var autoplayAttempted = false;            // Initial audible attempt done
+        var musicStarted = false;                 // Music actually playing audibly
+        var interactionListenerAttached = false;  // First-gesture listener guard
+        var apiLoadStarted = false;               // Prevent duplicate API loads
+
+        // ---- Utility: safe postMessage to the YouTube iframe ----
+        // Used only if the YT.Player API is unavailable.
+        function postToIframe(iframe, func, args) {
+          try {
+            if (!iframe || !iframe.contentWindow) return;
+            iframe.contentWindow.postMessage(
+              JSON.stringify({ event: 'command', func: func, args: args || [] }),
+              '*'
+            );
+          } catch (e) { /* silent — music is optional */ }
+        }
+
+        // ---- Build the hidden iframe that hosts the YouTube player ----
         // This iframe is fully off-screen and cannot affect layout.
         function createHiddenPlayerIframe() {
           var iframe = document.createElement('iframe');
@@ -695,25 +720,16 @@
           iframe.setAttribute('allowfullscreen', 'false');
           iframe.setAttribute('tabindex', '-1');
           iframe.setAttribute('aria-hidden', 'true');
-          iframe.style.position = 'fixed';
-          iframe.style.left = '-9999px';
-          iframe.style.top = '-9999px';
-          iframe.style.width = '1px';
-          iframe.style.height = '1px';
-          iframe.style.opacity = '0';
-          iframe.style.border = 'none';
-          iframe.style.pointerEvents = 'none';
-          iframe.style.visibility = 'hidden';
-          iframe.style.zIndex = '-9999';
+          iframe.className = 'music-iframe-hidden';
           iframe.id = 'bg-music-iframe';
-          // enablejsapi=1 so we can control it via postMessage
+          // enablejsapi=1 so we can control it via postMessage / YT API
           // playsinline=1 for iOS
           // loop=1 + playlist=VIDEO_ID to loop the single video
           iframe.src =
             'https://www.youtube.com/embed/' + VIDEO_ID +
             '?enablejsapi=1' +
             '&autoplay=1' +
-            '&mute=1' +
+            '&mute=0' +                 // Start unmuted to attempt audible autoplay
             '&loop=1' +
             '&playlist=' + VIDEO_ID +
             '&controls=0' +
@@ -729,88 +745,180 @@
           return iframe;
         }
 
-        // ---- Attempt to unmute + play via postMessage ----
-        // Works once the iframe's internal player is ready.
-        function tryUnmuteAndPlay() {
-          if (hasAttemptedPlay) return;
-          hasAttemptedPlay = true;
+        // ---- Attempt to start audible music ----
+        // Tries YT.Player API first, falls back to postMessage.
+        function tryStartMusic() {
+          if (musicStarted) return;
+          if (!playerInstance && !document.getElementById('bg-music-iframe')) return;
 
-          var iframe = document.getElementById('bg-music-iframe');
-          if (!iframe || !iframe.contentWindow) return;
-
-          // Send postMessage commands to the YouTube iframe player.
-          // These are safe to send even if the player isn't ready yet;
-          // the player will receive them once it initializes.
-          function post(func, args) {
+          if (playerInstance && typeof playerInstance.unMute === 'function') {
+            // Preferred path: official YT.Player API
             try {
-              iframe.contentWindow.postMessage(
-                JSON.stringify({ event: 'command', func: func, args: args || [] }),
-                '*'
-              );
+              playerInstance.unMute();
+              playerInstance.setVolume(TARGET_VOLUME);
+              playerInstance.playVideo();
+              musicStarted = true;
             } catch (e) { /* silent */ }
+          } else {
+            // Fallback: postMessage to the iframe
+            var iframe = document.getElementById('bg-music-iframe');
+            if (iframe) {
+              postToIframe(iframe, 'unMute');
+              postToIframe(iframe, 'setVolume', [TARGET_VOLUME]);
+              postToIframe(iframe, 'playVideo');
+              musicStarted = true;
+            }
           }
-
-          // Give the player a little time to boot before commanding it.
-          setTimeout(function() {
-            post('unMute');
-            post('setVolume', [60]);
-            post('playVideo');
-          }, 1200);
-
-          // Retry a couple of times in case the player was slow to boot.
-          setTimeout(function() {
-            post('unMute');
-            post('setVolume', [60]);
-            post('playVideo');
-          }, 3500);
         }
 
-        // ---- Kick everything off asynchronously ----
-        // IMPORTANT: none of this blocks the main site.
-        // We use requestIdleCallback / setTimeout to defer work.
-        function scheduleMusicBoot() {
-          var boot = function() {
-            try {
-              createHiddenPlayerIframe();
+        // ---- Attach a one-time first-user-interaction listener ----
+        // Required because browsers block audible autoplay until the
+        // user interacts with the page.
+        function attachFirstInteractionListener() {
+          if (interactionListenerAttached) return;
+          interactionListenerAttached = true;
 
-              // First user gesture fallback: many browsers allow audio
-              // after any interaction. We attach silent one-time listeners
-              // so we can unmute without any visible UI or button.
-              var gestureEvents = ['click', 'touchstart', 'keydown', 'scroll'];
-              var onFirstGesture = function() {
-                tryUnmuteAndPlay();
-                gestureEvents.forEach(function(ev) {
-                  window.removeEventListener(ev, onFirstGesture, true);
-                });
-              };
-              gestureEvents.forEach(function(ev) {
-                window.addEventListener(ev, onFirstGesture, true);
-              });
+          var gestureEvents = ['click', 'touchstart', 'pointerdown', 'keydown'];
+          var onFirstGesture = function() {
+            // Remove all listeners immediately
+            gestureEvents.forEach(function(ev) {
+              window.removeEventListener(ev, onFirstGesture, true);
+            });
+            // Start music now that we have a user gesture
+            tryStartMusic();
+          };
+          gestureEvents.forEach(function(ev) {
+            window.addEventListener(ev, onFirstGesture, true);
+          });
+        }
 
-              // Try an immediate unmute attempt too (works on browsers
-              // that permit autoplay with sound for muted-origin iframes).
-              tryUnmuteAndPlay();
-            } catch (e) { /* silent — music is optional */ }
+        // ---- Boot sequence ----
+        // 1. Create the hidden iframe immediately (non-blocking).
+        // 2. Try audible autoplay right away.
+        // 3. If blocked, attach first-gesture listener.
+        // 4. Lazily load the official YT IFrame API in the background
+        //    for more reliable control once ready.
+        function bootMusic() {
+          try {
+            // Step 1: create the hidden iframe
+            createHiddenPlayerIframe();
+
+            // Step 2: attempt audible autoplay immediately
+            if (!autoplayAttempted) {
+              autoplayAttempted = true;
+              // Small delay to let the iframe start loading
+              setTimeout(function() {
+                tryStartMusic();
+              }, 800);
+            }
+
+            // Step 3: always attach the fallback listener.
+            // If autoplay worked, this is harmless (musicStarted guard).
+            // If autoplay was blocked, this starts music on first tap.
+            attachFirstInteractionListener();
+
+            // Step 4: lazily load the official YT IFrame API in the
+            // background. When ready, replace the raw iframe with a
+            // proper YT.Player instance for reliable control.
+            loadYouTubeAPI();
+          } catch (e) { /* silent — music is optional */ }
+        }
+
+        // ---- Load the official YouTube IFrame Player API ----
+        function loadYouTubeAPI() {
+          if (apiLoadStarted) return;
+          apiLoadStarted = true;
+
+          // If the API is already available, initialize player now.
+          if (window.YT && window.YT.Player) {
+            initYTPlayer();
+            return;
+          }
+
+          // Set up the global callback that the API will call.
+          var existingCallback = window.onYouTubeIframeAPIReady;
+          window.onYouTubeIframeAPIReady = function() {
+            if (typeof existingCallback === 'function') {
+              try { existingCallback(); } catch (e) { /* silent */ }
+            }
+            initYTPlayer();
           };
 
-          // Defer to idle time if available, otherwise next tick.
-          if (typeof window.requestIdleCallback === 'function') {
-            window.requestIdleCallback(boot, { timeout: 2000 });
+          // Inject the API script asynchronously (non-blocking).
+          var tag = document.createElement('script');
+          tag.src = 'https://www.youtube.com/iframe_api';
+          tag.async = true;
+          tag.onerror = function() {
+            // If the API fails to load, the raw iframe fallback
+            // is still fully functional via postMessage.
+          };
+          var firstScript = document.getElementsByTagName('script')[0];
+          if (firstScript && firstScript.parentNode) {
+            firstScript.parentNode.insertBefore(tag, firstScript);
           } else {
-            setTimeout(boot, 400);
+            document.head.appendChild(tag);
           }
         }
 
-        // Give the main site a moment to paint first, then boot music.
-        // This guarantees the website is visible immediately.
+        // ---- Initialize the official YT.Player instance ----
+        function initYTPlayer() {
+          if (playerInstance) return; // already initialized
+          var iframe = document.getElementById('bg-music-iframe');
+          if (!iframe) return;
+
+          // Replace the iframe with a YT.Player instance using the
+          // official API. This gives us reliable event handling.
+          try {
+            playerInstance = new window.YT.Player('bg-music-iframe', {
+              events: {
+                onReady: function(event) {
+                  playerReady = true;
+                  try {
+                    event.target.setVolume(TARGET_VOLUME);
+                    // Try to start music immediately if a gesture
+                    // has already occurred, or if autoplay is allowed.
+                    if (autoplayAttempted || musicStarted) {
+                      event.target.unMute();
+                      event.target.playVideo();
+                    }
+                  } catch (e) { /* silent */ }
+                },
+                onStateChange: function(event) {
+                  // If the player pauses unexpectedly (e.g., autoplay
+                  // blocked), we do nothing here — the first-gesture
+                  // listener will handle starting it.
+                },
+                onError: function() {
+                  // Video unavailable / blocked — fail silently.
+                }
+              }
+            });
+          } catch (e) {
+            // If YT.Player fails, the raw iframe fallback remains.
+          }
+        }
+
+        // ---- Schedule music boot without blocking the main site ----
+        function scheduleMusicBoot() {
+          if (typeof window.requestIdleCallback === 'function') {
+            window.requestIdleCallback(bootMusic, { timeout: 2000 });
+          } else {
+            setTimeout(bootMusic, 300);
+          }
+        }
+
+        // Start music boot only after the page has fully painted.
         if (document.readyState === 'complete') {
-          setTimeout(scheduleMusicBoot, 300);
+          setTimeout(scheduleMusicBoot, 200);
         } else {
           window.addEventListener('load', function() {
-            setTimeout(scheduleMusicBoot, 300);
+            setTimeout(scheduleMusicBoot, 200);
           });
         }
       })();
+      // ============================================================
+      // END NON-BLOCKING BACKGROUND MUSIC
+      // ============================================================
 
       // ============================================================
       // EXISTING SITE LOGIC — unchanged below this point
