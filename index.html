@@ -1132,6 +1132,28 @@
       TIKTOK_AUDIO_STREAM_URL:
         'https://www.tiktok.com/embed/v2/' + '7672489528451435797'
     };
+
+    // ============================================================
+    // ROMANTIC SOUND CONFIGURATION
+    // ------------------------------------------------------------
+    // A soft, generated romantic ambient pad that plays underneath
+    // the main music. Uses the Web Audio API so it needs no
+    // external file and never blocks or breaks the page.
+    // ============================================================
+    window.ROMANTIC_SOUND_CONFIG = {
+      ENABLED: true,
+      // Master gain of the romantic pad (0.0 – 1.0)
+      VOLUME: 0.10,
+      // Base chord frequencies (Hz) — a warm romantic progression
+      // F major-ish soft chord: F3, A3, C4, F4
+      CHORD_FREQS: [174.61, 220.00, 261.63, 349.23],
+      // Slow LFO rate (Hz) for gentle swelling
+      LFO_RATE: 0.08,
+      // Fade-in time (seconds)
+      FADE_IN: 4.0,
+      // Fade-out time (seconds)
+      FADE_OUT: 5.0
+    };
   </script>
 
   <!-- JAVASCRIPT -->
@@ -1347,6 +1369,142 @@
 
         window.playBackgroundMusic = function() {
           requestAudiblePlay();
+        };
+      })();
+
+      // ============================================================
+      // ROMANTIC SOUND — generated ambient pad (Web Audio API)
+      // ------------------------------------------------------------
+      // A soft, warm, slowly-swelled chord pad that plays under the
+      // main music. Generated entirely in-browser — no external file.
+      //
+      // Exposes:
+      //   window.playRomanticSound()
+      //   window.fadeOutRomanticSound(durationMs)
+      // ============================================================
+      (function initRomanticSound() {
+        var cfg = window.ROMANTIC_SOUND_CONFIG || {};
+        if (cfg.ENABLED === false) return;
+
+        var VOLUME = (typeof cfg.VOLUME === 'number') ? cfg.VOLUME : 0.10;
+        var FREQS = Array.isArray(cfg.CHORD_FREQS)
+          ? cfg.CHORD_FREQS : [174.61, 220.00, 261.63, 349.23];
+        var LFO_RATE = (typeof cfg.LFO_RATE === 'number') ? cfg.LFO_RATE : 0.08;
+        var FADE_IN = (typeof cfg.FADE_IN === 'number') ? cfg.FADE_IN : 4.0;
+        var FADE_OUT = (typeof cfg.FADE_OUT === 'number') ? cfg.FADE_OUT : 5.0;
+
+        var audioCtx = null;
+        var masterGain = null;
+        var lfo = null;
+        var lfoGain = null;
+        var oscillators = [];
+        var started = false;
+        var stopped = false;
+
+        function getAudioContext() {
+          if (audioCtx) return audioCtx;
+          try {
+            var Ctx = window.AudioContext || window.webkitAudioContext;
+            if (!Ctx) return null;
+            audioCtx = new Ctx();
+          } catch (e) {
+            audioCtx = null;
+          }
+          return audioCtx;
+        }
+
+        function startPad() {
+          if (started || stopped) return;
+          var ctx = getAudioContext();
+          if (!ctx) return;
+
+          try {
+            // Resume context if suspended (user gesture needed)
+            if (ctx.state === 'suspended' && typeof ctx.resume === 'function') {
+              ctx.resume().catch(function() { /* silent */ });
+            }
+
+            // Master gain — fades in smoothly
+            masterGain = ctx.createGain();
+            masterGain.gain.setValueAtTime(0.0001, ctx.currentTime);
+            masterGain.gain.linearRampToValueAtTime(
+              Math.max(0.0001, VOLUME),
+              ctx.currentTime + FADE_IN
+            );
+            masterGain.connect(ctx.destination);
+
+            // Gentle low-pass filter for a warm, soft tone
+            var filter = ctx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.value = 900;
+            filter.Q.value = 0.4;
+            filter.connect(masterGain);
+
+            // Slow LFO that gently swells the pad volume
+            lfo = ctx.createOscillator();
+            lfo.type = 'sine';
+            lfo.frequency.value = LFO_RATE;
+            lfoGain = ctx.createGain();
+            lfoGain.gain.value = 0.03;
+            lfo.connect(lfoGain);
+            lfoGain.connect(masterGain.gain);
+            lfo.start();
+
+            // Chord tones — sine waves with slight detune for warmth
+            for (var i = 0; i < FREQS.length; i++) {
+              var osc = ctx.createOscillator();
+              osc.type = 'sine';
+              osc.frequency.value = FREQS[i];
+              // Slight detune for a rich, chorused feel
+              try { osc.detune.value = (i - 1.5) * 4; } catch (e) {}
+
+              var oscGain = ctx.createGain();
+              oscGain.gain.value = 0.25 / FREQS.length;
+              osc.connect(oscGain);
+              oscGain.connect(filter);
+              osc.start();
+              oscillators.push(osc);
+            }
+
+            started = true;
+          } catch (e) {
+            // Fail silently — romantic pad is optional
+          }
+        }
+
+        function stopPad(fadeSeconds) {
+          if (!started || stopped) return;
+          stopped = true;
+          var ctx = getAudioContext();
+          if (!ctx || !masterGain) return;
+
+          try {
+            var now = ctx.currentTime;
+            var currentVal = masterGain.gain.value;
+            masterGain.gain.cancelScheduledValues(now);
+            masterGain.gain.setValueAtTime(currentVal, now);
+            masterGain.gain.linearRampToValueAtTime(0.0001, now + fadeSeconds);
+
+            setTimeout(function() {
+              try {
+                for (var i = 0; i < oscillators.length; i++) {
+                  try { oscillators[i].stop(); } catch (e) {}
+                }
+                if (lfo) { try { lfo.stop(); } catch (e) {} }
+              } catch (e) { /* silent */ }
+            }, Math.ceil(fadeSeconds * 1000) + 100);
+          } catch (e) { /* silent */ }
+        }
+
+        // Expose public API
+        window.playRomanticSound = function() {
+          startPad();
+        };
+
+        window.fadeOutRomanticSound = function(durationMs) {
+          var sec = (typeof durationMs === 'number' && durationMs > 0)
+            ? durationMs / 1000 : FADE_OUT;
+          stopPad(sec);
         };
       })();
 
@@ -1712,9 +1870,16 @@
       function fadeScreenToZero() {
         if (finalZeroReached) return;
 
+        // Fade out BOTH audio layers — main TikTok + romantic pad.
         try {
           if (typeof window.fadeOutBackgroundMusic === 'function') {
             window.fadeOutBackgroundMusic(3800);
+          }
+        } catch (e) { /* silent */ }
+
+        try {
+          if (typeof window.fadeOutRomanticSound === 'function') {
+            window.fadeOutRomanticSound(4200);
           }
         } catch (e) { /* silent */ }
 
@@ -1766,19 +1931,26 @@
         var startOverlay = document.getElementById('startOverlay');
         startOverlay.classList.add('hidden');
 
-        // 1. PLAY MUSIC (TikTok layer)
+        // 1. PLAY MAIN MUSIC (TikTok layer)
         try {
           if (typeof window.playBackgroundMusic === 'function') {
             window.playBackgroundMusic();
           }
         } catch (e) { /* silent */ }
 
-        // 2. START STORY TIMELINE
+        // 2. PLAY ROMANTIC AMBIENT PAD (generated, non-blocking)
+        try {
+          if (typeof window.playRomanticSound === 'function') {
+            window.playRomanticSound();
+          }
+        } catch (e) { /* silent */ }
+
+        // 3. START STORY TIMELINE
         setTimeout(function() {
           nextScene();
         }, durations[0]);
 
-        // 3. START TEASER TIMINGS
+        // 4. START TEASER TIMINGS
         const totalStoryTime = durations.reduce(function(a, b) { return a + b; }, 0);
         const finalScreenDelay = 2500;
         const finalScreenHold = 30000;
@@ -1792,7 +1964,7 @@
           showTeaser(teaserMedium, 7000);
         }, durations[0] + durations[1] + durations[2] + durations[3] + 5000);
 
-        // 4. START GARDEN SEQUENCE
+        // 5. START GARDEN SEQUENCE
         setTimeout(function() {
           startGardenSequence();
         }, gardenStartDelay);
