@@ -9,28 +9,26 @@
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Hind+Siliguri:wght@300;400;500&display=swap');
 
     /* ============================================================
-       NEW COLOR THEME — Cherry Blossom + Light Pink + Sky Blue + Deep Blue
+       NEW COLOR THEME — PINK ROMANTIC (Cherry Blossom / Soft Pink / Light Pink / Deep Pink)
        ------------------------------------------------------------
-       Soft, romantic, elegant, dreamy, premium.
+       Soft, romantic, elegant, dreamy, premium. No heavy blue.
        ============================================================ */
     :root {
       --cb-pink:      #ffd6e7;
       --soft-pink:    #ffe8f2;
       --light-pink:   #fff2f8;
-      --sky-blue:     #a7d3f0;
-      --sky-blue-2:   #cfe7f7;
-      --deep-blue:    #1a2c4e;
-      --deep-blue-2:  #0e1a30;
+      --deep-pink:    #d47a9e;
+      --dark-pink:    #b0487a;
+      --rose-pink:    #e8a0b8;
       --white-tone:   #fdfbff;
       --ink:          #2a1f3d;
 
       --bg-1: #fdf4fa;
-      --bg-2: #eaf3fc;
-      --bg-3: #d6e6f7;
-      --bg-4: #1a2c4e;
+      --bg-2: #fce8f0;
+      --bg-3: #f9d6e4;
+      --bg-4: #f2b8ce;
 
-      --glow-pink:    rgba(255, 200, 220, 0.55);
-      --glow-blue:    rgba(150, 200, 240, 0.45);
+      --glow-pink:    rgba(255, 200, 220, 0.65);
       --text-main:    #3a2a4d;
       --text-soft:    #5b4a6e;
       --text-muted:   #8a7a9c;
@@ -62,11 +60,11 @@
       z-index: 0;
       background:
         radial-gradient(ellipse at 50% 25%,
-          var(--white-tone) 0%,
-          var(--light-pink) 30%,
-          var(--sky-blue-2) 60%,
-          var(--sky-blue) 80%,
-          #8fb8dd 100%);
+          #fff5fa 0%,
+          #fce8f0 30%,
+          #f9d6e4 60%,
+          #f2b8ce 80%,
+          #e8a0b8 100%);
       overflow: hidden;
     }
 
@@ -77,16 +75,16 @@
       top: -35vmax;
       left: -15vmax;
       background: radial-gradient(circle,
-        rgba(255, 220, 235, 0.55) 0%,
-        rgba(255, 210, 225, 0.28) 40%,
+        rgba(255, 220, 235, 0.65) 0%,
+        rgba(255, 200, 220, 0.38) 40%,
         transparent 70%);
       border-radius: 50%;
       animation: glowPulse 22s ease-in-out infinite alternate;
     }
 
     @keyframes glowPulse {
-      0% { opacity: 0.55; transform: scale(1); }
-      100% { opacity: 0.95; transform: scale(1.06); }
+      0% { opacity: 0.65; transform: scale(1); }
+      100% { opacity: 1; transform: scale(1.06); }
     }
 
     .bg-layer::after {
@@ -97,8 +95,8 @@
       top: -20vmax;
       right: -25vmax;
       background: radial-gradient(circle,
-        rgba(167, 211, 240, 0.35) 0%,
-        rgba(167, 211, 240, 0.12) 45%,
+        rgba(255, 180, 210, 0.35) 0%,
+        rgba(255, 180, 210, 0.12) 45%,
         transparent 70%);
       border-radius: 50%;
       pointer-events: none;
@@ -108,19 +106,19 @@
       position: absolute;
       width: 10px;
       height: 10px;
-      background: rgba(255, 200, 220, 0.55);
+      background: rgba(255, 200, 220, 0.65);
       border-radius: 50% 0 50% 50%;
       transform: rotate(45deg);
       animation: petalFall linear infinite;
       pointer-events: none;
       filter: blur(0.4px);
-      box-shadow: 0 0 8px rgba(255, 190, 215, 0.35);
+      box-shadow: 0 0 8px rgba(255, 190, 215, 0.45);
     }
 
     @keyframes petalFall {
       0% { transform: translateY(-10vh) rotate(0deg) scale(0.8); opacity: 0; }
-      8% { opacity: 0.75; }
-      92% { opacity: 0.4; }
+      8% { opacity: 0.85; }
+      92% { opacity: 0.5; }
       100% { transform: translateY(110vh) rotate(360deg) scale(1.05); opacity: 0; }
     }
 
@@ -174,8 +172,8 @@
       line-height: 1.15;
       color: #b0487a;
       text-shadow:
-        0 0 24px rgba(255, 190, 220, 0.55),
-        0 2px 12px rgba(120, 160, 210, 0.18);
+        0 0 24px rgba(255, 190, 220, 0.65),
+        0 2px 12px rgba(200, 130, 170, 0.22);
     }
 
     .title-lg {
@@ -185,7 +183,7 @@
       letter-spacing: 0.03em;
       line-height: 1.2;
       color: #a04070;
-      text-shadow: 0 0 22px rgba(255, 190, 220, 0.45);
+      text-shadow: 0 0 22px rgba(255, 190, 220, 0.55);
     }
 
     .title-md {
@@ -195,7 +193,7 @@
       letter-spacing: 0.03em;
       line-height: 1.3;
       color: #9a3c6e;
-      text-shadow: 0 0 18px rgba(255, 190, 220, 0.35);
+      text-shadow: 0 0 18px rgba(255, 190, 220, 0.45);
     }
 
     .name-highlight {
@@ -205,8 +203,8 @@
       letter-spacing: 0.06em;
       color: #c8548a;
       text-shadow:
-        0 0 36px rgba(255, 190, 220, 0.65),
-        0 2px 14px rgba(120, 160, 210, 0.22);
+        0 0 36px rgba(255, 190, 220, 0.75),
+        0 2px 14px rgba(200, 130, 170, 0.28);
     }
 
     .bangla {
@@ -266,10 +264,10 @@
       width: 5px;
       height: 5px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #f7b8d0, #a7d3f0);
-      opacity: 0.85;
+      background: linear-gradient(135deg, #f7b8d0, #e8a0b8);
+      opacity: 0.9;
       margin: 0.2em 0;
-      box-shadow: 0 0 8px rgba(255, 190, 215, 0.55);
+      box-shadow: 0 0 8px rgba(255, 190, 215, 0.65);
     }
 
     .divider-line {
@@ -277,25 +275,25 @@
       height: 1px;
       background: linear-gradient(to right,
         transparent,
-        rgba(200, 84, 138, 0.45),
-        rgba(120, 160, 210, 0.45),
+        rgba(200, 84, 138, 0.55),
+        rgba(232, 160, 184, 0.55),
         transparent);
       margin: 0.3em 0;
     }
 
     .memory-box {
       background: linear-gradient(135deg,
-        rgba(255, 220, 235, 0.65) 0%,
-        rgba(255, 240, 248, 0.75) 50%,
-        rgba(207, 231, 247, 0.65) 100%);
-      border: 1px solid rgba(200, 140, 180, 0.30);
+        rgba(255, 220, 235, 0.75) 0%,
+        rgba(255, 240, 248, 0.85) 50%,
+        rgba(249, 214, 228, 0.75) 100%);
+      border: 1px solid rgba(200, 140, 180, 0.35);
       border-radius: 16px;
       padding: 1.2em 1.5em;
       margin: 0.4em 0;
       backdrop-filter: blur(6px);
       box-shadow:
-        0 6px 24px rgba(180, 140, 190, 0.14),
-        inset 0 1px 0 rgba(255, 255, 255, 0.65);
+        0 6px 24px rgba(180, 140, 190, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.75);
       max-width: 90%;
     }
 
@@ -323,10 +321,10 @@
       justify-content: center;
       background:
         radial-gradient(ellipse at 50% 40%,
-          var(--white-tone) 0%,
-          var(--light-pink) 35%,
-          var(--sky-blue-2) 75%,
-          var(--sky-blue) 100%);
+          #fff5fa 0%,
+          #fce8f0 35%,
+          #f9d6e4 75%,
+          #f2b8ce 100%);
       opacity: 0;
       pointer-events: none;
       transition: opacity 3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -348,10 +346,10 @@
       border-radius: 18px;
       overflow: hidden;
       box-shadow:
-        0 0 60px rgba(255, 190, 220, 0.45),
-        0 0 120px rgba(150, 200, 240, 0.28);
-      border: 1px solid rgba(200, 140, 180, 0.32);
-      background: rgba(255, 255, 255, 0.55);
+        0 0 60px rgba(255, 190, 220, 0.55),
+        0 0 120px rgba(255, 160, 200, 0.32);
+      border: 1px solid rgba(200, 140, 180, 0.38);
+      background: rgba(255, 255, 255, 0.65);
     }
 
     .final-image-wrapper img {
@@ -428,10 +426,10 @@
       justify-content: center;
       background:
         radial-gradient(ellipse at 50% 40%,
-          var(--white-tone) 0%,
-          var(--light-pink) 30%,
-          var(--sky-blue-2) 70%,
-          var(--sky-blue) 100%);
+          #fff5fa 0%,
+          #fce8f0 30%,
+          #f9d6e4 70%,
+          #f2b8ce 100%);
       opacity: 0;
       pointer-events: none;
       transition: opacity 3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -466,7 +464,7 @@
       font-weight: 400;
       letter-spacing: 0.04em;
       color: #b0487a;
-      text-shadow: 0 0 26px rgba(255, 190, 220, 0.55);
+      text-shadow: 0 0 26px rgba(255, 190, 220, 0.65);
     }
 
     .garden-msg {
@@ -503,10 +501,10 @@
       object-fit: contain;
       border-radius: 14px;
       box-shadow:
-        0 0 50px rgba(255, 190, 220, 0.55),
-        0 0 100px rgba(150, 200, 240, 0.32);
-      border: 1px solid rgba(200, 140, 180, 0.32);
-      background: rgba(255, 255, 255, 0.55);
+        0 0 50px rgba(255, 190, 220, 0.65),
+        0 0 100px rgba(255, 160, 200, 0.38);
+      border: 1px solid rgba(200, 140, 180, 0.38);
+      background: rgba(255, 255, 255, 0.65);
       opacity: 0;
       transition: opacity 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
@@ -597,14 +595,14 @@
       padding: 1.2em 2em;
       border-radius: 18px;
       background: linear-gradient(135deg,
-        rgba(255, 240, 248, 0.85) 0%,
-        rgba(255, 220, 235, 0.80) 50%,
-        rgba(207, 231, 247, 0.85) 100%);
-      border: 1px solid rgba(200, 140, 180, 0.32);
+        rgba(255, 240, 248, 0.9) 0%,
+        rgba(255, 220, 235, 0.88) 50%,
+        rgba(249, 214, 228, 0.9) 100%);
+      border: 1px solid rgba(200, 140, 180, 0.38);
       backdrop-filter: blur(8px);
       box-shadow:
-        0 10px 40px rgba(180, 140, 190, 0.20),
-        inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        0 10px 40px rgba(180, 140, 190, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.85);
       transform: translateY(6px) scale(0.98);
       transition: transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       max-width: 88vw;
@@ -656,10 +654,10 @@
       justify-content: center;
       background:
         radial-gradient(ellipse at 50% 45%,
-          var(--white-tone) 0%,
-          var(--light-pink) 30%,
-          var(--sky-blue-2) 70%,
-          var(--sky-blue) 100%);
+          #fff5fa 0%,
+          #fce8f0 30%,
+          #f9d6e4 70%,
+          #f2b8ce 100%);
       opacity: 0;
       pointer-events: none;
       transition: opacity 3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -684,11 +682,11 @@
       opacity: 0;
       transform: scale(1.06);
       box-shadow:
-        0 0 60px rgba(255, 190, 220, 0.55),
-        0 0 140px rgba(150, 200, 240, 0.35),
-        0 0 200px rgba(255, 200, 220, 0.20);
-      border: 1px solid rgba(200, 140, 180, 0.35);
-      background: rgba(255, 255, 255, 0.55);
+        0 0 60px rgba(255, 190, 220, 0.65),
+        0 0 140px rgba(255, 160, 200, 0.42),
+        0 0 200px rgba(255, 200, 220, 0.25);
+      border: 1px solid rgba(200, 140, 180, 0.42);
+      background: rgba(255, 255, 255, 0.65);
       transition:
         opacity 3.2s cubic-bezier(0.25, 0.46, 0.45, 0.94),
         transform 6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -1023,6 +1021,15 @@
       // Example: 'https://example.com/my-girlfriend-photo.jpg'
       CLOSING_PHOTO_URL: ''
     };
+
+    // ============================================================
+    // SPECIAL PERSON IMAGE — configuration (MUST USE URL)
+    // ------------------------------------------------------------
+    // This is the "Special Person" image/section. Change the URL
+    // below to any direct image URL. If empty, the YouTube
+    // thumbnail from CLOSING_CONFIG is used automatically.
+    // ============================================================
+    window.SPECIAL_PERSON_IMAGE_URL = ''; // <-- PUT YOUR IMAGE URL HERE
   </script>
 
   <!-- JAVASCRIPT -->
@@ -1307,6 +1314,33 @@
       // ============================================================
 
       // ============================================================
+      // SPECIAL PERSON IMAGE — used in the final image wrapper
+      // ------------------------------------------------------------
+      // If SPECIAL_PERSON_IMAGE_URL is set, that image is used.
+      // Otherwise, the YouTube thumbnail from the video ID is used.
+      // ============================================================
+      (function initSpecialPersonImage() {
+        var img = document.getElementById('finalImage');
+        if (!img) return;
+
+        var url = window.SPECIAL_PERSON_IMAGE_URL;
+        if (url && typeof url === 'string' && url.trim() !== '') {
+          img.src = url.trim();
+          return;
+        }
+
+        // Fallback: use YouTube thumbnail
+        var vid = '3W4WLcAOBh8';
+        var thumbUrl = 'https://img.youtube.com/vi/' + vid + '/maxresdefault.jpg';
+        img.src = thumbUrl;
+        // If maxres fails, try hqdefault
+        img.onerror = function() {
+          img.src = 'https://img.youtube.com/vi/' + vid + '/hqdefault.jpg';
+          img.onerror = null;
+        };
+      })();
+
+      // ============================================================
       // EXISTING SITE LOGIC — unchanged below this point
       // ============================================================
 
@@ -1540,8 +1574,8 @@
           "<defs>" +
           "<radialGradient id='g' cx='50%' cy='40%' r='70%'>" +
           "<stop offset='0%' stop-color='#fdf4fa'/>" +
-          "<stop offset='50%' stop-color='#eaf3fc'/>" +
-          "<stop offset='100%' stop-color='#d6e6f7'/>" +
+          "<stop offset='50%' stop-color='#fce8f0'/>" +
+          "<stop offset='100%' stop-color='#f9d6e4'/>" +
           "</radialGradient>" +
           "</defs>" +
           "<rect width='900' height='1200' fill='url(#g)'/>" +
@@ -1708,8 +1742,14 @@
       // ============================================================
       // SCREEN FADE TO ZERO — smooth 100% → 0% opacity to black.
       // Music fades out gently and in sync (never abruptly stopped).
+      // FINAL STATE IS MAINTAINED — nothing comes back.
       // ============================================================
+      let finalZeroScreenReached = false;
+
       function fadeScreenToZero() {
+        if (finalZeroScreenReached) return;
+        finalZeroScreenReached = true;
+
         try {
           if (typeof window.fadeOutBackgroundMusic === 'function') {
             window.fadeOutBackgroundMusic(3800);
