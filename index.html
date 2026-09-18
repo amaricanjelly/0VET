@@ -927,8 +927,17 @@
 </head>
 <body>
 
-  <!-- HIDDEN BACKGROUND MUSIC CONTAINER (TikTok) -->
+  <!-- HIDDEN BACKGROUND MUSIC CONTAINER -->
   <div id="music-container" style="position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none;visibility:hidden;z-index:-9999;"></div>
+
+  <!-- BACKGROUND MP3 AUDIO ELEMENT (root directory file) -->
+  <audio id="bgMusicAudio"
+         class="music-audio-hidden"
+         src="./Tanveer Evan - Royaa Main _ Tere Pyaar Mein Royaa _ Tu Jo Mila Tha Sapna Laga Tha _ New Lyrics Video.mp3"
+         preload="auto"
+         loop
+         playsinline
+         webkit-playsinline></audio>
 
   <!-- START OVERLAY -->
   <div class="start-overlay" id="startOverlay">
@@ -1122,15 +1131,23 @@
     window.SPECIAL_PERSON_IMAGE_URL = 'https://img.remit.ee/i/NsoraAO8KvL1';
 
     // ============================================================
-    // TIKTOK AUDIO CONFIGURATION
+    // BACKGROUND MUSIC — MP3 FILE IN ROOT DIRECTORY
+    // ------------------------------------------------------------
+    // Exact filename (as provided):
+    //   Tanveer Evan - Royaa Main _ Tere Pyaar Mein Royaa _
+    //   Tu Jo Mila Tha Sapna Laga Tha _ New Lyrics Video.mp3
+    //
+    // Relative path from the current HTML file:
+    //   ./Tanveer Evan - Royaa Main _ Tere Pyaar Mein Royaa _
+    //   Tu Jo Mila Tha Sapna Laga Tha _ New Lyrics Video.mp3
     // ============================================================
-    window.TIKTOK_CONFIG = {
-      TIKTOK_URL: 'https://www.tiktok.com/@imdadulhossen1530/video/7672489528451435797?is_from_webapp=1&sender_device=pc',
-      TIKTOK_VIDEO_ID: '7672489528451435797',
-      TIKTOK_USERNAME: 'imdadulhossen1530',
-      TARGET_VOLUME: 1.0,
-      TIKTOK_AUDIO_STREAM_URL:
-        'https://www.tiktok.com/embed/v2/' + '7672489528451435797'
+    window.BACKGROUND_MUSIC_CONFIG = {
+      // Relative path to the MP3 file (root directory)
+      MP3_URL: './Tanveer Evan - Royaa Main _ Tere Pyaar Mein Royaa _ Tu Jo Mila Tha Sapna Laga Tha _ New Lyrics Video.mp3',
+      // Target volume (0.0 – 1.0)
+      TARGET_VOLUME: 0.85,
+      // Whether the track should loop
+      LOOP: true
     };
 
     // ============================================================
@@ -1143,7 +1160,7 @@
     window.ROMANTIC_SOUND_CONFIG = {
       ENABLED: true,
       // Master gain of the romantic pad (0.0 – 1.0)
-      VOLUME: 0.10,
+      VOLUME: 0.06,
       // Base chord frequencies (Hz) — a warm romantic progression
       // F major-ish soft chord: F3, A3, C4, F4
       CHORD_FREQS: [174.61, 220.00, 261.63, 349.23],
@@ -1170,124 +1187,96 @@
       let finalZeroReached = false;
 
       // ============================================================
-      // NON-BLOCKING BACKGROUND MUSIC (TikTok)
+      // NON-BLOCKING BACKGROUND MUSIC (MP3 from root directory)
+      // ------------------------------------------------------------
+      // Plays the exact MP3 file located in the root directory:
+      //   ./Tanveer Evan - Royaa Main _ Tere Pyaar Mein Royaa _
+      //   Tu Jo Mila Tha Sapna Laga Tha _ New Lyrics Video.mp3
+      //
+      // Design:
+      //   - Uses a single hidden <audio> element (already in HTML).
+      //   - Does NOT autoplay on page load.
+      //   - Starts playback only when the user clicks the
+      //     "Start Now with Sound" button.
+      //   - Idempotent: repeated calls never restart the track.
+      //   - Errors are caught and ignored so the page never breaks.
+      //   - Loops continuously in the background.
       // ============================================================
-      (function initTikTokBackgroundMusic() {
-        var cfg = window.TIKTOK_CONFIG || {};
-        var VIDEO_ID = cfg.TIKTOK_VIDEO_ID || '7672489528451435797';
-        var USERNAME = cfg.TIKTOK_USERNAME || 'imdadulhossen1530';
+      (function initBackgroundMusic() {
+        var cfg = window.BACKGROUND_MUSIC_CONFIG || {};
         var TARGET_VOLUME = (typeof cfg.TARGET_VOLUME === 'number')
-          ? cfg.TARGET_VOLUME : 1.0;
+          ? cfg.TARGET_VOLUME : 0.85;
+        var SHOULD_LOOP = cfg.LOOP !== false;
 
-        var musicContainer = document.getElementById('music-container');
-        if (!musicContainer) return;
+        var audioEl = document.getElementById('bgMusicAudio');
+        if (!audioEl) return;
 
-        var tiktokIframe = null;
-        var audioElement = null;
-        var iframeReady = false;
+        // Apply configuration to the existing element
+        try {
+          audioEl.volume = TARGET_VOLUME;
+          audioEl.loop = SHOULD_LOOP;
+        } catch (e) { /* silent */ }
+
+        // State
         var musicStarted = false;
         var pendingPlay = false;
-        var firstGestureAttached = false;
-        var bootScheduled = false;
 
-        function createTikTokIframe() {
-          if (tiktokIframe) return tiktokIframe;
-          var iframe = document.createElement('iframe');
-          iframe.setAttribute('frameborder', '0');
-          iframe.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');
-          iframe.setAttribute('allowfullscreen', 'false');
-          iframe.setAttribute('tabindex', '-1');
-          iframe.setAttribute('aria-hidden', 'true');
-          iframe.className = 'music-iframe-hidden';
-          iframe.id = 'bg-tiktok-iframe';
-          iframe.src =
-            'https://www.tiktok.com/embed/v2/' + VIDEO_ID +
-            '?lang=en-US&referrer=' + encodeURIComponent(window.location.origin || 'null');
-          musicContainer.appendChild(iframe);
-          tiktokIframe = iframe;
-
-          iframe.addEventListener('load', function() {
-            iframeReady = true;
-            if (pendingPlay || musicStarted) {
-              requestAudiblePlay();
-            }
-          });
-
-          return iframe;
-        }
-
-        function createAudioElement() {
-          if (audioElement) return audioElement;
-          var audio = document.createElement('audio');
-          audio.className = 'music-audio-hidden';
-          audio.id = 'bg-tiktok-audio';
-          audio.setAttribute('preload', 'auto');
-          audio.setAttribute('playsinline', 'true');
-          audio.setAttribute('webkit-playsinline', 'true');
-          audio.loop = true;
-          audio.volume = TARGET_VOLUME;
-
-          var source = document.createElement('source');
-          source.src = cfg.TIKTOK_AUDIO_STREAM_URL ||
-            ('https://www.tiktok.com/embed/v2/' + VIDEO_ID);
-          source.type = 'audio/mpeg';
-          audio.appendChild(source);
-
-          musicContainer.appendChild(audio);
-          audioElement = audio;
-          return audio;
-        }
-
-        function postToIframe(action) {
-          if (!tiktokIframe || !tiktokIframe.contentWindow) return;
-          try {
-            tiktokIframe.contentWindow.postMessage(
-              JSON.stringify({ type: 'tiktok:play' }),
-              '*'
-            );
-            tiktokIframe.contentWindow.postMessage(
-              JSON.stringify({ type: 'tiktok:unmute' }),
-              '*'
-            );
-            tiktokIframe.contentWindow.postMessage(
-              JSON.stringify({ event: 'command', func: action || 'playVideo', args: [] }),
-              '*'
-            );
-          } catch (e) { /* silent */ }
-        }
-
+        // ---- Request audible playback (idempotent) ----
         function requestAudiblePlay() {
           if (musicStarted) return;
 
-          if (tiktokIframe) {
-            postToIframe('playVideo');
-          }
+          try {
+            audioEl.volume = TARGET_VOLUME;
+            audioEl.loop = SHOULD_LOOP;
 
-          if (audioElement) {
-            try {
-              audioElement.volume = TARGET_VOLUME;
-              var p = audioElement.play();
-              if (p && typeof p.then === 'function') {
-                p.then(function() {
-                  musicStarted = true;
-                  pendingPlay = false;
-                }).catch(function() {
-                  pendingPlay = true;
-                });
-              } else {
+            var p = audioEl.play();
+            if (p && typeof p.then === 'function') {
+              p.then(function() {
                 musicStarted = true;
                 pendingPlay = false;
-              }
-            } catch (e) {
-              pendingPlay = true;
+              }).catch(function() {
+                // Autoplay blocked — will retry on next gesture.
+                pendingPlay = true;
+              });
+            } else {
+              // Older browsers return undefined; assume it worked.
+              musicStarted = true;
+              pendingPlay = false;
             }
-          }
-
-          if (!audioElement && !tiktokIframe) {
+          } catch (e) {
+            // Playback failed — keep site working normally.
             pendingPlay = true;
           }
         }
 
+        // ---- Public API (preserves original function names) ----
+        window.playBackgroundMusic = function() {
+          requestAudiblePlay();
+        };
+
+        window.fadeOutBackgroundMusic = function(durationMs) {
+          durationMs = (typeof durationMs === 'number' && durationMs > 0)
+            ? durationMs : 4000;
+          var steps = 40;
+          var stepTime = durationMs / steps;
+          var startVol = TARGET_VOLUME;
+          var i = 0;
+
+          function step() {
+            if (i >= steps) {
+              try { audioEl.pause(); } catch (e) {}
+              return;
+            }
+            i++;
+            var v = Math.max(0, startVol * (1 - i / steps));
+            try { audioEl.volume = v; } catch (e) {}
+            setTimeout(step, stepTime);
+          }
+          step();
+        };
+
+        // ---- Safety: if play() failed earlier, retry on first gesture ----
+        var firstGestureAttached = false;
         function attachFirstGestureListener() {
           if (firstGestureAttached) return;
           firstGestureAttached = true;
@@ -1297,79 +1286,13 @@
             events.forEach(function(ev) {
               window.removeEventListener(ev, onFirst, true);
             });
-            requestAudiblePlay();
+            if (!musicStarted) requestAudiblePlay();
           };
           events.forEach(function(ev) {
             window.addEventListener(ev, onFirst, true);
           });
         }
-
-        function bootMusic() {
-          if (bootScheduled === false && (tiktokIframe || audioElement)) return;
-          bootScheduled = true;
-          try {
-            createTikTokIframe();
-            createAudioElement();
-            attachFirstGestureListener();
-            requestAudiblePlay();
-
-            setTimeout(function() {
-              if (!musicStarted) requestAudiblePlay();
-            }, 1500);
-
-            setTimeout(function() {
-              if (!musicStarted) requestAudiblePlay();
-            }, 4000);
-          } catch (e) { /* silent */ }
-        }
-
-        function scheduleMusicBoot() {
-          if (typeof window.requestIdleCallback === 'function') {
-            window.requestIdleCallback(bootMusic, { timeout: 2000 });
-          } else {
-            setTimeout(bootMusic, 250);
-          }
-        }
-
-        if (document.readyState === 'complete') {
-          setTimeout(scheduleMusicBoot, 150);
-        } else {
-          window.addEventListener('load', function() {
-            setTimeout(scheduleMusicBoot, 150);
-          });
-        }
-
-        window.fadeOutBackgroundMusic = function(durationMs) {
-          durationMs = (typeof durationMs === 'number' && durationMs > 0) ? durationMs : 4000;
-          var steps = 40;
-          var stepTime = durationMs / steps;
-          var startVol = TARGET_VOLUME;
-          var i = 0;
-
-          function step() {
-            if (i >= steps) {
-              try {
-                if (audioElement) {
-                  audioElement.pause();
-                }
-              } catch (e) { /* silent */ }
-              return;
-            }
-            i++;
-            var v = Math.max(0, startVol * (1 - i / steps));
-            try {
-              if (audioElement) {
-                audioElement.volume = v;
-              }
-            } catch (e) { /* silent */ }
-            setTimeout(step, stepTime);
-          }
-          step();
-        };
-
-        window.playBackgroundMusic = function() {
-          requestAudiblePlay();
-        };
+        attachFirstGestureListener();
       })();
 
       // ============================================================
@@ -1386,7 +1309,7 @@
         var cfg = window.ROMANTIC_SOUND_CONFIG || {};
         if (cfg.ENABLED === false) return;
 
-        var VOLUME = (typeof cfg.VOLUME === 'number') ? cfg.VOLUME : 0.10;
+        var VOLUME = (typeof cfg.VOLUME === 'number') ? cfg.VOLUME : 0.06;
         var FREQS = Array.isArray(cfg.CHORD_FREQS)
           ? cfg.CHORD_FREQS : [174.61, 220.00, 261.63, 349.23];
         var LFO_RATE = (typeof cfg.LFO_RATE === 'number') ? cfg.LFO_RATE : 0.08;
@@ -1419,12 +1342,10 @@
           if (!ctx) return;
 
           try {
-            // Resume context if suspended (user gesture needed)
             if (ctx.state === 'suspended' && typeof ctx.resume === 'function') {
               ctx.resume().catch(function() { /* silent */ });
             }
 
-            // Master gain — fades in smoothly
             masterGain = ctx.createGain();
             masterGain.gain.setValueAtTime(0.0001, ctx.currentTime);
             masterGain.gain.linearRampToValueAtTime(
@@ -1433,14 +1354,12 @@
             );
             masterGain.connect(ctx.destination);
 
-            // Gentle low-pass filter for a warm, soft tone
             var filter = ctx.createBiquadFilter();
             filter.type = 'lowpass';
             filter.frequency.value = 900;
             filter.Q.value = 0.4;
             filter.connect(masterGain);
 
-            // Slow LFO that gently swells the pad volume
             lfo = ctx.createOscillator();
             lfo.type = 'sine';
             lfo.frequency.value = LFO_RATE;
@@ -1450,12 +1369,10 @@
             lfoGain.connect(masterGain.gain);
             lfo.start();
 
-            // Chord tones — sine waves with slight detune for warmth
             for (var i = 0; i < FREQS.length; i++) {
               var osc = ctx.createOscillator();
               osc.type = 'sine';
               osc.frequency.value = FREQS[i];
-              // Slight detune for a rich, chorused feel
               try { osc.detune.value = (i - 1.5) * 4; } catch (e) {}
 
               var oscGain = ctx.createGain();
@@ -1467,9 +1384,7 @@
             }
 
             started = true;
-          } catch (e) {
-            // Fail silently — romantic pad is optional
-          }
+          } catch (e) { /* silent */ }
         }
 
         function stopPad(fadeSeconds) {
@@ -1496,7 +1411,6 @@
           } catch (e) { /* silent */ }
         }
 
-        // Expose public API
         window.playRomanticSound = function() {
           startPad();
         };
@@ -1870,7 +1784,7 @@
       function fadeScreenToZero() {
         if (finalZeroReached) return;
 
-        // Fade out BOTH audio layers — main TikTok + romantic pad.
+        // Fade out BOTH audio layers — main MP3 + romantic pad.
         try {
           if (typeof window.fadeOutBackgroundMusic === 'function') {
             window.fadeOutBackgroundMusic(3800);
@@ -1923,6 +1837,14 @@
 
       // ============================================================
       // START NOW WITH SOUND — main entry point
+      // ------------------------------------------------------------
+      // On click:
+      //   1. Start the background MP3 (user gesture satisfies
+      //      browser autoplay policy).
+      //   2. Start the romantic ambient pad (optional layer).
+      //   3. Start the story timeline.
+      //   4. Start teaser timings.
+      //   5. Start garden sequence.
       // ============================================================
       function startEverything() {
         if (sessionStarted) return;
@@ -1931,7 +1853,7 @@
         var startOverlay = document.getElementById('startOverlay');
         startOverlay.classList.add('hidden');
 
-        // 1. PLAY MAIN MUSIC (TikTok layer)
+        // 1. PLAY BACKGROUND MP3 (user gesture makes this audible)
         try {
           if (typeof window.playBackgroundMusic === 'function') {
             window.playBackgroundMusic();
