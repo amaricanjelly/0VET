@@ -491,6 +491,188 @@
       display: block !important;
     }
 
+    /* ============================================================
+       TEASER TIMELINE — small / medium transition moments
+       Non-blocking, purely visual, never blocks reading.
+       ============================================================ */
+    .teaser-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 15;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 1.2s ease;
+    }
+
+    .teaser-overlay.visible {
+      opacity: 1;
+    }
+
+    .teaser-inner {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.35em;
+      padding: 1.2em 2em;
+      border-radius: 18px;
+      background: rgba(255, 210, 225, 0.04);
+      border: 1px solid rgba(255, 210, 225, 0.12);
+      backdrop-filter: blur(6px);
+      box-shadow: 0 0 50px rgba(255, 210, 225, 0.08);
+      transform: translateY(6px) scale(0.98);
+      transition: transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      max-width: 88vw;
+    }
+
+    .teaser-overlay.visible .teaser-inner {
+      transform: translateY(0) scale(1);
+    }
+
+    .teaser-small .teaser-inner {
+      padding: 0.9em 1.6em;
+    }
+
+    .teaser-medium .teaser-inner {
+      padding: 1.4em 2.2em;
+    }
+
+    .teaser-line {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: clamp(0.85rem, 2.8vw, 1.2rem);
+      color: #ffdcea;
+      letter-spacing: 0.05em;
+      line-height: 1.5;
+    }
+
+    .teaser-small .teaser-line {
+      font-size: clamp(0.8rem, 2.5vw, 1.05rem);
+    }
+
+    .teaser-bangla {
+      font-family: 'Hind Siliguri', sans-serif;
+      font-size: clamp(0.85rem, 2.8vw, 1.15rem);
+      font-weight: 300;
+      color: #f8e2ec;
+      line-height: 1.7;
+    }
+
+    /* ============================================================
+       FINAL IMAGE — closing photo, cinematic soft display
+       ============================================================ */
+    .closing-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(ellipse at 50% 45%, #1c1018 0%, #100810 60%, #000000 100%);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      padding: 4vmin;
+      overflow: hidden;
+    }
+
+    .closing-screen.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .closing-photo-frame {
+      position: relative;
+      max-width: 82vmin;
+      max-height: 68vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 20px;
+      overflow: hidden;
+      opacity: 0;
+      transform: scale(1.06);
+      box-shadow:
+        0 0 60px rgba(255, 210, 225, 0.18),
+        0 0 140px rgba(255, 210, 225, 0.06),
+        0 0 200px rgba(255, 200, 220, 0.04);
+      border: 1px solid rgba(255, 210, 225, 0.16);
+      background: rgba(255, 210, 225, 0.03);
+      transition:
+        opacity 3.2s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        transform 6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .closing-photo-frame.show {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .closing-photo-frame img {
+      width: 100%;
+      height: auto;
+      max-height: 68vh;
+      object-fit: contain;
+      display: block;
+      border-radius: 20px;
+    }
+
+    .closing-caption {
+      margin-top: 2.2vmin;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3em;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 2.6s ease 0.8s, transform 2.6s ease 0.8s;
+    }
+
+    .closing-caption.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .closing-caption .cap-main {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: clamp(0.95rem, 3.2vw, 1.35rem);
+      color: #ffdcea;
+      letter-spacing: 0.05em;
+      line-height: 1.6;
+    }
+
+    .closing-caption .cap-sub {
+      font-family: 'Hind Siliguri', sans-serif;
+      font-size: clamp(0.8rem, 2.6vw, 1.05rem);
+      font-weight: 300;
+      color: #d4b0c0;
+      letter-spacing: 0.04em;
+      line-height: 1.6;
+    }
+
+    /* ============================================================
+       SCREEN FADE TO ZERO — smooth 100% → 0% opacity to black
+       ============================================================ */
+    .zero-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      background: #000000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 3.5s cubic-bezier(0.4, 0.0, 0.2, 1);
+    }
+
+    .zero-screen.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
     /* ---------- RESPONSIVE ---------- */
     @media (max-width: 480px) {
       .story-container {
@@ -513,6 +695,13 @@
         max-width: 92vmin;
         max-height: 62vh;
       }
+      .closing-photo-frame {
+        max-width: 92vmin;
+        max-height: 60vh;
+      }
+      .closing-photo-frame img {
+        max-height: 60vh;
+      }
     }
 
     @media (min-width: 1200px) {
@@ -532,6 +721,12 @@
         gap: 0.3em;
       }
       .flower-img {
+        max-height: 58vh;
+      }
+      .closing-photo-frame {
+        max-height: 58vh;
+      }
+      .closing-photo-frame img {
         max-height: 58vh;
       }
     }
@@ -672,6 +867,65 @@
     </div>
   </div>
 
+  <!-- ============================================================
+       TEASER TIMELINE — non-blocking small / medium transition moments
+       These are purely visual overlays. They never block reading,
+       never create blocking popups, and are safely dismissible
+       by the story timeline.
+       ============================================================ -->
+  <div class="teaser-overlay teaser-small" id="teaserSmall">
+    <div class="teaser-inner">
+      <div class="teaser-line">every moment with you feels special...</div>
+      <div class="teaser-bangla">তোমার সাথে প্রতিটা মুহূর্ত আলাদা।</div>
+    </div>
+  </div>
+
+  <div class="teaser-overlay teaser-medium" id="teaserMedium">
+    <div class="teaser-inner">
+      <div class="teaser-line">some people arrive... and quietly become home.</div>
+      <div class="teaser-bangla">কিছু মানুষ আসে... আর চুপচাপ ঘর হয়ে যায়।</div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       FINAL IMAGE — closing photo, cinematic soft display
+       ============================================================ -->
+  <div class="closing-screen" id="closingScreen">
+    <div class="closing-photo-frame" id="closingPhotoFrame">
+      <img id="closingPhoto" src="" alt="My love">
+    </div>
+    <div class="closing-caption" id="closingCaption">
+      <div class="cap-main">you are my favourite chapter.</div>
+      <div class="cap-sub">তুমি আমার সবচেয়ে প্রিয় অধ্যায়।</div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       SCREEN FADE TO ZERO — smooth 100% → 0% opacity to black
+       ============================================================ -->
+  <div class="zero-screen" id="zeroScreen"></div>
+
+  <!-- ============================================================
+       CONFIG — easy editing area
+       Change CLOSING_PHOTO_URL to your girlfriend's photo URL,
+       or set it to '' and use the file picker via the page.
+       (The file picker is exposed as window.setClosingPhoto(fileOrUrl)
+        for optional local selection.)
+       ============================================================ -->
+  <script>
+    // FINAL IMAGE — configuration
+    window.CLOSING_CONFIG = {
+      // Option 1: Provide a direct image URL
+      // Example: 'https://example.com/my-girlfriend-photo.jpg'
+      CLOSING_PHOTO_URL: '',
+
+      // Option 2: Local file selection (via the helper below)
+      // You can call window.setClosingPhoto(file) from anywhere
+      // e.g. from a small hidden input, or from console.
+      // The image will be used as the final closing photo.
+    };
+  </script>
+
   <!-- JAVASCRIPT -->
   <script>
     (function() {
@@ -689,6 +943,7 @@
       // - Uses the official YouTube IFrame Player API.
       // - Visually hidden and fully background.
       // - YouTube UI (logo, title, controls, thumbnail) is never visible.
+      // - Closing stage fades the music smoothly (no abrupt stop).
       // ============================================================
       (function initBackgroundMusic() {
         // ---- Configuration ----
@@ -923,6 +1178,43 @@
             setTimeout(scheduleMusicBoot, 200);
           });
         }
+
+        // ---- Expose a smooth fade-out for the closing stage ----
+        // Called by the closing animation so music never stops abruptly.
+        window.fadeOutBackgroundMusic = function(durationMs) {
+          durationMs = (typeof durationMs === 'number' && durationMs > 0) ? durationMs : 4000;
+          var steps = 40;
+          var stepTime = durationMs / steps;
+          var startVol = TARGET_VOLUME;
+          var i = 0;
+
+          function step() {
+            if (i >= steps) {
+              // Fully faded — pause the player silently
+              try {
+                if (playerInstance && typeof playerInstance.pauseVideo === 'function') {
+                  playerInstance.pauseVideo();
+                } else {
+                  var iframe = document.getElementById('bg-music-iframe');
+                  if (iframe) postToIframe(iframe, 'pauseVideo');
+                }
+              } catch (e) { /* silent */ }
+              return;
+            }
+            i++;
+            var v = Math.max(0, Math.round(startVol * (1 - i / steps)));
+            try {
+              if (playerInstance && typeof playerInstance.setVolume === 'function') {
+                playerInstance.setVolume(v);
+              } else {
+                var iframe2 = document.getElementById('bg-music-iframe');
+                if (iframe2) postToIframe(iframe2, 'setVolume', [v]);
+              }
+            } catch (e) { /* silent */ }
+            setTimeout(step, stepTime);
+          }
+          step();
+        };
       })();
       // ============================================================
       // END NON-BLOCKING BACKGROUND MUSIC
@@ -1100,6 +1392,13 @@
           setTimeout(function() {
             gardenOutro.classList.add('visible');
           }, 1800);
+
+          // After garden outro has been visible for a while, begin
+          // the advanced closing sequence (teasers → final image →
+          // closing animation → screen fade to zero).
+          setTimeout(function() {
+            beginClosingSequence();
+          }, 1800 + 9000);
           return;
         }
 
@@ -1133,6 +1432,193 @@
       setTimeout(function() {
         startGardenSequence();
       }, gardenStartDelay);
+
+      // ============================================================
+      // TEASER TIMELINE — non-blocking transition moments
+      // ------------------------------------------------------------
+      // Small teaser shows briefly between story phases.
+      // Medium teaser shows a bit longer before the closing.
+      // These are purely visual and never block reading or playback.
+      // ============================================================
+      const teaserSmall = document.getElementById('teaserSmall');
+      const teaserMedium = document.getElementById('teaserMedium');
+
+      function showTeaser(el, visibleMs) {
+        if (!el) return;
+        el.classList.add('visible');
+        setTimeout(function() {
+          el.classList.remove('visible');
+        }, visibleMs);
+      }
+
+      // Small teaser — appears between scene 2 and scene 3
+      // (does not block scene transitions; both run independently)
+      setTimeout(function() {
+        showTeaser(teaserSmall, 5000);
+      }, durations[0] + 4000);
+
+      // Medium teaser — appears near the end of the story,
+      // just before the final screen establishes itself
+      setTimeout(function() {
+        showTeaser(teaserMedium, 7000);
+      }, durations[0] + durations[1] + durations[2] + durations[3] + 5000);
+
+      // ============================================================
+      // FINAL IMAGE — closing photo, cinematic soft display
+      // ------------------------------------------------------------
+      // A configurable closing photo. Priority order:
+      //   1) window.CLOSING_CONFIG.CLOSING_PHOTO_URL (URL)
+      //   2) window.setClosingPhoto(fileOrUrl)     (local file / URL)
+      //   3) built-in romantic placeholder
+      // ============================================================
+      const closingScreen = document.getElementById('closingScreen');
+      const closingPhotoFrame = document.getElementById('closingPhotoFrame');
+      const closingPhoto = document.getElementById('closingPhoto');
+      const closingCaption = document.getElementById('closingCaption');
+
+      // Placeholder used if no image is configured.
+      const CLOSING_PLACEHOLDER =
+        "data:image/svg+xml," +
+        encodeURIComponent(
+          "<svg xmlns='http://www.w3.org/2000/svg' width='900' height='1200' viewBox='0 0 900 1200'>" +
+          "<defs>" +
+          "<radialGradient id='g' cx='50%' cy='40%' r='70%'>" +
+          "<stop offset='0%' stop-color='#2a1822'/>" +
+          "<stop offset='60%' stop-color='#1c1018'/>" +
+          "<stop offset='100%' stop-color='#100810'/>" +
+          "</radialGradient>" +
+          "</defs>" +
+          "<rect width='900' height='1200' fill='url(#g)'/>" +
+          "<text x='450' y='580' font-family='Georgia, serif' font-size='26' fill='#ffdcea' text-anchor='middle' opacity='0.65'>❤️ Your Photo ❤️</text>" +
+          "<text x='450' y='625' font-family='Georgia, serif' font-size='15' fill='#d4b0c0' text-anchor='middle' opacity='0.45'>set CLOSING_PHOTO_URL or use setClosingPhoto()</text>" +
+          "</svg>"
+        );
+
+      // Resolve the closing photo source with clear priority.
+      function resolveClosingPhotoSrc() {
+        try {
+          if (window.CLOSING_CONFIG &&
+              typeof window.CLOSING_CONFIG.CLOSING_PHOTO_URL === 'string' &&
+              window.CLOSING_CONFIG.CLOSING_PHOTO_URL.trim() !== '') {
+            return window.CLOSING_CONFIG.CLOSING_PHOTO_URL.trim();
+          }
+        } catch (e) { /* silent */ }
+        if (window.__closingPhotoSrc && typeof window.__closingPhotoSrc === 'string') {
+          return window.__closingPhotoSrc;
+        }
+        return CLOSING_PLACEHOLDER;
+      }
+
+      // Preload closing photo so the reveal is smooth (no pop-in).
+      function preloadClosingPhoto(src) {
+        try {
+          const img = new Image();
+          img.decoding = 'async';
+          img.src = src;
+        } catch (e) { /* silent */ }
+      }
+
+      // Public helper — choose your own photo (URL string or File object).
+      // Example:
+      //   window.setClosingPhoto('https://example.com/her.jpg');
+      //   window.setClosingPhoto(fileFromInput.files[0]);
+      window.setClosingPhoto = function(fileOrUrl) {
+        try {
+          if (typeof fileOrUrl === 'string' && fileOrUrl.trim() !== '') {
+            window.__closingPhotoSrc = fileOrUrl.trim();
+            preloadClosingPhoto(window.__closingPhotoSrc);
+            return true;
+          }
+          if (fileOrUrl && typeof fileOrUrl === 'object' && typeof URL !== 'undefined' && URL.createObjectURL) {
+            const url = URL.createObjectURL(fileOrUrl);
+            window.__closingPhotoSrc = url;
+            preloadClosingPhoto(url);
+            return true;
+          }
+        } catch (e) { /* silent */ }
+        return false;
+      };
+
+      // Apply the resolved source to the <img>.
+      const resolvedSrc = resolveClosingPhotoSrc();
+      closingPhoto.src = resolvedSrc;
+      preloadClosingPhoto(resolvedSrc);
+
+      // ============================================================
+      // CLOSING ANIMATION — cinematic reveal of the final photo,
+      // then smooth fade of the whole scene.
+      // ============================================================
+      function showClosingScreen() {
+        // 1) Make the closing screen itself visible (soft fade in).
+        closingScreen.classList.add('visible');
+
+        // 2) Soft photo reveal: subtle scale + fade, gentle glow.
+        setTimeout(function() {
+          closingPhotoFrame.classList.add('show');
+        }, 300);
+
+        // 3) Caption fades in a moment later.
+        setTimeout(function() {
+          closingCaption.classList.add('show');
+        }, 1400);
+      }
+
+      // ============================================================
+      // SCREEN FADE TO ZERO — smooth 100% → 0% opacity to black.
+      // Music fades out gently and in sync (never abruptly stopped).
+      // ============================================================
+      function fadeScreenToZero() {
+        // Smoothly reduce background music volume during the fade.
+        try {
+          if (typeof window.fadeOutBackgroundMusic === 'function') {
+            window.fadeOutBackgroundMusic(3800);
+          }
+        } catch (e) { /* silent */ }
+
+        // Fade the closing screen down first…
+        try {
+          closingScreen.classList.remove('visible');
+        } catch (e) { /* silent */ }
+
+        // …then bring in the black "zero" screen on top.
+        setTimeout(function() {
+          const zeroScreen = document.getElementById('zeroScreen');
+          if (zeroScreen) {
+            zeroScreen.classList.add('visible');
+          }
+        }, 600);
+      }
+
+      // ============================================================
+      // FINAL TIMELINE LOGIC
+      // ------------------------------------------------------------
+      //   garden outro done
+      //   → show closing screen (final photo)
+      //   → soft image effect
+      //   → closing animation
+      //   → smooth fade out
+      //   → screen = zero
+      //
+      // No hard-coded random delay is used to trigger the closing;
+      // the sequence starts exactly when the last visible content
+      // (garden outro) has finished its on-screen duration.
+      // ============================================================
+      function beginClosingSequence() {
+        // 1) Reveal final closing screen with the configured photo.
+        showClosingScreen();
+
+        // 2) Hold the final photo on screen long enough for the
+        //    cinematic effect to be felt (soft glow, subtle zoom).
+        const closingHoldMs = 9000;
+
+        // 3) Then smoothly fade everything to zero.
+        setTimeout(function() {
+          fadeScreenToZero();
+        }, closingHoldMs);
+      }
+
+      // Safety: expose for optional manual triggering.
+      window.beginClosingSequence = beginClosingSequence;
 
     })();
   </script>
