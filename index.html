@@ -122,6 +122,144 @@
       100% { transform: translateY(110vh) rotate(360deg) scale(1.05); opacity: 0; }
     }
 
+    /* ---------- START OVERLAY ---------- */
+    .start-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(ellipse at 50% 40%,
+          #fff5fa 0%,
+          #fce8f0 35%,
+          #f9d6e4 75%,
+          #f2b8ce 100%);
+      gap: 2.5vmin;
+      padding: 4vmin;
+      transition: opacity 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      pointer-events: auto;
+    }
+
+    .start-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .start-button {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.2rem, 4.5vw, 2.0rem);
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: #fff5fa;
+      background: linear-gradient(135deg, #d47a9e 0%, #b0487a 50%, #9a3c6e 100%);
+      border: none;
+      border-radius: 60px;
+      padding: 1.1em 2.8em;
+      cursor: pointer;
+      box-shadow:
+        0 8px 40px rgba(180, 72, 122, 0.45),
+        0 0 80px rgba(255, 190, 220, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.35);
+      transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                  box-shadow 0.35s ease;
+      outline: none;
+      -webkit-tap-highlight-color: transparent;
+      text-shadow: 0 2px 10px rgba(120, 30, 70, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .start-button::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 60px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.28) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .start-button:hover {
+      transform: scale(1.05);
+      box-shadow:
+        0 12px 55px rgba(180, 72, 122, 0.6),
+        0 0 120px rgba(255, 190, 220, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.45);
+    }
+
+    .start-button:active {
+      transform: scale(0.97);
+    }
+
+    .start-hint {
+      font-family: 'Hind Siliguri', sans-serif;
+      font-size: clamp(0.8rem, 2.6vw, 1.05rem);
+      font-weight: 300;
+      color: #8a6a7e;
+      letter-spacing: 0.06em;
+      text-align: center;
+      line-height: 1.7;
+      opacity: 0.85;
+    }
+
+    .start-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 6vw, 3.2rem);
+      font-weight: 400;
+      color: #b0487a;
+      text-shadow: 0 0 30px rgba(255, 190, 220, 0.65);
+      letter-spacing: 0.04em;
+      text-align: center;
+      line-height: 1.25;
+    }
+
+    /* ---------- COUNTDOWN ---------- */
+    .countdown-overlay {
+      position: fixed;
+      top: 18px;
+      right: 22px;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 1.5s ease;
+    }
+
+    .countdown-overlay.visible {
+      opacity: 1;
+    }
+
+    .countdown-number {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 5vw, 2.8rem);
+      font-weight: 600;
+      color: #b0487a;
+      text-shadow:
+        0 0 20px rgba(255, 190, 220, 0.75),
+        0 2px 12px rgba(200, 130, 170, 0.35);
+      letter-spacing: 0.04em;
+      line-height: 1;
+      min-width: 1.4em;
+      text-align: center;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    .countdown-number.tick {
+      transform: scale(1.18);
+      opacity: 0.85;
+    }
+
+    .countdown-number.zero-hold {
+      color: #9a3c6e;
+      text-shadow:
+        0 0 30px rgba(255, 190, 220, 0.95),
+        0 2px 16px rgba(200, 130, 170, 0.45);
+    }
+
     /* ---------- STORY CONTAINER ---------- */
     .story-container {
       position: relative;
@@ -787,6 +925,13 @@
       .closing-photo-frame img {
         max-height: 60vh;
       }
+      .countdown-overlay {
+        top: 12px;
+        right: 14px;
+      }
+      .start-button {
+        padding: 0.95em 2.2em;
+      }
     }
 
     @media (min-width: 1200px) {
@@ -821,6 +966,19 @@
 
   <!-- HIDDEN BACKGROUND MUSIC (non-blocking, async) -->
   <div id="music-container" style="position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none;visibility:hidden;z-index:-9999;"></div>
+
+  <!-- START OVERLAY -->
+  <div class="start-overlay" id="startOverlay">
+    <div class="start-title">30 Days of Knowing You</div>
+    <div class="divider-line"></div>
+    <button class="start-button" id="startButton">Start Now with Sound</button>
+    <div class="start-hint">Tap to begin our beautiful journey together</div>
+  </div>
+
+  <!-- COUNTDOWN OVERLAY -->
+  <div class="countdown-overlay" id="countdownOverlay">
+    <div class="countdown-number" id="countdownNumber">100</div>
+  </div>
 
   <!-- BACKGROUND -->
   <div class="bg-layer">
@@ -995,47 +1153,40 @@
     // FINAL IMAGE — configuration
     // ============================================================
     window.CLOSING_CONFIG = {
-      // ============================================================
-      // IMAGE SOURCE PRIORITY
-      // ------------------------------------------------------------
-      // 1. If AUTO_USE_VIDEO_THUMBNAIL = true, the system will try
-      //    to automatically fetch a thumbnail from the YouTube video
-      //    configured below (VIDEO_ID_FOR_THUMBNAIL), in this order:
-      //      maxresdefault.jpg → sddefault.jpg → hqdefault.jpg → mqdefault.jpg
-      //    The first one that loads successfully will be used.
-      //
-      // 2. If the automatic fetch fails (network / region / removed),
-      //    the system falls back to CLOSING_PHOTO_URL (below).
-      //
-      // 3. If CLOSING_PHOTO_URL is also empty, the built-in
-      //    placeholder is used, and the user can still call
-      //    window.setClosingPhoto(fileOrUrl) at any time.
-      // ============================================================
       AUTO_USE_VIDEO_THUMBNAIL: true,
-
-      // The YouTube video ID whose thumbnail will be used as the
-      // final closing image when AUTO_USE_VIDEO_THUMBNAIL is true.
       VIDEO_ID_FOR_THUMBNAIL: '3W4WLcAOBh8',
-
-      // Manual fallback: provide a direct image URL here.
-      // Example: 'https://example.com/my-girlfriend-photo.jpg'
       CLOSING_PHOTO_URL: ''
     };
 
     // ============================================================
-    // SPECIAL PERSON IMAGE — configuration (MUST USE URL)
+    // SPECIAL PERSON IMAGE — EXACTLY THE 3RD URL FROM THE LIST
     // ------------------------------------------------------------
-    // This is the "Special Person" image/section. Change the URL
-    // below to any direct image URL. If empty, the YouTube
-    // thumbnail from CLOSING_CONFIG is used automatically.
+    // The user's existing list has these URLs:
+    //   1. https://img.remit.ee/i/UnWFIzSeVY59
+    //   2. https://img.remit.ee/i/cKTJZq5P7GRx
+    //   3. https://img.remit.ee/i/NsoraAO8KvL1  <-- 3rd URL
+    //   4. https://img.remit.ee/i/BBGVazW4Qd0W
+    //   ...
+    // We use the 3rd URL exactly as requested.
     // ============================================================
-    window.SPECIAL_PERSON_IMAGE_URL = ''; // <-- PUT YOUR IMAGE URL HERE
+    window.SPECIAL_PERSON_IMAGE_URL = 'https://img.remit.ee/i/NsoraAO8KvL1';
   </script>
 
   <!-- JAVASCRIPT -->
   <script>
     (function() {
       'use strict';
+
+      // ============================================================
+      // GLOBAL STATE
+      // ============================================================
+      let sessionStarted = false;
+      let storyFinished = false;
+      let timelineFinished = false;
+      let finalZeroReached = false;
+      let countdownInterval = null;
+      let countdownSeconds = 100;
+      let storyTimeoutIds = [];
 
       // ============================================================
       // NON-BLOCKING BACKGROUND MUSIC
@@ -1308,6 +1459,11 @@
           }
           step();
         };
+
+        // Expose a manual play function for the Start button
+        window.playBackgroundMusic = function() {
+          requestAudiblePlay();
+        };
       })();
       // ============================================================
       // END NON-BLOCKING BACKGROUND MUSIC
@@ -1316,8 +1472,7 @@
       // ============================================================
       // SPECIAL PERSON IMAGE — used in the final image wrapper
       // ------------------------------------------------------------
-      // If SPECIAL_PERSON_IMAGE_URL is set, that image is used.
-      // Otherwise, the YouTube thumbnail from the video ID is used.
+      // The 3rd URL from the user's existing list is used exactly.
       // ============================================================
       (function initSpecialPersonImage() {
         var img = document.getElementById('finalImage');
@@ -1326,14 +1481,14 @@
         var url = window.SPECIAL_PERSON_IMAGE_URL;
         if (url && typeof url === 'string' && url.trim() !== '') {
           img.src = url.trim();
+          // No random fallback. If broken, it stays broken.
           return;
         }
 
-        // Fallback: use YouTube thumbnail
+        // Fallback only if the variable is empty (should not happen)
         var vid = '3W4WLcAOBh8';
         var thumbUrl = 'https://img.youtube.com/vi/' + vid + '/maxresdefault.jpg';
         img.src = thumbUrl;
-        // If maxres fails, try hqdefault
         img.onerror = function() {
           img.src = 'https://img.youtube.com/vi/' + vid + '/hqdefault.jpg';
           img.onerror = null;
@@ -1341,10 +1496,48 @@
       })();
 
       // ============================================================
-      // EXISTING SITE LOGIC — unchanged below this point
+      // COUNTDOWN SYSTEM — 100 to 0 with HOLD at 0
       // ============================================================
+      const countdownOverlay = document.getElementById('countdownOverlay');
+      const countdownNumber = document.getElementById('countdownNumber');
 
-      // ---------- PETALS ----------
+      function startCountdown() {
+        if (countdownInterval) return;
+        countdownSeconds = 100;
+        countdownNumber.textContent = countdownSeconds;
+        countdownNumber.classList.remove('zero-hold');
+        countdownOverlay.classList.add('visible');
+
+        countdownInterval = setInterval(function() {
+          if (countdownSeconds <= 0) {
+            // HOLD at 0 — never go negative, never restart
+            clearInterval(countdownInterval);
+            countdownInterval = null;
+            countdownNumber.textContent = '0';
+            countdownNumber.classList.add('zero-hold');
+            finalZeroReached = true;
+            return;
+          }
+
+          countdownSeconds--;
+          countdownNumber.textContent = countdownSeconds;
+
+          // Tick animation
+          countdownNumber.classList.add('tick');
+          setTimeout(function() {
+            countdownNumber.classList.remove('tick');
+          }, 280);
+
+          if (countdownSeconds === 0) {
+            countdownNumber.classList.add('zero-hold');
+            finalZeroReached = true;
+          }
+        }, 1000);
+      }
+
+      // ============================================================
+      // PETALS
+      // ============================================================
       const petalsContainer = document.getElementById('petals-container');
       const PETAL_COUNT = 16;
 
@@ -1370,7 +1563,9 @@
         createPetal();
       }
 
-      // ---------- SCENE TIMING ----------
+      // ============================================================
+      // SCENE TIMING
+      // ============================================================
       const scenes = [
         document.getElementById('scene1'),
         document.getElementById('scene2'),
@@ -1384,7 +1579,6 @@
       const durations = [14000, 16000, 16000, 18000, 22000];
 
       let currentIndex = 0;
-      let storyFinished = false;
 
       function showScene(index) {
         scenes.forEach(function(scene, i) {
@@ -1408,28 +1602,29 @@
           currentIndex++;
           showScene(currentIndex);
 
-          setTimeout(function() {
+          var tid = setTimeout(function() {
             nextScene();
           }, durations[currentIndex]);
+          storyTimeoutIds.push(tid);
         } else {
           storyFinished = true;
+          timelineFinished = true;
 
           scenes.forEach(function(scene) {
             scene.classList.remove('active');
             scene.classList.add('exit');
           });
 
-          setTimeout(function() {
+          var tid = setTimeout(function() {
             finalScreen.classList.add('visible');
           }, 2500);
+          storyTimeoutIds.push(tid);
         }
       }
 
-      setTimeout(function() {
-        nextScene();
-      }, durations[0]);
-
-      // ---------- GARDEN SEQUENCE ----------
+      // ============================================================
+      // GARDEN SEQUENCE
+      // ============================================================
       const gardenScreen = document.getElementById('gardenScreen');
       const gardenIntro = document.getElementById('gardenIntro');
       const gardenFlowerStage = document.getElementById('gardenFlowerStage');
@@ -1480,56 +1675,54 @@
 
         gardenScreen.classList.add('visible');
 
-        setTimeout(function() {
+        var tid1 = setTimeout(function() {
           gardenIntro.classList.add('hidden');
 
-          setTimeout(function() {
+          var tid2 = setTimeout(function() {
             gardenFlowerStage.classList.add('visible');
 
-            setTimeout(function() {
+            var tid3 = setTimeout(function() {
               playFlowers(0);
             }, 1500);
+            storyTimeoutIds.push(tid3);
           }, 1500);
+          storyTimeoutIds.push(tid2);
         }, 12000);
+        storyTimeoutIds.push(tid1);
       }
 
       function playFlowers(index) {
         if (index >= flowerUrls.length) {
           gardenFlowerStage.classList.remove('visible');
 
-          setTimeout(function() {
+          var tid1 = setTimeout(function() {
             gardenOutro.classList.add('visible');
           }, 1800);
+          storyTimeoutIds.push(tid1);
 
-          setTimeout(function() {
+          var tid2 = setTimeout(function() {
             beginClosingSequence();
           }, 1800 + 9000);
+          storyTimeoutIds.push(tid2);
           return;
         }
 
         flowerImg.src = flowerUrls[index];
         flowerImg.classList.add('show');
 
-        setTimeout(function() {
+        var tid1 = setTimeout(function() {
           flowerImg.classList.remove('show');
 
-          setTimeout(function() {
+          var tid2 = setTimeout(function() {
             playFlowers(index + 1);
           }, 900);
+          storyTimeoutIds.push(tid2);
         }, 500);
+        storyTimeoutIds.push(tid1);
       }
 
-      const totalStoryTime = durations.reduce(function(a, b) { return a + b; }, 0);
-      const finalScreenDelay = 2500;
-      const finalScreenHold = 30000;
-      const gardenStartDelay = totalStoryTime + finalScreenDelay + finalScreenHold;
-
-      setTimeout(function() {
-        startGardenSequence();
-      }, gardenStartDelay);
-
       // ============================================================
-      // TEASER TIMELINE — non-blocking transition moments
+      // TEASER TIMELINE
       // ============================================================
       const teaserSmall = document.getElementById('teaserSmall');
       const teaserMedium = document.getElementById('teaserMedium');
@@ -1537,30 +1730,14 @@
       function showTeaser(el, visibleMs) {
         if (!el) return;
         el.classList.add('visible');
-        setTimeout(function() {
+        var tid = setTimeout(function() {
           el.classList.remove('visible');
         }, visibleMs);
+        storyTimeoutIds.push(tid);
       }
-
-      setTimeout(function() {
-        showTeaser(teaserSmall, 5000);
-      }, durations[0] + 4000);
-
-      setTimeout(function() {
-        showTeaser(teaserMedium, 7000);
-      }, durations[0] + durations[1] + durations[2] + durations[3] + 5000);
 
       // ============================================================
       // FINAL IMAGE — closing photo, cinematic soft display
-      // ------------------------------------------------------------
-      // AUTO-SELECT IMAGE SOURCE:
-      //   1. Try YouTube thumbnail (maxres → sd → hq → mq)
-      //   2. Fall back to CLOSING_PHOTO_URL
-      //   3. Fall back to built-in placeholder
-      //   4. window.setClosingPhoto() always overrides
-      //
-      // All candidates are validated with a hidden <img> preloader
-      // so we never show a broken image. Fully async & non-blocking.
       // ============================================================
       const closingScreen = document.getElementById('closingScreen');
       const closingPhotoFrame = document.getElementById('closingPhotoFrame');
@@ -1584,29 +1761,24 @@
           "</svg>"
         );
 
-      // ---- Build the ordered list of candidate image URLs ----
       function buildClosingImageCandidates() {
         var candidates = [];
 
-        // 1. Automatic YouTube thumbnail candidates (highest → lowest quality)
         try {
           if (window.CLOSING_CONFIG &&
               window.CLOSING_CONFIG.AUTO_USE_VIDEO_THUMBNAIL === true &&
               typeof window.CLOSING_CONFIG.VIDEO_ID_FOR_THUMBNAIL === 'string' &&
               window.CLOSING_CONFIG.VIDEO_ID_FOR_THUMBNAIL.trim() !== '') {
             var vid = window.CLOSING_CONFIG.VIDEO_ID_FOR_THUMBNAIL.trim();
-            // YouTube auto-generated thumbnails, ordered by quality.
             candidates.push('https://i.ytimg.com/vi/' + vid + '/maxresdefault.jpg');
             candidates.push('https://i.ytimg.com/vi/' + vid + '/sddefault.jpg');
             candidates.push('https://i.ytimg.com/vi/' + vid + '/hqdefault.jpg');
             candidates.push('https://i.ytimg.com/vi/' + vid + '/mqdefault.jpg');
-            // Alternate CDN host as a fallback for some regions/networks.
             candidates.push('https://img.youtube.com/vi/' + vid + '/maxresdefault.jpg');
             candidates.push('https://img.youtube.com/vi/' + vid + '/hqdefault.jpg');
           }
         } catch (e) { /* silent */ }
 
-        // 2. User-configured URL (if provided)
         try {
           if (window.CLOSING_CONFIG &&
               typeof window.CLOSING_CONFIG.CLOSING_PHOTO_URL === 'string' &&
@@ -1615,34 +1787,26 @@
           }
         } catch (e) { /* silent */ }
 
-        // 3. Manually set source via setClosingPhoto()
         if (window.__closingPhotoSrc && typeof window.__closingPhotoSrc === 'string') {
           candidates.push(window.__closingPhotoSrc);
         }
 
-        // 4. Built-in placeholder (always succeeds)
         candidates.push(CLOSING_PLACEHOLDER);
 
         return candidates;
       }
 
-      // ---- Asynchronously find the first candidate that loads ----
-      // Uses a hidden Image() to test each URL without touching the DOM.
-      // Never throws, never blocks. Calls onResolved(src) with the
-      // first successful URL (or the placeholder if all fail).
       function resolveClosingImageAsync(onResolved) {
         var candidates = buildClosingImageCandidates();
         var index = 0;
 
         function tryNext() {
           if (index >= candidates.length) {
-            // Should not happen since placeholder is last, but be safe.
             try { onResolved(CLOSING_PLACEHOLDER); } catch (e) { /* silent */ }
             return;
           }
           var url = candidates[index++];
 
-          // Data URIs are always available.
           if (url.indexOf('data:') === 0) {
             try { onResolved(url); } catch (e) { /* silent */ }
             return;
@@ -1660,13 +1824,11 @@
             if (ok) {
               try { onResolved(url); } catch (e) { /* silent */ }
             } else {
-              // Try the next candidate.
               tryNext();
             }
           };
 
           probe.onload = function() {
-            // Some CDNs return a tiny placeholder; ensure it's real.
             if (probe.naturalWidth && probe.naturalWidth > 10) {
               done(true);
             } else {
@@ -1675,7 +1837,6 @@
           };
           probe.onerror = function() { done(false); };
 
-          // Safety timeout: if the network hangs, move on.
           setTimeout(function() { done(false); }, 4000);
 
           try {
@@ -1688,8 +1849,6 @@
         tryNext();
       }
 
-      // ---- Public helper: user-selected photo (URL or File) ----
-      // Overrides everything else. Safe to call at any time.
       window.setClosingPhoto = function(fileOrUrl) {
         try {
           if (typeof fileOrUrl === 'string' && fileOrUrl.trim() !== '') {
@@ -1708,14 +1867,9 @@
         return false;
       };
 
-      // ---- Kick off async resolution ----
-      // While resolving, show the built-in placeholder so the DOM
-      // always has a valid image (no broken-icon flash).
       closingPhoto.src = CLOSING_PLACEHOLDER;
 
       resolveClosingImageAsync(function(resolvedSrc) {
-        // Only swap in the resolved image if the user hasn't
-        // already manually selected a photo in the meantime.
         if (window.__closingPhotoSrc && typeof window.__closingPhotoSrc === 'string') {
           return;
         }
@@ -1725,30 +1879,30 @@
       });
 
       // ============================================================
-      // CLOSING ANIMATION — cinematic reveal of the final photo
+      // CLOSING ANIMATION
       // ============================================================
       function showClosingScreen() {
         closingScreen.classList.add('visible');
 
-        setTimeout(function() {
+        var tid1 = setTimeout(function() {
           closingPhotoFrame.classList.add('show');
         }, 300);
+        storyTimeoutIds.push(tid1);
 
-        setTimeout(function() {
+        var tid2 = setTimeout(function() {
           closingCaption.classList.add('show');
         }, 1400);
+        storyTimeoutIds.push(tid2);
       }
 
       // ============================================================
       // SCREEN FADE TO ZERO — smooth 100% → 0% opacity to black.
-      // Music fades out gently and in sync (never abruptly stopped).
       // FINAL STATE IS MAINTAINED — nothing comes back.
       // ============================================================
-      let finalZeroScreenReached = false;
-
       function fadeScreenToZero() {
-        if (finalZeroScreenReached) return;
-        finalZeroScreenReached = true;
+        if (finalZeroReached && document.getElementById('zeroScreen').classList.contains('visible')) {
+          return;
+        }
 
         try {
           if (typeof window.fadeOutBackgroundMusic === 'function') {
@@ -1760,12 +1914,13 @@
           closingScreen.classList.remove('visible');
         } catch (e) { /* silent */ }
 
-        setTimeout(function() {
+        var tid = setTimeout(function() {
           const zeroScreen = document.getElementById('zeroScreen');
           if (zeroScreen) {
             zeroScreen.classList.add('visible');
           }
         }, 600);
+        storyTimeoutIds.push(tid);
       }
 
       // ============================================================
@@ -1774,14 +1929,81 @@
       function beginClosingSequence() {
         showClosingScreen();
 
-        const closingHoldMs = 9000;
-
-        setTimeout(function() {
+        var tid = setTimeout(function() {
           fadeScreenToZero();
-        }, closingHoldMs);
+        }, 9000);
+        storyTimeoutIds.push(tid);
       }
 
       window.beginClosingSequence = beginClosingSequence;
+
+      // ============================================================
+      // START NOW WITH SOUND — main entry point
+      // ------------------------------------------------------------
+      // On click:
+      //   1. Music starts (via user gesture)
+      //   2. Countdown starts at 100
+      //   3. Story timeline starts
+      //   4. Teaser timings start
+      //   5. Garden sequence starts
+      // ============================================================
+      function startEverything() {
+        if (sessionStarted) return;
+        sessionStarted = true;
+
+        // Hide start overlay
+        var startOverlay = document.getElementById('startOverlay');
+        startOverlay.classList.add('hidden');
+
+        // 1. PLAY MUSIC — user gesture makes this audible
+        try {
+          if (typeof window.playBackgroundMusic === 'function') {
+            window.playBackgroundMusic();
+          }
+        } catch (e) { /* silent */ }
+
+        // 2. START COUNTDOWN at 100
+        startCountdown();
+
+        // 3. START STORY TIMELINE
+        var tid = setTimeout(function() {
+          nextScene();
+        }, durations[0]);
+        storyTimeoutIds.push(tid);
+
+        // 4. START TEASER TIMINGS
+        var totalStoryTime = durations.reduce(function(a, b) { return a + b; }, 0);
+        var finalScreenDelay = 2500;
+        var finalScreenHold = 30000;
+        var gardenStartDelay = totalStoryTime + finalScreenDelay + finalScreenHold;
+
+        var tidTeaser1 = setTimeout(function() {
+          showTeaser(teaserSmall, 5000);
+        }, durations[0] + 4000);
+        storyTimeoutIds.push(tidTeaser1);
+
+        var tidTeaser2 = setTimeout(function() {
+          showTeaser(teaserMedium, 7000);
+        }, durations[0] + durations[1] + durations[2] + durations[3] + 5000);
+        storyTimeoutIds.push(tidTeaser2);
+
+        // 5. START GARDEN SEQUENCE
+        var tidGarden = setTimeout(function() {
+          startGardenSequence();
+        }, gardenStartDelay);
+        storyTimeoutIds.push(tidGarden);
+      }
+
+      // ============================================================
+      // BIND START BUTTON
+      // ============================================================
+      var startButton = document.getElementById('startButton');
+      if (startButton) {
+        startButton.addEventListener('click', function(e) {
+          e.preventDefault();
+          startEverything();
+        }, { once: true });
+      }
 
     })();
   </script>
