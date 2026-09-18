@@ -8,6 +8,43 @@
     /* ---------- FONTS ---------- */
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Hind+Siliguri:wght@300;400;500&display=swap');
 
+    /* ============================================================
+       NEW COLOR THEME — Cherry Blossom + Light Pink + Sky Blue + Deep Blue
+       ------------------------------------------------------------
+       Soft, romantic, elegant, dreamy, premium.
+       Palette:
+         --cb-pink        : Cherry Blossom Pink
+         --soft-pink      : Soft Pink
+         --light-pink     : Light Pink
+         --sky-blue       : Sky Blue
+         --deep-blue      : Deep / Heavy Blue
+         --white-tone     : Soft white / very light
+         --bg-1..3        : Background gradient stops
+       ============================================================ */
+    :root {
+      --cb-pink:      #ffd6e7;   /* cherry blossom pink */
+      --soft-pink:    #ffe8f2;   /* soft pink */
+      --light-pink:   #fff2f8;   /* light pink, near white */
+      --sky-blue:     #a7d3f0;   /* sky blue */
+      --sky-blue-2:   #cfe7f7;   /* lighter sky blue */
+      --deep-blue:    #1a2c4e;   /* deep blue */
+      --deep-blue-2:  #0e1a30;   /* deeper blue for background base */
+      --white-tone:   #fdfbff;   /* very light white tone */
+      --ink:          #2a1f3d;   /* dark ink for contrast, slightly blue-violet */
+
+      --bg-1: #fdf4fa;           /* near-white with pink hint */
+      --bg-2: #eaf3fc;           /* sky-blue tint */
+      --bg-3: #d6e6f7;           /* deeper sky-blue tint */
+      --bg-4: #1a2c4e;           /* deep blue for edges */
+
+      --glow-pink:    rgba(255, 200, 220, 0.55);
+      --glow-blue:    rgba(150, 200, 240, 0.45);
+      --text-main:    #3a2a4d;
+      --text-soft:    #5b4a6e;
+      --text-muted:   #8a7a9c;
+      --text-on-dark: #fff5fa;
+    }
+
     /* ---------- RESET & BASE ---------- */
     * {
       margin: 0;
@@ -19,57 +56,84 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background: #150c12;
+      background: #fdf4fa;
       font-family: 'Hind Siliguri', 'Playfair Display', serif;
-      color: #fff5f8;
+      color: var(--text-main);
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
 
     /* ---------- BACKGROUND ---------- */
+    /* Cherry-blossom + sky-blue inspired soft gradient.
+       Edges gently deepen into blue for a premium, dreamy feel. */
     .bg-layer {
       position: fixed;
       inset: 0;
       z-index: 0;
-      background: radial-gradient(ellipse at 50% 30%, #2a1822 0%, #1c1018 45%, #100810 100%);
+      background:
+        radial-gradient(ellipse at 50% 25%,
+          var(--white-tone) 0%,
+          var(--light-pink) 30%,
+          var(--sky-blue-2) 60%,
+          var(--sky-blue) 80%,
+          #8fb8dd 100%);
       overflow: hidden;
     }
 
-    /* soft glow — light pink, very subtle */
+    /* Very soft pink-white glow that pulses slowly */
     .bg-glow {
       position: absolute;
       width: 130vmax;
       height: 130vmax;
       top: -35vmax;
       left: -15vmax;
-      background: radial-gradient(circle, rgba(255, 210, 225, 0.05) 0%, rgba(255, 200, 220, 0.02) 40%, transparent 70%);
+      background: radial-gradient(circle,
+        rgba(255, 220, 235, 0.55) 0%,
+        rgba(255, 210, 225, 0.28) 40%,
+        transparent 70%);
       border-radius: 50%;
       animation: glowPulse 22s ease-in-out infinite alternate;
     }
 
     @keyframes glowPulse {
-      0% { opacity: 0.6; transform: scale(1); }
-      100% { opacity: 1; transform: scale(1.06); }
+      0% { opacity: 0.55; transform: scale(1); }
+      100% { opacity: 0.95; transform: scale(1.06); }
     }
 
-    /* petals — very slow, calm */
+    /* Soft sky-blue secondary glow on the right side for balance */
+    .bg-layer::after {
+      content: '';
+      position: absolute;
+      width: 90vmax;
+      height: 90vmax;
+      top: -20vmax;
+      right: -25vmax;
+      background: radial-gradient(circle,
+        rgba(167, 211, 240, 0.35) 0%,
+        rgba(167, 211, 240, 0.12) 45%,
+        transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    /* petals — cherry blossom pink, slow, calm */
     .petal {
       position: absolute;
       width: 10px;
       height: 10px;
-      background: rgba(255, 220, 232, 0.2);
+      background: rgba(255, 200, 220, 0.55);
       border-radius: 50% 0 50% 50%;
       transform: rotate(45deg);
       animation: petalFall linear infinite;
       pointer-events: none;
-      filter: blur(0.5px);
-      box-shadow: 0 0 6px rgba(255, 210, 225, 0.12);
+      filter: blur(0.4px);
+      box-shadow: 0 0 8px rgba(255, 190, 215, 0.35);
     }
 
     @keyframes petalFall {
       0% { transform: translateY(-10vh) rotate(0deg) scale(0.8); opacity: 0; }
-      8% { opacity: 0.6; }
-      92% { opacity: 0.35; }
+      8% { opacity: 0.75; }
+      92% { opacity: 0.4; }
       100% { transform: translateY(110vh) rotate(360deg) scale(1.05); opacity: 0; }
     }
 
@@ -121,8 +185,10 @@
       font-weight: 400;
       letter-spacing: 0.04em;
       line-height: 1.15;
-      color: #ffe8f0;
-      text-shadow: 0 0 30px rgba(255, 210, 225, 0.25), 0 0 80px rgba(255, 210, 225, 0.06);
+      color: #b0487a;                 /* deeper cherry pink for contrast on light bg */
+      text-shadow:
+        0 0 24px rgba(255, 190, 220, 0.55),
+        0 2px 12px rgba(120, 160, 210, 0.18);
     }
 
     .title-lg {
@@ -131,8 +197,8 @@
       font-weight: 400;
       letter-spacing: 0.03em;
       line-height: 1.2;
-      color: #ffdcea;
-      text-shadow: 0 0 25px rgba(255, 210, 225, 0.2);
+      color: #a04070;
+      text-shadow: 0 0 22px rgba(255, 190, 220, 0.45);
     }
 
     .title-md {
@@ -141,7 +207,8 @@
       font-weight: 400;
       letter-spacing: 0.03em;
       line-height: 1.3;
-      color: #ffd4e4;
+      color: #9a3c6e;
+      text-shadow: 0 0 18px rgba(255, 190, 220, 0.35);
     }
 
     .name-highlight {
@@ -149,8 +216,10 @@
       font-size: clamp(1.8rem, 7vw, 3.6rem);
       font-weight: 600;
       letter-spacing: 0.06em;
-      color: #ffc8dc;
-      text-shadow: 0 0 40px rgba(255, 200, 220, 0.3);
+      color: #c8548a;
+      text-shadow:
+        0 0 36px rgba(255, 190, 220, 0.65),
+        0 2px 14px rgba(120, 160, 210, 0.22);
     }
 
     .bangla {
@@ -158,7 +227,7 @@
       font-size: clamp(0.95rem, 3.2vw, 1.35rem);
       font-weight: 300;
       line-height: 1.75;
-      color: #f8e2ec;
+      color: var(--text-main);
       letter-spacing: 0.01em;
     }
 
@@ -167,7 +236,7 @@
       font-size: clamp(1.0rem, 3.4vw, 1.5rem);
       font-weight: 400;
       line-height: 1.8;
-      color: #ffe8f0;
+      color: #4a3860;
     }
 
     .bangla-large {
@@ -175,7 +244,7 @@
       font-size: clamp(1.15rem, 4vw, 1.8rem);
       font-weight: 500;
       line-height: 1.7;
-      color: #ffe8f0;
+      color: #3a2a4d;
     }
 
     .english {
@@ -183,7 +252,7 @@
       font-size: clamp(0.9rem, 3vw, 1.3rem);
       font-weight: 400;
       line-height: 1.6;
-      color: #f4d6e2;
+      color: var(--text-soft);
       letter-spacing: 0.04em;
     }
 
@@ -193,7 +262,7 @@
       font-size: clamp(0.95rem, 3.2vw, 1.4rem);
       font-weight: 400;
       line-height: 1.6;
-      color: #f4d6e2;
+      color: var(--text-soft);
       letter-spacing: 0.03em;
     }
 
@@ -202,33 +271,44 @@
       font-size: clamp(0.75rem, 2.4vw, 1.0rem);
       font-weight: 300;
       letter-spacing: 0.14em;
-      color: #d4b0c0;
+      color: var(--text-muted);
       text-transform: uppercase;
     }
 
     .divider-dot {
-      width: 4px;
-      height: 4px;
+      width: 5px;
+      height: 5px;
       border-radius: 50%;
-      background: #ffc8dc;
-      opacity: 0.45;
+      background: linear-gradient(135deg, #f7b8d0, #a7d3f0);
+      opacity: 0.85;
       margin: 0.2em 0;
+      box-shadow: 0 0 8px rgba(255, 190, 215, 0.55);
     }
 
     .divider-line {
       width: 60px;
       height: 1px;
-      background: linear-gradient(to right, transparent, rgba(255, 200, 220, 0.35), transparent);
+      background: linear-gradient(to right,
+        transparent,
+        rgba(200, 84, 138, 0.45),
+        rgba(120, 160, 210, 0.45),
+        transparent);
       margin: 0.3em 0;
     }
 
     .memory-box {
-      background: rgba(255, 210, 225, 0.05);
-      border: 1px solid rgba(255, 210, 225, 0.14);
+      background: linear-gradient(135deg,
+        rgba(255, 220, 235, 0.65) 0%,
+        rgba(255, 240, 248, 0.75) 50%,
+        rgba(207, 231, 247, 0.65) 100%);
+      border: 1px solid rgba(200, 140, 180, 0.30);
       border-radius: 16px;
       padding: 1.2em 1.5em;
       margin: 0.4em 0;
-      backdrop-filter: blur(4px);
+      backdrop-filter: blur(6px);
+      box-shadow:
+        0 6px 24px rgba(180, 140, 190, 0.14),
+        inset 0 1px 0 rgba(255, 255, 255, 0.65);
       max-width: 90%;
     }
 
@@ -254,7 +334,12 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      background: radial-gradient(ellipse at 50% 40%, #2a1822 0%, #1c1018 45%, #100810 100%);
+      background:
+        radial-gradient(ellipse at 50% 40%,
+          var(--white-tone) 0%,
+          var(--light-pink) 35%,
+          var(--sky-blue-2) 75%,
+          var(--sky-blue) 100%);
       opacity: 0;
       pointer-events: none;
       transition: opacity 3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -275,9 +360,11 @@
       justify-content: center;
       border-radius: 18px;
       overflow: hidden;
-      box-shadow: 0 0 60px rgba(255, 210, 225, 0.12), 0 0 120px rgba(255, 210, 225, 0.04);
-      border: 1px solid rgba(255, 210, 225, 0.12);
-      background: rgba(255, 210, 225, 0.03);
+      box-shadow:
+        0 0 60px rgba(255, 190, 220, 0.45),
+        0 0 120px rgba(150, 200, 240, 0.28);
+      border: 1px solid rgba(200, 140, 180, 0.32);
+      background: rgba(255, 255, 255, 0.55);
     }
 
     .final-image-wrapper img {
@@ -303,13 +390,13 @@
       font-size: clamp(0.85rem, 2.8vw, 1.15rem);
       font-weight: 400;
       line-height: 1.7;
-      color: #ffdcea;
+      color: #5a3a6a;
       letter-spacing: 0.04em;
     }
 
     .final-text-block .love-line:last-child {
       font-size: clamp(1.0rem, 3.2vw, 1.3rem);
-      color: #ffc8dc;
+      color: #b0487a;
       font-weight: 600;
       letter-spacing: 0.08em;
       margin-top: 0.15em;
@@ -319,7 +406,7 @@
       font-family: 'Hind Siliguri', sans-serif;
       font-size: clamp(0.75rem, 2.4vw, 1.0rem);
       font-weight: 300;
-      color: #d4b0c0;
+      color: var(--text-muted);
       letter-spacing: 0.06em;
       margin-top: 1.2em;
       opacity: 0;
@@ -329,14 +416,14 @@
 
     @keyframes fadeInSubtle {
       0% { opacity: 0; transform: translateY(6px); }
-      100% { opacity: 0.8; transform: translateY(0); }
+      100% { opacity: 0.9; transform: translateY(0); }
     }
 
     .signature {
       font-family: 'Playfair Display', serif;
       font-size: clamp(0.7rem, 2.2vw, 0.95rem);
       font-style: italic;
-      color: #c9a0b2;
+      color: #9a7aa8;
       letter-spacing: 0.08em;
       margin-top: 0.6em;
       opacity: 0;
@@ -352,7 +439,12 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      background: radial-gradient(ellipse at 50% 40%, #2a1822 0%, #1c1018 45%, #100810 100%);
+      background:
+        radial-gradient(ellipse at 50% 40%,
+          var(--white-tone) 0%,
+          var(--light-pink) 30%,
+          var(--sky-blue-2) 70%,
+          var(--sky-blue) 100%);
       opacity: 0;
       pointer-events: none;
       transition: opacity 3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -386,8 +478,8 @@
       font-size: clamp(1.5rem, 5vw, 2.6rem);
       font-weight: 400;
       letter-spacing: 0.04em;
-      color: #ffdcea;
-      text-shadow: 0 0 30px rgba(255, 210, 225, 0.25);
+      color: #b0487a;
+      text-shadow: 0 0 26px rgba(255, 190, 220, 0.55);
     }
 
     .garden-msg {
@@ -395,7 +487,7 @@
       font-size: clamp(0.95rem, 3.2vw, 1.35rem);
       font-weight: 300;
       line-height: 1.9;
-      color: #f8e2ec;
+      color: var(--text-main);
       letter-spacing: 0.01em;
       text-align: center;
     }
@@ -423,9 +515,11 @@
       height: auto;
       object-fit: contain;
       border-radius: 14px;
-      box-shadow: 0 0 50px rgba(255, 210, 225, 0.15), 0 0 100px rgba(255, 210, 225, 0.05);
-      border: 1px solid rgba(255, 210, 225, 0.12);
-      background: rgba(255, 210, 225, 0.03);
+      box-shadow:
+        0 0 50px rgba(255, 190, 220, 0.55),
+        0 0 100px rgba(150, 200, 240, 0.32);
+      border: 1px solid rgba(200, 140, 180, 0.32);
+      background: rgba(255, 255, 255, 0.55);
       opacity: 0;
       transition: opacity 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
@@ -458,7 +552,7 @@
       font-size: clamp(1.1rem, 3.8vw, 1.7rem);
       font-weight: 400;
       line-height: 1.85;
-      color: #ffe8f0;
+      color: #3a2a4d;
       letter-spacing: 0.01em;
     }
 
@@ -468,7 +562,7 @@
       font-size: clamp(0.9rem, 3vw, 1.3rem);
       font-weight: 400;
       line-height: 1.7;
-      color: #f4d6e2;
+      color: var(--text-soft);
       letter-spacing: 0.03em;
     }
 
@@ -519,10 +613,15 @@
       gap: 0.35em;
       padding: 1.2em 2em;
       border-radius: 18px;
-      background: rgba(255, 210, 225, 0.04);
-      border: 1px solid rgba(255, 210, 225, 0.12);
-      backdrop-filter: blur(6px);
-      box-shadow: 0 0 50px rgba(255, 210, 225, 0.08);
+      background: linear-gradient(135deg,
+        rgba(255, 240, 248, 0.85) 0%,
+        rgba(255, 220, 235, 0.80) 50%,
+        rgba(207, 231, 247, 0.85) 100%);
+      border: 1px solid rgba(200, 140, 180, 0.32);
+      backdrop-filter: blur(8px);
+      box-shadow:
+        0 10px 40px rgba(180, 140, 190, 0.20),
+        inset 0 1px 0 rgba(255, 255, 255, 0.75);
       transform: translateY(6px) scale(0.98);
       transition: transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       max-width: 88vw;
@@ -544,7 +643,7 @@
       font-family: 'Playfair Display', serif;
       font-style: italic;
       font-size: clamp(0.85rem, 2.8vw, 1.2rem);
-      color: #ffdcea;
+      color: #9a3c6e;
       letter-spacing: 0.05em;
       line-height: 1.5;
     }
@@ -557,7 +656,7 @@
       font-family: 'Hind Siliguri', sans-serif;
       font-size: clamp(0.85rem, 2.8vw, 1.15rem);
       font-weight: 300;
-      color: #f8e2ec;
+      color: var(--text-main);
       line-height: 1.7;
     }
 
@@ -572,7 +671,12 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      background: radial-gradient(ellipse at 50% 45%, #1c1018 0%, #100810 60%, #000000 100%);
+      background:
+        radial-gradient(ellipse at 50% 45%,
+          var(--white-tone) 0%,
+          var(--light-pink) 30%,
+          var(--sky-blue-2) 70%,
+          var(--sky-blue) 100%);
       opacity: 0;
       pointer-events: none;
       transition: opacity 3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -597,11 +701,11 @@
       opacity: 0;
       transform: scale(1.06);
       box-shadow:
-        0 0 60px rgba(255, 210, 225, 0.18),
-        0 0 140px rgba(255, 210, 225, 0.06),
-        0 0 200px rgba(255, 200, 220, 0.04);
-      border: 1px solid rgba(255, 210, 225, 0.16);
-      background: rgba(255, 210, 225, 0.03);
+        0 0 60px rgba(255, 190, 220, 0.55),
+        0 0 140px rgba(150, 200, 240, 0.35),
+        0 0 200px rgba(255, 200, 220, 0.20);
+      border: 1px solid rgba(200, 140, 180, 0.35);
+      background: rgba(255, 255, 255, 0.55);
       transition:
         opacity 3.2s cubic-bezier(0.25, 0.46, 0.45, 0.94),
         transform 6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -641,7 +745,7 @@
       font-family: 'Playfair Display', serif;
       font-style: italic;
       font-size: clamp(0.95rem, 3.2vw, 1.35rem);
-      color: #ffdcea;
+      color: #9a3c6e;
       letter-spacing: 0.05em;
       line-height: 1.6;
     }
@@ -650,7 +754,7 @@
       font-family: 'Hind Siliguri', sans-serif;
       font-size: clamp(0.8rem, 2.6vw, 1.05rem);
       font-weight: 300;
-      color: #d4b0c0;
+      color: var(--text-muted);
       letter-spacing: 0.04em;
       line-height: 1.6;
     }
@@ -778,29 +882,29 @@
     <div class="scene" id="scene4">
       <div class="title-md" style="font-size:clamp(1.1rem,3.8vw,1.9rem); letter-spacing:0.04em;">That First Day...</div>
       <div class="memory-box">
-        <div class="bangla-medium" style="color:#ffdcea;">"DREAM কমপ্লিট"</div>
+        <div class="bangla-medium" style="color:#9a3c6e;">"DREAM কমপ্লিট"</div>
       </div>
       <div class="bangla">আমি বলেছিলাম — DREAM কমপ্লিট।</div>
       <div class="bangla">তুমি বলেছিলে — with wrong person.</div>
       <div class="divider-dot"></div>
-      <div class="bangla-medium" style="color:#ffc8dc;">কিন্তু আজ মনে হয়...<br>হয়তো কথাটা ছিল —<br><span style="font-style:italic; color:#ffe8f0;">"with the right person."</span></div>
+      <div class="bangla-medium" style="color:#b0487a;">কিন্তু আজ মনে হয়...<br>হয়তো কথাটা ছিল —<br><span style="font-style:italic; color:#9a3c6e;">"with the right person."</span></div>
       <div class="divider-line"></div>
-      <div class="bangla" style="font-size:clamp(0.85rem,2.8vw,1.1rem); color:#e8c8d6;">কারণ কিছু মানুষকে প্রথম দিন থেকেই একটু অন্যরকম লাগে।</div>
+      <div class="bangla" style="font-size:clamp(0.85rem,2.8vw,1.1rem); color:#7a6a8c;">কারণ কিছু মানুষকে প্রথম দিন থেকেই একটু অন্যরকম লাগে।</div>
     </div>
 
     <!-- SCENE 5 — 30 DAYS MESSAGE -->
     <div class="scene" id="scene5">
       <div class="scene-5-message">
-        <div class="title-md" style="font-size:clamp(1.2rem,4.2vw,2.1rem); color:#ffdcea;">Happy 30 Days, Ayshuuuu ❤️</div>
+        <div class="title-md" style="font-size:clamp(1.2rem,4.2vw,2.1rem); color:#b0487a;">Happy 30 Days, Ayshuuuu ❤️</div>
         <div class="divider-line"></div>
         <div class="bangla">আজ আমাদের পরিচয়ের 30 দিন complete হলো।</div>
         <div class="bangla">এই 30 দিন হয়তো পৃথিবীর কাছে খুব ছোট একটা সময়,<br>কিন্তু আমার কাছে এই 30 দিনের প্রতিটা মুহূর্তের আলাদা একটা meaning আছে।</div>
         <div class="bangla">তুমি আমার জীবনে কীভাবে এতটা important হয়ে গেলে,<br>সেটা হয়তো আমি নিজেও ঠিকভাবে explain করতে পারবো না।</div>
         <div class="bangla">শুধু এটুকু জানি,<br>প্রথম দিনের সেই পরিচয়টা আজ আর শুধু পরিচয় নেই।</div>
-        <div class="bangla-medium" style="color:#ffc8dc;">তুমি আমার Wife,<br>আমার Future Wife,<br>আমার খুব special একজন মানুষ।</div>
+        <div class="bangla-medium" style="color:#b0487a;">তুমি আমার Wife,<br>আমার Future Wife,<br>আমার খুব special একজন মানুষ।</div>
         <div class="bangla">আজকের এই 30 days শুধু একটা সংখ্যা না...<br>এটা আমাদের story-এর একটা সুন্দর ছোট্ট chapter।</div>
         <div class="divider-dot"></div>
-        <div class="bangla-medium" style="color:#ffe8f0; font-weight:500;">Happy 30 Days, my Ayshuuuu.</div>
+        <div class="bangla-medium" style="color:#9a3c6e; font-weight:500;">Happy 30 Days, my Ayshuuuu.</div>
       </div>
     </div>
 
@@ -809,7 +913,7 @@
   <!-- FINAL SCREEN -->
   <div class="final-screen" id="finalScreen">
     <div class="final-image-wrapper">
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='800' viewBox='0 0 600 800'%3E%3Crect width='600' height='800' fill='%23150c12'/%3E%3Ctext x='300' y='380' font-family='Georgia, serif' font-size='18' fill='%23ffdcea' text-anchor='middle' opacity='0.6'%3E❤️ Final Image ❤️%3C/text%3E%3Ctext x='300' y='420' font-family='Georgia, serif' font-size='13' fill='%23d4b0c0' text-anchor='middle' opacity='0.4'%3E(replace with your image)%3C/text%3E%3C/svg%3E" 
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='800' viewBox='0 0 600 800'%3E%3Crect width='600' height='800' fill='%23fdf4fa'/%3E%3Ctext x='300' y='380' font-family='Georgia, serif' font-size='18' fill='%23b0487a' text-anchor='middle' opacity='0.75'%3E❤️ Final Image ❤️%3C/text%3E%3Ctext x='300' y='420' font-family='Georgia, serif' font-size='13' fill='%238a7a9c' text-anchor='middle' opacity='0.55'%3E(replace with your image)%3C/text%3E%3C/svg%3E" 
            alt="Final love image" 
            id="finalImage">
     </div>
@@ -869,9 +973,6 @@
 
   <!-- ============================================================
        TEASER TIMELINE — non-blocking small / medium transition moments
-       These are purely visual overlays. They never block reading,
-       never create blocking popups, and are safely dismissible
-       by the story timeline.
        ============================================================ -->
   <div class="teaser-overlay teaser-small" id="teaserSmall">
     <div class="teaser-inner">
@@ -907,10 +1008,6 @@
 
   <!-- ============================================================
        CONFIG — easy editing area
-       Change CLOSING_PHOTO_URL to your girlfriend's photo URL,
-       or set it to '' and use the file picker via the page.
-       (The file picker is exposed as window.setClosingPhoto(fileOrUrl)
-        for optional local selection.)
        ============================================================ -->
   <script>
     // FINAL IMAGE — configuration
@@ -918,11 +1015,6 @@
       // Option 1: Provide a direct image URL
       // Example: 'https://example.com/my-girlfriend-photo.jpg'
       CLOSING_PHOTO_URL: '',
-
-      // Option 2: Local file selection (via the helper below)
-      // You can call window.setClosingPhoto(file) from anywhere
-      // e.g. from a small hidden input, or from console.
-      // The image will be used as the final closing photo.
     };
   </script>
 
@@ -934,47 +1026,56 @@
       // ============================================================
       // NON-BLOCKING BACKGROUND MUSIC
       // ------------------------------------------------------------
-      // Robust, cross-browser, event-driven background music system.
-      // - Attempts audible autoplay immediately on page load.
-      // - If blocked by browser policy, waits for the first user
-      //   interaction (click, touch, pointer, key) and starts then.
-      // - Never blocks UI, never shows alerts/modals, never throws
-      //   fatal errors, never creates duplicate players.
-      // - Uses the official YouTube IFrame Player API.
-      // - Visually hidden and fully background.
-      // - YouTube UI (logo, title, controls, thumbnail) is never visible.
-      // - Closing stage fades the music smoothly (no abrupt stop).
+      // Refresh-safe, cross-browser, event-driven background music.
+      //
+      // Design:
+      //   - A single hidden YouTube iframe is created once per page load.
+      //   - The official YT IFrame API is loaded lazily & asynchronously.
+      //   - A small "pending play" queue lets us request playback
+      //     before the player is ready; the request fires automatically
+      //     once onReady arrives. No blocking waits.
+      //   - If the API is slow or unavailable, a postMessage fallback
+      //     drives the raw iframe directly.
+      //   - First user interaction (click/touch/pointer/key) triggers
+      //     an unmute+play attempt if audible autoplay was blocked.
+      //   - Everything is idempotent: repeated calls never create
+      //     duplicate players or duplicate listeners.
+      //   - YouTube UI is never visible (iframe is 1x1, off-screen,
+      //     invisible, pointer-events:none, controls=0, modestbranding).
       // ============================================================
       (function initBackgroundMusic() {
         // ---- Configuration ----
-        var VIDEO_ID = '3W4WLcAOBh8';            // Song used as background music
-        var TARGET_VOLUME = 100;                  // Near-maximum volume
+        var VIDEO_ID = '3W4WLcAOBh8';
+        var TARGET_VOLUME = 100;   // Near-maximum; browser policy still applies
         var musicContainer = document.getElementById('music-container');
+        if (!musicContainer) return;
 
-        // ---- State flags (prevent duplicate work) ----
-        var playerInstance = null;                // YT.Player instance
-        var playerReady = false;                  // Player fully initialized
-        var autoplayAttempted = false;            // Initial audible attempt done
-        var musicStarted = false;                 // Music actually playing audibly
-        var interactionListenerAttached = false;  // First-gesture listener guard
-        var apiLoadStarted = false;               // Prevent duplicate API loads
+        // ---- Module-scoped state (clean per page load) ----
+        var ytApiState = 'idle';        // 'idle' | 'loading' | 'ready'
+        var playerInstance = null;      // YT.Player instance
+        var playerReady = false;        // onReady fired
+        var rawIframe = null;           // the underlying iframe element
+        var pendingPlay = false;        // a play request is queued
+        var musicStarted = false;       // audible playback has been requested
+        var firstGestureAttached = false;
+        var bootScheduled = false;
+        var apiScriptInjected = false;
 
-        // ---- Utility: safe postMessage to the YouTube iframe ----
-        // Used only as a fallback if the YT.Player API is unavailable.
-        function postToIframe(iframe, func, args) {
+        // ---- Low-level: safe postMessage to the raw iframe ----
+        function postToIframe(func, args) {
+          if (!rawIframe || !rawIframe.contentWindow) return;
           try {
-            if (!iframe || !iframe.contentWindow) return;
-            iframe.contentWindow.postMessage(
+            rawIframe.contentWindow.postMessage(
               JSON.stringify({ event: 'command', func: func, args: args || [] }),
               '*'
             );
-          } catch (e) { /* silent — music is optional */ }
+          } catch (e) { /* silent */ }
         }
 
-        // ---- Build the hidden iframe that hosts the YouTube player ----
-        // This iframe is fully off-screen and cannot affect layout.
-        // No YouTube UI is ever visible to the visitor.
-        function createHiddenPlayerIframe() {
+        // ---- Create the single hidden iframe ----
+        // Called at most once per page load.
+        function createHiddenIframe() {
+          if (rawIframe) return rawIframe;
           var iframe = document.createElement('iframe');
           iframe.setAttribute('frameborder', '0');
           iframe.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');
@@ -983,15 +1084,13 @@
           iframe.setAttribute('aria-hidden', 'true');
           iframe.className = 'music-iframe-hidden';
           iframe.id = 'bg-music-iframe';
-          // enablejsapi=1 so we can control it via postMessage / YT API
-          // playsinline=1 for iOS
-          // loop=1 + playlist=VIDEO_ID to loop the single video
-          // controls=0, modestbranding=1, rel=0, showinfo=0 to suppress UI
+          // Start unmuted so the browser can decide whether to allow
+          // audible autoplay. If blocked, we retry on first gesture.
           iframe.src =
             'https://www.youtube.com/embed/' + VIDEO_ID +
             '?enablejsapi=1' +
             '&autoplay=1' +
-            '&mute=0' +                 // Start unmuted to attempt audible autoplay
+            '&mute=0' +
             '&loop=1' +
             '&playlist=' + VIDEO_ID +
             '&controls=0' +
@@ -1004,115 +1103,103 @@
             '&playsinline=1' +
             '&origin=' + encodeURIComponent(window.location.origin || 'null');
           musicContainer.appendChild(iframe);
+          rawIframe = iframe;
           return iframe;
         }
 
-        // ---- Attempt to start audible music ----
-        // Tries YT.Player API first, falls back to postMessage.
-        function tryStartMusic() {
+        // ---- Request audible playback ----
+        // Works whether the player is ready or not:
+        //  - If YT.Player exists and is ready → command it directly.
+        //  - Else if raw iframe exists → postMessage fallback.
+        //  - Else → queue the request (pendingPlay) for later.
+        function requestAudiblePlay() {
           if (musicStarted) return;
-          if (!playerInstance && !document.getElementById('bg-music-iframe')) return;
 
-          if (playerInstance && typeof playerInstance.unMute === 'function') {
-            // Preferred path: official YT.Player API
+          if (playerInstance && playerReady && typeof playerInstance.playVideo === 'function') {
+            // Preferred: official API, player is ready
             try {
               playerInstance.unMute();
               playerInstance.setVolume(TARGET_VOLUME);
               playerInstance.playVideo();
               musicStarted = true;
+              pendingPlay = false;
             } catch (e) { /* silent */ }
-          } else {
-            // Fallback: postMessage to the iframe
-            var iframe = document.getElementById('bg-music-iframe');
-            if (iframe) {
-              postToIframe(iframe, 'unMute');
-              postToIframe(iframe, 'setVolume', [TARGET_VOLUME]);
-              postToIframe(iframe, 'playVideo');
-              musicStarted = true;
-            }
-          }
-        }
-
-        // ---- Attach a one-time first-user-interaction listener ----
-        // Required because browsers block audible autoplay until the
-        // user interacts with the page.
-        function attachFirstInteractionListener() {
-          if (interactionListenerAttached) return;
-          interactionListenerAttached = true;
-
-          var gestureEvents = ['click', 'touchstart', 'pointerdown', 'keydown'];
-          var onFirstGesture = function() {
-            // Remove all listeners immediately to prevent duplicates
-            gestureEvents.forEach(function(ev) {
-              window.removeEventListener(ev, onFirstGesture, true);
-            });
-            // Start music now that we have a user gesture
-            tryStartMusic();
-          };
-          gestureEvents.forEach(function(ev) {
-            window.addEventListener(ev, onFirstGesture, true);
-          });
-        }
-
-        // ---- Boot sequence ----
-        // 1. Create the hidden iframe immediately (non-blocking).
-        // 2. Try audible autoplay right away.
-        // 3. If blocked, attach first-gesture listener.
-        // 4. Lazily load the official YT IFrame API in the background
-        //    for more reliable control once ready.
-        function bootMusic() {
-          try {
-            // Step 1: create the hidden iframe
-            createHiddenPlayerIframe();
-
-            // Step 2: attempt audible autoplay immediately
-            if (!autoplayAttempted) {
-              autoplayAttempted = true;
-              // Small delay to let the iframe start loading
-              setTimeout(function() {
-                tryStartMusic();
-              }, 800);
-            }
-
-            // Step 3: always attach the fallback listener.
-            // If autoplay worked, this is harmless (musicStarted guard).
-            // If autoplay was blocked, this starts music on first tap.
-            attachFirstInteractionListener();
-
-            // Step 4: lazily load the official YT IFrame API in the
-            // background. When ready, replace the raw iframe with a
-            // proper YT.Player instance for reliable control.
-            loadYouTubeAPI();
-          } catch (e) { /* silent — music is optional */ }
-        }
-
-        // ---- Load the official YouTube IFrame Player API ----
-        function loadYouTubeAPI() {
-          if (apiLoadStarted) return;
-          apiLoadStarted = true;
-
-          // If the API is already available, initialize player now.
-          if (window.YT && window.YT.Player) {
-            initYTPlayer();
             return;
           }
 
-          // Set up the global callback that the API will call.
-          var existingCallback = window.onYouTubeIframeAPIReady;
+          if (rawIframe) {
+            // Fallback: drive the raw iframe via postMessage
+            try {
+              postToIframe('unMute');
+              postToIframe('setVolume', [TARGET_VOLUME]);
+              postToIframe('playVideo');
+              musicStarted = true;
+              pendingPlay = false;
+            } catch (e) { /* silent */ }
+            return;
+          }
+
+          // Nothing ready yet — remember the intent.
+          pendingPlay = true;
+        }
+
+        // ---- One-time first-user-gesture handler ----
+        // Only attached if audible autoplay was blocked.
+        function attachFirstGestureListener() {
+          if (firstGestureAttached) return;
+          firstGestureAttached = true;
+
+          var events = ['click', 'touchstart', 'pointerdown', 'keydown'];
+          var onFirst = function() {
+            events.forEach(function(ev) {
+              window.removeEventListener(ev, onFirst, true);
+            });
+            // Try once more now that we have a user gesture.
+            requestAudiblePlay();
+          };
+          events.forEach(function(ev) {
+            window.addEventListener(ev, onFirst, true);
+          });
+        }
+
+        // ---- Load the official YouTube IFrame API lazily ----
+        function loadYTAPI(onReady) {
+          if (ytApiState === 'ready') {
+            onReady();
+            return;
+          }
+          if (ytApiState === 'loading') {
+            // Chain: append callback to be run once ready.
+            var prev = window.__ytApiReadyCallbacks || [];
+            prev.push(onReady);
+            window.__ytApiReadyCallbacks = prev;
+            return;
+          }
+          ytApiState = 'loading';
+          window.__ytApiReadyCallbacks = [onReady];
+
+          // Define the global callback expected by the API.
+          var prevGlobal = window.onYouTubeIframeAPIReady;
           window.onYouTubeIframeAPIReady = function() {
-            if (typeof existingCallback === 'function') {
-              try { existingCallback(); } catch (e) { /* silent */ }
+            ytApiState = 'ready';
+            if (typeof prevGlobal === 'function') {
+              try { prevGlobal(); } catch (e) { /* silent */ }
             }
-            initYTPlayer();
+            var cbs = window.__ytApiReadyCallbacks || [];
+            window.__ytApiReadyCallbacks = [];
+            cbs.forEach(function(cb) {
+              try { cb(); } catch (e) { /* silent */ }
+            });
           };
 
-          // Inject the API script asynchronously (non-blocking).
+          if (apiScriptInjected) return;
+          apiScriptInjected = true;
           var tag = document.createElement('script');
           tag.src = 'https://www.youtube.com/iframe_api';
           tag.async = true;
           tag.onerror = function() {
-            // If the API fails to load, the raw iframe fallback
-            // is still fully functional via postMessage.
+            // API failed — the raw iframe fallback still works.
+            ytApiState = 'idle';
           };
           var firstScript = document.getElementsByTagName('script')[0];
           if (firstScript && firstScript.parentNode) {
@@ -1122,14 +1209,12 @@
           }
         }
 
-        // ---- Initialize the official YT.Player instance ----
+        // ---- Initialize the YT.Player once API is ready ----
         function initYTPlayer() {
-          if (playerInstance) return; // already initialized
-          var iframe = document.getElementById('bg-music-iframe');
-          if (!iframe) return;
+          if (playerInstance) return;
+          if (!rawIframe) return;
+          if (!window.YT || !window.YT.Player) return;
 
-          // Replace the iframe with a YT.Player instance using the
-          // official API. This gives us reliable event handling.
           try {
             playerInstance = new window.YT.Player('bg-music-iframe', {
               events: {
@@ -1137,50 +1222,81 @@
                   playerReady = true;
                   try {
                     event.target.setVolume(TARGET_VOLUME);
-                    // Try to start music immediately if a gesture
-                    // has already occurred, or if autoplay is allowed.
-                    if (autoplayAttempted || musicStarted) {
-                      event.target.unMute();
-                      event.target.playVideo();
-                    }
                   } catch (e) { /* silent */ }
+                  // If a play was queued before ready, fire it now.
+                  if (pendingPlay || musicStarted) {
+                    requestAudiblePlay();
+                  }
                 },
-                onStateChange: function(event) {
-                  // If the player pauses unexpectedly (e.g., autoplay
-                  // blocked), we do nothing here — the first-gesture
-                  // listener will handle starting it.
+                onStateChange: function() {
+                  // No-op. Playback is controlled explicitly.
                 },
                 onError: function() {
-                  // Video unavailable / blocked — fail silently.
-                  // The rest of the website remains fully functional.
+                  // Video unavailable / blocked. Fail silently.
                 }
               }
             });
           } catch (e) {
-            // If YT.Player fails, the raw iframe fallback remains.
+            // If YT.Player fails, keep the raw iframe fallback.
+            playerInstance = null;
           }
         }
 
-        // ---- Schedule music boot without blocking the main site ----
+        // ---- Boot sequence (idempotent) ----
+        function bootMusic() {
+          if (bootScheduled === false && rawIframe) return;
+          bootScheduled = true;
+          try {
+            // 1. Create the single hidden iframe.
+            createHiddenIframe();
+
+            // 2. Attempt audible autoplay immediately.
+            //    If the browser allows it, music starts now.
+            //    If not, the request is harmlessly ignored and we
+            //    fall back to first-user-gesture.
+            requestAudiblePlay();
+
+            // 3. Attach first-gesture fallback (idempotent).
+            //    Harmless if autoplay already succeeded because
+            //    requestAudiblePlay() early-returns when musicStarted.
+            attachFirstGestureListener();
+
+            // 4. Lazily load the API for reliable control.
+            loadYTAPI(initYTPlayer);
+
+            // 5. Safety retry: some browsers need a short moment
+            //    after page load before autoplay is evaluated.
+            //    This is non-blocking and harmless if already playing.
+            setTimeout(function() {
+              if (!musicStarted) requestAudiblePlay();
+            }, 1500);
+
+            // 6. Final safety retry after API has had time to boot.
+            setTimeout(function() {
+              if (!musicStarted) requestAudiblePlay();
+            }, 4000);
+          } catch (e) { /* silent — music is optional */ }
+        }
+
+        // ---- Schedule boot without blocking the main site ----
         function scheduleMusicBoot() {
           if (typeof window.requestIdleCallback === 'function') {
             window.requestIdleCallback(bootMusic, { timeout: 2000 });
           } else {
-            setTimeout(bootMusic, 300);
+            setTimeout(bootMusic, 250);
           }
         }
 
-        // Start music boot only after the page has fully painted.
         if (document.readyState === 'complete') {
-          setTimeout(scheduleMusicBoot, 200);
+          setTimeout(scheduleMusicBoot, 150);
         } else {
           window.addEventListener('load', function() {
-            setTimeout(scheduleMusicBoot, 200);
+            setTimeout(scheduleMusicBoot, 150);
           });
         }
 
-        // ---- Expose a smooth fade-out for the closing stage ----
-        // Called by the closing animation so music never stops abruptly.
+        // ---- Smooth fade-out for the closing stage ----
+        // Never abruptly stops music. Called by the closing sequence.
         window.fadeOutBackgroundMusic = function(durationMs) {
           durationMs = (typeof durationMs === 'number' && durationMs > 0) ? durationMs : 4000;
           var steps = 40;
@@ -1190,13 +1306,11 @@
 
           function step() {
             if (i >= steps) {
-              // Fully faded — pause the player silently
               try {
                 if (playerInstance && typeof playerInstance.pauseVideo === 'function') {
                   playerInstance.pauseVideo();
                 } else {
-                  var iframe = document.getElementById('bg-music-iframe');
-                  if (iframe) postToIframe(iframe, 'pauseVideo');
+                  postToIframe('pauseVideo');
                 }
               } catch (e) { /* silent */ }
               return;
@@ -1207,8 +1321,7 @@
               if (playerInstance && typeof playerInstance.setVolume === 'function') {
                 playerInstance.setVolume(v);
               } else {
-                var iframe2 = document.getElementById('bg-music-iframe');
-                if (iframe2) postToIframe(iframe2, 'setVolume', [v]);
+                postToIframe('setVolume', [v]);
               }
             } catch (e) { /* silent */ }
             setTimeout(step, stepTime);
@@ -1238,10 +1351,11 @@
         petal.style.left = Math.random() * 100 + '%';
         petal.style.animationDuration = (Math.random() * 16 + 22) + 's';
         petal.style.animationDelay = (Math.random() * 20) + 's';
-        petal.style.opacity = Math.random() * 0.35 + 0.12;
+        petal.style.opacity = Math.random() * 0.55 + 0.25;
 
-        const hue = Math.random() * 15 + 340;
-        petal.style.background = 'hsla(' + hue + ', 75%, 88%, ' + (Math.random() * 0.22 + 0.1) + ')';
+        // Cherry blossom pink with a subtle sky-blue tint variation
+        const hue = Math.random() * 25 + 335; // 335..360 → pink range
+        petal.style.background = 'hsla(' + hue + ', 85%, 88%, ' + (Math.random() * 0.35 + 0.25) + ')';
 
         petalsContainer.appendChild(petal);
       }
@@ -1261,7 +1375,6 @@
 
       const finalScreen = document.getElementById('finalScreen');
 
-      // Durations in ms — increased for comfortable reading
       const durations = [14000, 16000, 16000, 18000, 22000];
 
       let currentIndex = 0;
@@ -1293,23 +1406,19 @@
             nextScene();
           }, durations[currentIndex]);
         } else {
-          // After last scene, show final screen
           storyFinished = true;
 
-          // Fade out all scenes
           scenes.forEach(function(scene) {
             scene.classList.remove('active');
             scene.classList.add('exit');
           });
 
-          // Show final screen
           setTimeout(function() {
             finalScreen.classList.add('visible');
           }, 2500);
         }
       }
 
-      // Start the story: scene1 already active, begin timer
       setTimeout(function() {
         nextScene();
       }, durations[0]);
@@ -1350,7 +1459,6 @@
         "https://img.remit.ee/i/VIjKBgcSdMki"
       ];
 
-      // Preload images
       const preloadedImages = [];
       flowerUrls.forEach(function(url) {
         const img = new Image();
@@ -1364,19 +1472,14 @@
         if (gardenStarted) return;
         gardenStarted = true;
 
-        // Show garden screen
         gardenScreen.classList.add('visible');
 
-        // Intro visible for 12 seconds (comfortable read)
         setTimeout(function() {
-          // Hide intro
           gardenIntro.classList.add('hidden');
 
-          // Show flower stage
           setTimeout(function() {
             gardenFlowerStage.classList.add('visible');
 
-            // Start flower sequence after a soft delay
             setTimeout(function() {
               playFlowers(0);
             }, 1500);
@@ -1386,44 +1489,30 @@
 
       function playFlowers(index) {
         if (index >= flowerUrls.length) {
-          // All flowers shown — fade out stage, show outro
           gardenFlowerStage.classList.remove('visible');
 
           setTimeout(function() {
             gardenOutro.classList.add('visible');
           }, 1800);
 
-          // After garden outro has been visible for a while, begin
-          // the advanced closing sequence (teasers → final image →
-          // closing animation → screen fade to zero).
           setTimeout(function() {
             beginClosingSequence();
           }, 1800 + 9000);
           return;
         }
 
-        // Set image source
         flowerImg.src = flowerUrls[index];
-
-        // Fade in
         flowerImg.classList.add('show');
 
-        // Hold for ~0.5s, then fade out and move to next
         setTimeout(function() {
           flowerImg.classList.remove('show');
 
-          // After fade-out completes, load next
           setTimeout(function() {
             playFlowers(index + 1);
           }, 900);
         }, 500);
       }
 
-      // Trigger garden sequence after final screen is well established
-      // Final screen appears ~2.5s after scene 5 ends.
-      // Scene timings: 14 + 16 + 16 + 18 + 22 = 86s
-      // Then 2.5s for final screen to fade in.
-      // Give final screen about 30 seconds before garden starts.
       const totalStoryTime = durations.reduce(function(a, b) { return a + b; }, 0);
       const finalScreenDelay = 2500;
       const finalScreenHold = 30000;
@@ -1435,10 +1524,6 @@
 
       // ============================================================
       // TEASER TIMELINE — non-blocking transition moments
-      // ------------------------------------------------------------
-      // Small teaser shows briefly between story phases.
-      // Medium teaser shows a bit longer before the closing.
-      // These are purely visual and never block reading or playback.
       // ============================================================
       const teaserSmall = document.getElementById('teaserSmall');
       const teaserMedium = document.getElementById('teaserMedium');
@@ -1451,50 +1536,39 @@
         }, visibleMs);
       }
 
-      // Small teaser — appears between scene 2 and scene 3
-      // (does not block scene transitions; both run independently)
       setTimeout(function() {
         showTeaser(teaserSmall, 5000);
       }, durations[0] + 4000);
 
-      // Medium teaser — appears near the end of the story,
-      // just before the final screen establishes itself
       setTimeout(function() {
         showTeaser(teaserMedium, 7000);
       }, durations[0] + durations[1] + durations[2] + durations[3] + 5000);
 
       // ============================================================
       // FINAL IMAGE — closing photo, cinematic soft display
-      // ------------------------------------------------------------
-      // A configurable closing photo. Priority order:
-      //   1) window.CLOSING_CONFIG.CLOSING_PHOTO_URL (URL)
-      //   2) window.setClosingPhoto(fileOrUrl)     (local file / URL)
-      //   3) built-in romantic placeholder
       // ============================================================
       const closingScreen = document.getElementById('closingScreen');
       const closingPhotoFrame = document.getElementById('closingPhotoFrame');
       const closingPhoto = document.getElementById('closingPhoto');
       const closingCaption = document.getElementById('closingCaption');
 
-      // Placeholder used if no image is configured.
       const CLOSING_PLACEHOLDER =
         "data:image/svg+xml," +
         encodeURIComponent(
           "<svg xmlns='http://www.w3.org/2000/svg' width='900' height='1200' viewBox='0 0 900 1200'>" +
           "<defs>" +
           "<radialGradient id='g' cx='50%' cy='40%' r='70%'>" +
-          "<stop offset='0%' stop-color='#2a1822'/>" +
-          "<stop offset='60%' stop-color='#1c1018'/>" +
-          "<stop offset='100%' stop-color='#100810'/>" +
+          "<stop offset='0%' stop-color='#fdf4fa'/>" +
+          "<stop offset='50%' stop-color='#eaf3fc'/>" +
+          "<stop offset='100%' stop-color='#d6e6f7'/>" +
           "</radialGradient>" +
           "</defs>" +
           "<rect width='900' height='1200' fill='url(#g)'/>" +
-          "<text x='450' y='580' font-family='Georgia, serif' font-size='26' fill='#ffdcea' text-anchor='middle' opacity='0.65'>❤️ Your Photo ❤️</text>" +
-          "<text x='450' y='625' font-family='Georgia, serif' font-size='15' fill='#d4b0c0' text-anchor='middle' opacity='0.45'>set CLOSING_PHOTO_URL or use setClosingPhoto()</text>" +
+          "<text x='450' y='580' font-family='Georgia, serif' font-size='26' fill='#b0487a' text-anchor='middle' opacity='0.75'>❤️ Your Photo ❤️</text>" +
+          "<text x='450' y='625' font-family='Georgia, serif' font-size='15' fill='#8a7a9c' text-anchor='middle' opacity='0.55'>set CLOSING_PHOTO_URL or use setClosingPhoto()</text>" +
           "</svg>"
         );
 
-      // Resolve the closing photo source with clear priority.
       function resolveClosingPhotoSrc() {
         try {
           if (window.CLOSING_CONFIG &&
@@ -1509,7 +1583,6 @@
         return CLOSING_PLACEHOLDER;
       }
 
-      // Preload closing photo so the reveal is smooth (no pop-in).
       function preloadClosingPhoto(src) {
         try {
           const img = new Image();
@@ -1518,10 +1591,6 @@
         } catch (e) { /* silent */ }
       }
 
-      // Public helper — choose your own photo (URL string or File object).
-      // Example:
-      //   window.setClosingPhoto('https://example.com/her.jpg');
-      //   window.setClosingPhoto(fileFromInput.files[0]);
       window.setClosingPhoto = function(fileOrUrl) {
         try {
           if (typeof fileOrUrl === 'string' && fileOrUrl.trim() !== '') {
@@ -1539,25 +1608,20 @@
         return false;
       };
 
-      // Apply the resolved source to the <img>.
       const resolvedSrc = resolveClosingPhotoSrc();
       closingPhoto.src = resolvedSrc;
       preloadClosingPhoto(resolvedSrc);
 
       // ============================================================
-      // CLOSING ANIMATION — cinematic reveal of the final photo,
-      // then smooth fade of the whole scene.
+      // CLOSING ANIMATION — cinematic reveal of the final photo
       // ============================================================
       function showClosingScreen() {
-        // 1) Make the closing screen itself visible (soft fade in).
         closingScreen.classList.add('visible');
 
-        // 2) Soft photo reveal: subtle scale + fade, gentle glow.
         setTimeout(function() {
           closingPhotoFrame.classList.add('show');
         }, 300);
 
-        // 3) Caption fades in a moment later.
         setTimeout(function() {
           closingCaption.classList.add('show');
         }, 1400);
@@ -1568,19 +1632,16 @@
       // Music fades out gently and in sync (never abruptly stopped).
       // ============================================================
       function fadeScreenToZero() {
-        // Smoothly reduce background music volume during the fade.
         try {
           if (typeof window.fadeOutBackgroundMusic === 'function') {
             window.fadeOutBackgroundMusic(3800);
           }
         } catch (e) { /* silent */ }
 
-        // Fade the closing screen down first…
         try {
           closingScreen.classList.remove('visible');
         } catch (e) { /* silent */ }
 
-        // …then bring in the black "zero" screen on top.
         setTimeout(function() {
           const zeroScreen = document.getElementById('zeroScreen');
           if (zeroScreen) {
@@ -1591,33 +1652,17 @@
 
       // ============================================================
       // FINAL TIMELINE LOGIC
-      // ------------------------------------------------------------
-      //   garden outro done
-      //   → show closing screen (final photo)
-      //   → soft image effect
-      //   → closing animation
-      //   → smooth fade out
-      //   → screen = zero
-      //
-      // No hard-coded random delay is used to trigger the closing;
-      // the sequence starts exactly when the last visible content
-      // (garden outro) has finished its on-screen duration.
       // ============================================================
       function beginClosingSequence() {
-        // 1) Reveal final closing screen with the configured photo.
         showClosingScreen();
 
-        // 2) Hold the final photo on screen long enough for the
-        //    cinematic effect to be felt (soft glow, subtle zoom).
         const closingHoldMs = 9000;
 
-        // 3) Then smoothly fade everything to zero.
         setTimeout(function() {
           fadeScreenToZero();
         }, closingHoldMs);
       }
 
-      // Safety: expose for optional manual triggering.
       window.beginClosingSequence = beginClosingSequence;
 
     })();
