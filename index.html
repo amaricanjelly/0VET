@@ -215,51 +215,6 @@
       line-height: 1.25;
     }
 
-    /* ---------- COUNTDOWN ---------- */
-    .countdown-overlay {
-      position: fixed;
-      top: 18px;
-      right: 22px;
-      z-index: 50;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 1.5s ease;
-    }
-
-    .countdown-overlay.visible {
-      opacity: 1;
-    }
-
-    .countdown-number {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(1.6rem, 5vw, 2.8rem);
-      font-weight: 600;
-      color: #b0487a;
-      text-shadow:
-        0 0 20px rgba(255, 190, 220, 0.75),
-        0 2px 12px rgba(200, 130, 170, 0.35);
-      letter-spacing: 0.04em;
-      line-height: 1;
-      min-width: 1.4em;
-      text-align: center;
-      transition: transform 0.3s ease, opacity 0.3s ease;
-    }
-
-    .countdown-number.tick {
-      transform: scale(1.18);
-      opacity: 0.85;
-    }
-
-    .countdown-number.zero-hold {
-      color: #9a3c6e;
-      text-shadow:
-        0 0 30px rgba(255, 190, 220, 0.95),
-        0 2px 16px rgba(200, 130, 170, 0.45);
-    }
-
     /* ---------- STORY CONTAINER ---------- */
     .story-container {
       position: relative;
@@ -937,10 +892,6 @@
       .closing-photo-frame img {
         max-height: 60vh;
       }
-      .countdown-overlay {
-        top: 12px;
-        right: 14px;
-      }
       .start-button {
         padding: 0.95em 2.2em;
       }
@@ -985,11 +936,6 @@
     <div class="divider-line"></div>
     <button class="start-button" id="startButton">Start Now with Sound</button>
     <div class="start-hint">Tap to begin our beautiful journey together</div>
-  </div>
-
-  <!-- COUNTDOWN OVERLAY -->
-  <div class="countdown-overlay" id="countdownOverlay">
-    <div class="countdown-number" id="countdownNumber">--</div>
   </div>
 
   <!-- BACKGROUND -->
@@ -1177,44 +1123,12 @@
 
     // ============================================================
     // TIKTOK AUDIO CONFIGURATION
-    // ------------------------------------------------------------
-    // The YouTube audio system has been fully removed.
-    // A TikTok video/song is now used as the background music.
-    //
-    // TikTok URL:
-    //   https://www.tiktok.com/@imdadulhossen1530/video/7672489528451435797
-    //
-    // Because TikTok does not provide a public audio stream API,
-    // we use TWO layers:
-    //   1. A hidden TikTok embed iframe (official embed format)
-    //   2. A hidden <audio> element pointing at TikTok's direct
-    //      CDN audio stream (extracted via public URL pattern).
-    //
-    // The user gesture (Start button click) triggers both:
-    //   - iframe play request (via postMessage to TikTok embed)
-    //   - audio element .play() with volume = 1.0
-    //
-    // Whichever becomes audible first is the one the user hears.
-    // All original function names are preserved:
-    //   window.playBackgroundMusic()
-    //   window.fadeOutBackgroundMusic(durationMs)
     // ============================================================
     window.TIKTOK_CONFIG = {
-      // The TikTok video URL (full URL with query params)
       TIKTOK_URL: 'https://www.tiktok.com/@imdadulhossen1530/video/7672489528451435797?is_from_webapp=1&sender_device=pc',
-
-      // The TikTok video ID (extracted from URL) — used for embed
       TIKTOK_VIDEO_ID: '7672489528451435797',
-
-      // The TikTok username (extracted from URL) — used for embed
       TIKTOK_USERNAME: 'imdadulhossen1530',
-
-      // Target volume (0.0 – 1.0)
       TARGET_VOLUME: 1.0,
-
-      // Direct audio stream URL fallback.
-      // TikTok serves audio via CDN; this pattern is publicly known.
-      // If it fails, the iframe layer remains as backup.
       TIKTOK_AUDIO_STREAM_URL:
         'https://www.tiktok.com/embed/v2/' + '7672489528451435797'
     };
@@ -1232,32 +1146,9 @@
       let storyFinished = false;
       let timelineFinished = false;
       let finalZeroReached = false;
-      let countdownRAF = null;
-      let startTime = 0;
-      let endTime = 0;
-      let totalDurationMs = 0;
-      let totalDurationSec = 0;
-      let displayedSeconds = -1;
-      let countdownInitialized = false;
 
       // ============================================================
       // NON-BLOCKING BACKGROUND MUSIC (TikTok)
-      // ------------------------------------------------------------
-      // Replaces the previous YouTube audio system entirely.
-      //
-      // Architecture:
-      //   Layer 1 — Hidden TikTok embed iframe.
-      //             Created with the official TikTok embed URL.
-      //             Play/unmute attempted via postMessage on the
-      //             user gesture (Start button click).
-      //
-      //   Layer 2 — Hidden <audio> element.
-      //             Points at TikTok's embeddable audio URL.
-      //             Played with .play() and volume=1.0 on the
-      //             same user gesture.
-      //
-      // Both layers are non-blocking, idempotent, and refresh-safe.
-      // No YouTube references remain anywhere in this block.
       // ============================================================
       (function initTikTokBackgroundMusic() {
         var cfg = window.TIKTOK_CONFIG || {};
@@ -1269,7 +1160,6 @@
         var musicContainer = document.getElementById('music-container');
         if (!musicContainer) return;
 
-        // ---- Module-scoped state (clean per page load) ----
         var tiktokIframe = null;
         var audioElement = null;
         var iframeReady = false;
@@ -1278,7 +1168,6 @@
         var firstGestureAttached = false;
         var bootScheduled = false;
 
-        // ---- Create the hidden TikTok iframe ----
         function createTikTokIframe() {
           if (tiktokIframe) return tiktokIframe;
           var iframe = document.createElement('iframe');
@@ -1289,7 +1178,6 @@
           iframe.setAttribute('aria-hidden', 'true');
           iframe.className = 'music-iframe-hidden';
           iframe.id = 'bg-tiktok-iframe';
-          // Official TikTok embed URL pattern.
           iframe.src =
             'https://www.tiktok.com/embed/v2/' + VIDEO_ID +
             '?lang=en-US&referrer=' + encodeURIComponent(window.location.origin || 'null');
@@ -1306,7 +1194,6 @@
           return iframe;
         }
 
-        // ---- Create the hidden <audio> element ----
         function createAudioElement() {
           if (audioElement) return audioElement;
           var audio = document.createElement('audio');
@@ -1318,27 +1205,20 @@
           audio.loop = true;
           audio.volume = TARGET_VOLUME;
 
-          // Primary source: TikTok embed audio URL (public pattern).
-          // Fallback source: the same embed URL — browsers will
-          // attempt to extract audio from the embed stream.
           var source = document.createElement('source');
           source.src = cfg.TIKTOK_AUDIO_STREAM_URL ||
             ('https://www.tiktok.com/embed/v2/' + VIDEO_ID);
           source.type = 'audio/mpeg';
           audio.appendChild(source);
 
-          // Append to music container so it stays off-screen.
           musicContainer.appendChild(audio);
           audioElement = audio;
           return audio;
         }
 
-        // ---- Low-level: safe postMessage to the TikTok iframe ----
         function postToIframe(action) {
           if (!tiktokIframe || !tiktokIframe.contentWindow) return;
           try {
-            // TikTok embed understands several command shapes;
-            // we send the most commonly accepted ones.
             tiktokIframe.contentWindow.postMessage(
               JSON.stringify({ type: 'tiktok:play' }),
               '*'
@@ -1354,16 +1234,13 @@
           } catch (e) { /* silent */ }
         }
 
-        // ---- Request audible playback ----
         function requestAudiblePlay() {
           if (musicStarted) return;
 
-          // Layer 1 — iframe
           if (tiktokIframe) {
             postToIframe('playVideo');
           }
 
-          // Layer 2 — audio element
           if (audioElement) {
             try {
               audioElement.volume = TARGET_VOLUME;
@@ -1373,7 +1250,6 @@
                   musicStarted = true;
                   pendingPlay = false;
                 }).catch(function() {
-                  // Autoplay blocked — wait for gesture.
                   pendingPlay = true;
                 });
               } else {
@@ -1390,7 +1266,6 @@
           }
         }
 
-        // ---- One-time first-user-gesture handler ----
         function attachFirstGestureListener() {
           if (firstGestureAttached) return;
           firstGestureAttached = true;
@@ -1407,7 +1282,6 @@
           });
         }
 
-        // ---- Boot sequence (idempotent) ----
         function bootMusic() {
           if (bootScheduled === false && (tiktokIframe || audioElement)) return;
           bootScheduled = true;
@@ -1424,10 +1298,9 @@
             setTimeout(function() {
               if (!musicStarted) requestAudiblePlay();
             }, 4000);
-          } catch (e) { /* silent — music is optional */ }
+          } catch (e) { /* silent */ }
         }
 
-        // ---- Schedule boot without blocking the main site ----
         function scheduleMusicBoot() {
           if (typeof window.requestIdleCallback === 'function') {
             window.requestIdleCallback(bootMusic, { timeout: 2000 });
@@ -1444,7 +1317,6 @@
           });
         }
 
-        // ---- Smooth fade-out (preserves original function name) ----
         window.fadeOutBackgroundMusic = function(durationMs) {
           durationMs = (typeof durationMs === 'number' && durationMs > 0) ? durationMs : 4000;
           var steps = 40;
@@ -1473,7 +1345,6 @@
           step();
         };
 
-        // ---- Expose manual play (preserves original function name) ----
         window.playBackgroundMusic = function() {
           requestAudiblePlay();
         };
@@ -1492,7 +1363,6 @@
           return;
         }
 
-        // Fallback: no YouTube thumbnail anymore — use placeholder.
         img.src =
           "data:image/svg+xml," +
           encodeURIComponent(
@@ -1502,69 +1372,6 @@
             "</svg>"
           );
       })();
-
-      // ============================================================
-      // COUNTDOWN — DYNAMIC ACTUAL-DURATION SYSTEM
-      // ============================================================
-      const countdownOverlay = document.getElementById('countdownOverlay');
-      const countdownNumber = document.getElementById('countdownNumber');
-      const zeroScreen = document.getElementById('zeroScreen');
-
-      let countdownTimerActive = false;
-
-      function setCountdownText(val) {
-        if (displayedSeconds !== val) {
-          displayedSeconds = val;
-          countdownNumber.textContent = val;
-        }
-      }
-
-      function runCountdown() {
-        if (!countdownTimerActive) return;
-
-        if (startTime === 0) {
-          countdownRAF = requestAnimationFrame(runCountdown);
-          return;
-        }
-
-        if (finalZeroReached) {
-          setCountdownText(0);
-          countdownNumber.classList.add('zero-hold');
-          countdownRAF = null;
-          return;
-        }
-
-        const elapsedMs = performance.now() - startTime;
-        const elapsedSec = Math.floor(elapsedMs / 1000);
-        const currentElapsed = elapsedSec;
-
-        if (!finalZeroReached) {
-          setCountdownText(currentElapsed);
-
-          if (currentElapsed !== displayedSeconds) {
-            countdownNumber.classList.add('tick');
-            setTimeout(function() {
-              countdownNumber.classList.remove('tick');
-            }, 280);
-          }
-        } else {
-          setCountdownText(0);
-          countdownNumber.classList.add('zero-hold');
-        }
-
-        countdownRAF = requestAnimationFrame(runCountdown);
-      }
-
-      function startCountdown() {
-        if (countdownTimerActive) return;
-        countdownTimerActive = true;
-        startTime = performance.now();
-        displayedSeconds = -1;
-        countdownOverlay.classList.add('visible');
-        countdownNumber.classList.remove('zero-hold');
-        countdownNumber.textContent = '0';
-        countdownRAF = requestAnimationFrame(runCountdown);
-      }
 
       // ============================================================
       // PETALS
@@ -1925,22 +1732,6 @@
 
             if (finalZeroReached) return;
             finalZeroReached = true;
-
-            endTime = performance.now();
-            totalDurationMs = endTime - startTime;
-            totalDurationSec = Math.round(totalDurationMs / 1000);
-
-            if (countdownRAF) {
-              cancelAnimationFrame(countdownRAF);
-              countdownRAF = null;
-            }
-            countdownTimerActive = false;
-            displayedSeconds = 0;
-            countdownNumber.textContent = '0';
-            countdownNumber.classList.add('zero-hold');
-
-            window.__actualTotalDurationSeconds = totalDurationSec;
-            window.__actualTotalDurationMs = totalDurationMs;
           };
 
           zeroScreen.addEventListener('transitionend', onTransitionEnd);
@@ -1948,19 +1739,6 @@
           setTimeout(function() {
             if (finalZeroReached) return;
             finalZeroReached = true;
-            endTime = performance.now();
-            totalDurationMs = endTime - startTime;
-            totalDurationSec = Math.round(totalDurationMs / 1000);
-            if (countdownRAF) {
-              cancelAnimationFrame(countdownRAF);
-              countdownRAF = null;
-            }
-            countdownTimerActive = false;
-            displayedSeconds = 0;
-            countdownNumber.textContent = '0';
-            countdownNumber.classList.add('zero-hold');
-            window.__actualTotalDurationSeconds = totalDurationSec;
-            window.__actualTotalDurationMs = totalDurationMs;
           }, 5000);
         }, 600);
       }
@@ -1995,15 +1773,12 @@
           }
         } catch (e) { /* silent */ }
 
-        // 2. START DYNAMIC COUNTDOWN
-        startCountdown();
-
-        // 3. START STORY TIMELINE
+        // 2. START STORY TIMELINE
         setTimeout(function() {
           nextScene();
         }, durations[0]);
 
-        // 4. START TEASER TIMINGS
+        // 3. START TEASER TIMINGS
         const totalStoryTime = durations.reduce(function(a, b) { return a + b; }, 0);
         const finalScreenDelay = 2500;
         const finalScreenHold = 30000;
@@ -2017,7 +1792,7 @@
           showTeaser(teaserMedium, 7000);
         }, durations[0] + durations[1] + durations[2] + durations[3] + 5000);
 
-        // 5. START GARDEN SEQUENCE
+        // 4. START GARDEN SEQUENCE
         setTimeout(function() {
           startGardenSequence();
         }, gardenStartDelay);
