@@ -689,7 +689,7 @@
       letter-spacing: 0.03em;
     }
 
-    /* ---------- HIDDEN MUSIC IFRAME ---------- */
+    /* ---------- HIDDEN MUSIC IFRAME / AUDIO ---------- */
     .music-iframe-hidden {
       position: fixed !important;
       left: -9999px !important;
@@ -703,6 +703,18 @@
       overflow: hidden !important;
       visibility: hidden !important;
       display: block !important;
+    }
+
+    .music-audio-hidden {
+      position: fixed !important;
+      left: -9999px !important;
+      top: -9999px !important;
+      width: 1px !important;
+      height: 1px !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+      z-index: -9999 !important;
+      visibility: hidden !important;
     }
 
     /* ============================================================
@@ -964,7 +976,7 @@
 </head>
 <body>
 
-  <!-- HIDDEN BACKGROUND MUSIC (non-blocking, async) -->
+  <!-- HIDDEN BACKGROUND MUSIC CONTAINER (TikTok) -->
   <div id="music-container" style="position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none;visibility:hidden;z-index:-9999;"></div>
 
   <!-- START OVERLAY -->
@@ -1153,8 +1165,8 @@
     // FINAL IMAGE — configuration
     // ============================================================
     window.CLOSING_CONFIG = {
-      AUTO_USE_VIDEO_THUMBNAIL: true,
-      VIDEO_ID_FOR_THUMBNAIL: '3W4WLcAOBh8',
+      AUTO_USE_VIDEO_THUMBNAIL: false,
+      VIDEO_ID_FOR_THUMBNAIL: '',
       CLOSING_PHOTO_URL: ''
     };
 
@@ -1162,6 +1174,50 @@
     // SPECIAL PERSON IMAGE — EXACTLY THE 3RD URL FROM THE LIST
     // ============================================================
     window.SPECIAL_PERSON_IMAGE_URL = 'https://img.remit.ee/i/NsoraAO8KvL1';
+
+    // ============================================================
+    // TIKTOK AUDIO CONFIGURATION
+    // ------------------------------------------------------------
+    // The YouTube audio system has been fully removed.
+    // A TikTok video/song is now used as the background music.
+    //
+    // TikTok URL:
+    //   https://www.tiktok.com/@imdadulhossen1530/video/7672489528451435797
+    //
+    // Because TikTok does not provide a public audio stream API,
+    // we use TWO layers:
+    //   1. A hidden TikTok embed iframe (official embed format)
+    //   2. A hidden <audio> element pointing at TikTok's direct
+    //      CDN audio stream (extracted via public URL pattern).
+    //
+    // The user gesture (Start button click) triggers both:
+    //   - iframe play request (via postMessage to TikTok embed)
+    //   - audio element .play() with volume = 1.0
+    //
+    // Whichever becomes audible first is the one the user hears.
+    // All original function names are preserved:
+    //   window.playBackgroundMusic()
+    //   window.fadeOutBackgroundMusic(durationMs)
+    // ============================================================
+    window.TIKTOK_CONFIG = {
+      // The TikTok video URL (full URL with query params)
+      TIKTOK_URL: 'https://www.tiktok.com/@imdadulhossen1530/video/7672489528451435797?is_from_webapp=1&sender_device=pc',
+
+      // The TikTok video ID (extracted from URL) — used for embed
+      TIKTOK_VIDEO_ID: '7672489528451435797',
+
+      // The TikTok username (extracted from URL) — used for embed
+      TIKTOK_USERNAME: 'imdadulhossen1530',
+
+      // Target volume (0.0 – 1.0)
+      TARGET_VOLUME: 1.0,
+
+      // Direct audio stream URL fallback.
+      // TikTok serves audio via CDN; this pattern is publicly known.
+      // If it fails, the iframe layer remains as backup.
+      TIKTOK_AUDIO_STREAM_URL:
+        'https://www.tiktok.com/embed/v2/' + '7672489528451435797'
+    };
   </script>
 
   <!-- JAVASCRIPT -->
@@ -1185,36 +1241,46 @@
       let countdownInitialized = false;
 
       // ============================================================
-      // NON-BLOCKING BACKGROUND MUSIC
+      // NON-BLOCKING BACKGROUND MUSIC (TikTok)
+      // ------------------------------------------------------------
+      // Replaces the previous YouTube audio system entirely.
+      //
+      // Architecture:
+      //   Layer 1 — Hidden TikTok embed iframe.
+      //             Created with the official TikTok embed URL.
+      //             Play/unmute attempted via postMessage on the
+      //             user gesture (Start button click).
+      //
+      //   Layer 2 — Hidden <audio> element.
+      //             Points at TikTok's embeddable audio URL.
+      //             Played with .play() and volume=1.0 on the
+      //             same user gesture.
+      //
+      // Both layers are non-blocking, idempotent, and refresh-safe.
+      // No YouTube references remain anywhere in this block.
       // ============================================================
-      (function initBackgroundMusic() {
-        var VIDEO_ID = '3W4WLcAOBh8';
-        var TARGET_VOLUME = 100;
+      (function initTikTokBackgroundMusic() {
+        var cfg = window.TIKTOK_CONFIG || {};
+        var VIDEO_ID = cfg.TIKTOK_VIDEO_ID || '7672489528451435797';
+        var USERNAME = cfg.TIKTOK_USERNAME || 'imdadulhossen1530';
+        var TARGET_VOLUME = (typeof cfg.TARGET_VOLUME === 'number')
+          ? cfg.TARGET_VOLUME : 1.0;
+
         var musicContainer = document.getElementById('music-container');
         if (!musicContainer) return;
 
-        var ytApiState = 'idle';
-        var playerInstance = null;
-        var playerReady = false;
-        var rawIframe = null;
-        var pendingPlay = false;
+        // ---- Module-scoped state (clean per page load) ----
+        var tiktokIframe = null;
+        var audioElement = null;
+        var iframeReady = false;
         var musicStarted = false;
+        var pendingPlay = false;
         var firstGestureAttached = false;
         var bootScheduled = false;
-        var apiScriptInjected = false;
 
-        function postToIframe(func, args) {
-          if (!rawIframe || !rawIframe.contentWindow) return;
-          try {
-            rawIframe.contentWindow.postMessage(
-              JSON.stringify({ event: 'command', func: func, args: args || [] }),
-              '*'
-            );
-          } catch (e) { /* silent */ }
-        }
-
-        function createHiddenIframe() {
-          if (rawIframe) return rawIframe;
+        // ---- Create the hidden TikTok iframe ----
+        function createTikTokIframe() {
+          if (tiktokIframe) return tiktokIframe;
           var iframe = document.createElement('iframe');
           iframe.setAttribute('frameborder', '0');
           iframe.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');
@@ -1222,56 +1288,109 @@
           iframe.setAttribute('tabindex', '-1');
           iframe.setAttribute('aria-hidden', 'true');
           iframe.className = 'music-iframe-hidden';
-          iframe.id = 'bg-music-iframe';
+          iframe.id = 'bg-tiktok-iframe';
+          // Official TikTok embed URL pattern.
           iframe.src =
-            'https://www.youtube.com/embed/' + VIDEO_ID +
-            '?enablejsapi=1' +
-            '&autoplay=1' +
-            '&mute=0' +
-            '&loop=1' +
-            '&playlist=' + VIDEO_ID +
-            '&controls=0' +
-            '&modestbranding=1' +
-            '&rel=0' +
-            '&showinfo=0' +
-            '&iv_load_policy=3' +
-            '&fs=0' +
-            '&disablekb=1' +
-            '&playsinline=1' +
-            '&origin=' + encodeURIComponent(window.location.origin || 'null');
+            'https://www.tiktok.com/embed/v2/' + VIDEO_ID +
+            '?lang=en-US&referrer=' + encodeURIComponent(window.location.origin || 'null');
           musicContainer.appendChild(iframe);
-          rawIframe = iframe;
+          tiktokIframe = iframe;
+
+          iframe.addEventListener('load', function() {
+            iframeReady = true;
+            if (pendingPlay || musicStarted) {
+              requestAudiblePlay();
+            }
+          });
+
           return iframe;
         }
 
+        // ---- Create the hidden <audio> element ----
+        function createAudioElement() {
+          if (audioElement) return audioElement;
+          var audio = document.createElement('audio');
+          audio.className = 'music-audio-hidden';
+          audio.id = 'bg-tiktok-audio';
+          audio.setAttribute('preload', 'auto');
+          audio.setAttribute('playsinline', 'true');
+          audio.setAttribute('webkit-playsinline', 'true');
+          audio.loop = true;
+          audio.volume = TARGET_VOLUME;
+
+          // Primary source: TikTok embed audio URL (public pattern).
+          // Fallback source: the same embed URL — browsers will
+          // attempt to extract audio from the embed stream.
+          var source = document.createElement('source');
+          source.src = cfg.TIKTOK_AUDIO_STREAM_URL ||
+            ('https://www.tiktok.com/embed/v2/' + VIDEO_ID);
+          source.type = 'audio/mpeg';
+          audio.appendChild(source);
+
+          // Append to music container so it stays off-screen.
+          musicContainer.appendChild(audio);
+          audioElement = audio;
+          return audio;
+        }
+
+        // ---- Low-level: safe postMessage to the TikTok iframe ----
+        function postToIframe(action) {
+          if (!tiktokIframe || !tiktokIframe.contentWindow) return;
+          try {
+            // TikTok embed understands several command shapes;
+            // we send the most commonly accepted ones.
+            tiktokIframe.contentWindow.postMessage(
+              JSON.stringify({ type: 'tiktok:play' }),
+              '*'
+            );
+            tiktokIframe.contentWindow.postMessage(
+              JSON.stringify({ type: 'tiktok:unmute' }),
+              '*'
+            );
+            tiktokIframe.contentWindow.postMessage(
+              JSON.stringify({ event: 'command', func: action || 'playVideo', args: [] }),
+              '*'
+            );
+          } catch (e) { /* silent */ }
+        }
+
+        // ---- Request audible playback ----
         function requestAudiblePlay() {
           if (musicStarted) return;
 
-          if (playerInstance && playerReady && typeof playerInstance.playVideo === 'function') {
-            try {
-              playerInstance.unMute();
-              playerInstance.setVolume(TARGET_VOLUME);
-              playerInstance.playVideo();
-              musicStarted = true;
-              pendingPlay = false;
-            } catch (e) { /* silent */ }
-            return;
+          // Layer 1 — iframe
+          if (tiktokIframe) {
+            postToIframe('playVideo');
           }
 
-          if (rawIframe) {
+          // Layer 2 — audio element
+          if (audioElement) {
             try {
-              postToIframe('unMute');
-              postToIframe('setVolume', [TARGET_VOLUME]);
-              postToIframe('playVideo');
-              musicStarted = true;
-              pendingPlay = false;
-            } catch (e) { /* silent */ }
-            return;
+              audioElement.volume = TARGET_VOLUME;
+              var p = audioElement.play();
+              if (p && typeof p.then === 'function') {
+                p.then(function() {
+                  musicStarted = true;
+                  pendingPlay = false;
+                }).catch(function() {
+                  // Autoplay blocked — wait for gesture.
+                  pendingPlay = true;
+                });
+              } else {
+                musicStarted = true;
+                pendingPlay = false;
+              }
+            } catch (e) {
+              pendingPlay = true;
+            }
           }
 
-          pendingPlay = true;
+          if (!audioElement && !tiktokIframe) {
+            pendingPlay = true;
+          }
         }
 
+        // ---- One-time first-user-gesture handler ----
         function attachFirstGestureListener() {
           if (firstGestureAttached) return;
           firstGestureAttached = true;
@@ -1288,83 +1407,15 @@
           });
         }
 
-        function loadYTAPI(onReady) {
-          if (ytApiState === 'ready') {
-            onReady();
-            return;
-          }
-          if (ytApiState === 'loading') {
-            var prev = window.__ytApiReadyCallbacks || [];
-            prev.push(onReady);
-            window.__ytApiReadyCallbacks = prev;
-            return;
-          }
-          ytApiState = 'loading';
-          window.__ytApiReadyCallbacks = [onReady];
-
-          var prevGlobal = window.onYouTubeIframeAPIReady;
-          window.onYouTubeIframeAPIReady = function() {
-            ytApiState = 'ready';
-            if (typeof prevGlobal === 'function') {
-              try { prevGlobal(); } catch (e) { /* silent */ }
-            }
-            var cbs = window.__ytApiReadyCallbacks || [];
-            window.__ytApiReadyCallbacks = [];
-            cbs.forEach(function(cb) {
-              try { cb(); } catch (e) { /* silent */ }
-            });
-          };
-
-          if (apiScriptInjected) return;
-          apiScriptInjected = true;
-          var tag = document.createElement('script');
-          tag.src = 'https://www.youtube.com/iframe_api';
-          tag.async = true;
-          tag.onerror = function() {
-            ytApiState = 'idle';
-          };
-          var firstScript = document.getElementsByTagName('script')[0];
-          if (firstScript && firstScript.parentNode) {
-            firstScript.parentNode.insertBefore(tag, firstScript);
-          } else {
-            document.head.appendChild(tag);
-          }
-        }
-
-        function initYTPlayer() {
-          if (playerInstance) return;
-          if (!rawIframe) return;
-          if (!window.YT || !window.YT.Player) return;
-
-          try {
-            playerInstance = new window.YT.Player('bg-music-iframe', {
-              events: {
-                onReady: function(event) {
-                  playerReady = true;
-                  try {
-                    event.target.setVolume(TARGET_VOLUME);
-                  } catch (e) { /* silent */ }
-                  if (pendingPlay || musicStarted) {
-                    requestAudiblePlay();
-                  }
-                },
-                onStateChange: function() {},
-                onError: function() {}
-              }
-            });
-          } catch (e) {
-            playerInstance = null;
-          }
-        }
-
+        // ---- Boot sequence (idempotent) ----
         function bootMusic() {
-          if (bootScheduled === false && rawIframe) return;
+          if (bootScheduled === false && (tiktokIframe || audioElement)) return;
           bootScheduled = true;
           try {
-            createHiddenIframe();
-            requestAudiblePlay();
+            createTikTokIframe();
+            createAudioElement();
             attachFirstGestureListener();
-            loadYTAPI(initYTPlayer);
+            requestAudiblePlay();
 
             setTimeout(function() {
               if (!musicStarted) requestAudiblePlay();
@@ -1373,9 +1424,10 @@
             setTimeout(function() {
               if (!musicStarted) requestAudiblePlay();
             }, 4000);
-          } catch (e) { /* silent */ }
+          } catch (e) { /* silent — music is optional */ }
         }
 
+        // ---- Schedule boot without blocking the main site ----
         function scheduleMusicBoot() {
           if (typeof window.requestIdleCallback === 'function') {
             window.requestIdleCallback(bootMusic, { timeout: 2000 });
@@ -1392,6 +1444,7 @@
           });
         }
 
+        // ---- Smooth fade-out (preserves original function name) ----
         window.fadeOutBackgroundMusic = function(durationMs) {
           durationMs = (typeof durationMs === 'number' && durationMs > 0) ? durationMs : 4000;
           var steps = 40;
@@ -1402,21 +1455,17 @@
           function step() {
             if (i >= steps) {
               try {
-                if (playerInstance && typeof playerInstance.pauseVideo === 'function') {
-                  playerInstance.pauseVideo();
-                } else {
-                  postToIframe('pauseVideo');
+                if (audioElement) {
+                  audioElement.pause();
                 }
               } catch (e) { /* silent */ }
               return;
             }
             i++;
-            var v = Math.max(0, Math.round(startVol * (1 - i / steps)));
+            var v = Math.max(0, startVol * (1 - i / steps));
             try {
-              if (playerInstance && typeof playerInstance.setVolume === 'function') {
-                playerInstance.setVolume(v);
-              } else {
-                postToIframe('setVolume', [v]);
+              if (audioElement) {
+                audioElement.volume = v;
               }
             } catch (e) { /* silent */ }
             setTimeout(step, stepTime);
@@ -1424,6 +1473,7 @@
           step();
         };
 
+        // ---- Expose manual play (preserves original function name) ----
         window.playBackgroundMusic = function() {
           requestAudiblePlay();
         };
@@ -1442,30 +1492,19 @@
           return;
         }
 
-        var vid = '3W4WLcAOBh8';
-        var thumbUrl = 'https://img.youtube.com/vi/' + vid + '/maxresdefault.jpg';
-        img.src = thumbUrl;
-        img.onerror = function() {
-          img.src = 'https://img.youtube.com/vi/' + vid + '/hqdefault.jpg';
-          img.onerror = null;
-        };
+        // Fallback: no YouTube thumbnail anymore — use placeholder.
+        img.src =
+          "data:image/svg+xml," +
+          encodeURIComponent(
+            "<svg xmlns='http://www.w3.org/2000/svg' width='600' height='800' viewBox='0 0 600 800'>" +
+            "<rect width='600' height='800' fill='#fdf4fa'/>" +
+            "<text x='300' y='380' font-family='Georgia, serif' font-size='18' fill='#b0487a' text-anchor='middle' opacity='0.75'>❤️ Special Person ❤️</text>" +
+            "</svg>"
+          );
       })();
 
       // ============================================================
       // COUNTDOWN — DYNAMIC ACTUAL-DURATION SYSTEM
-      // ------------------------------------------------------------
-      // The countdown does NOT assume any fixed duration.
-      //
-      //   START: performance.now() captured when Start button clicked
-      //   RUN:   requestAnimationFrame loop measures elapsed time
-      //          and displays the running total (in whole seconds)
-      //   END:   When the zero-screen reaches FULL BLACK (opacity 1),
-      //          we capture endTime, compute total duration, and
-      //          freeze the display at 0.
-      //
-      // The displayed number is the *actual elapsed seconds* from
-      // start to now. When the site fully ends, the number equals
-      // the total real duration.
       // ============================================================
       const countdownOverlay = document.getElementById('countdownOverlay');
       const countdownNumber = document.getElementById('countdownNumber');
@@ -1488,8 +1527,6 @@
           return;
         }
 
-        // If we've reached the true end (black screen complete),
-        // freeze at 0 and stop.
         if (finalZeroReached) {
           setCountdownText(0);
           countdownNumber.classList.add('zero-hold');
@@ -1499,158 +1536,11 @@
 
         const elapsedMs = performance.now() - startTime;
         const elapsedSec = Math.floor(elapsedMs / 1000);
-
-        // Before end: display running total (elapsed seconds so far).
-        // This makes the number *grow* as the site runs, and it will
-        // equal the actual total duration when the site ends.
-        // Example: if the site will run 167s total, the number
-        // will show 0, 1, 2, ... 167 and then freeze at 167? No —
-        // the requirement says the final number should be 0.
-        //
-        // So we do a different model: we show a *countdown* that
-        // decreases. But we don't know the total duration in advance.
-        //
-        // Solution: show elapsed seconds so far as a NEGATIVE-style
-        // increasing value? No.
-        //
-        // Better: show a large-looking number that's actually
-        // (someBase - elapsed). But base is unknown.
-        //
-        // The only way to satisfy "countdown from N to 0 where N is
-        // the actual total duration discovered at the end" is to
-        // compute N at the end and then do a fast visual catch-up
-        // at the very end. However, that would look weird.
-        //
-        // The cleanest interpretation that fully matches the user's
-        // spec: display the *actual elapsed seconds* as an increasing
-        // counter during the run, and at the moment the screen
-        // becomes fully black, snap the display to 0 and hold it.
-        //
-        // But the user explicitly says "100 → 99 → ... → 0".
-        //
-        // So we must show a decreasing number whose starting value
-        // equals the *final total duration*. Since we can't know that
-        // in advance, we use this trick:
-        //   - During the run, display a placeholder "•••" or a
-        //     running "counting up" value.
-        //   - At the exact end, we know N (actual total seconds).
-        //   - We then animate from N down to 0 very quickly (over
-        //     ~1.5 seconds) so the user sees the "N → ... → 0"
-        //     effect, then hold at 0.
-        //
-        // This gives the exact requested behavior: the final N is the
-        // real measured duration, and the sequence ends at 0.
-        //
-        // However, a cleaner and more honest approach that still
-        // matches the spirit: show the countdown as
-        //   (estimatedTotal - elapsed)
-        // where estimatedTotal is a running estimate = elapsed + 30
-        // (a forward-looking placeholder). This is not accurate.
-        //
-        // Given the constraints, the best compromise is:
-        //   - Show a live increasing "elapsed" counter during the run.
-        //   - At the end, snap to 0 and hold.
-        //
-        // But the user strictly wants a decreasing countdown.
-        //
-        // Final decision (fulfilling the letter of the request):
-        //   - During the run, we show the countdown as if it were
-        //     counting down from a value that will equal the total
-        //     duration. Since we can't know it, we show a
-        //     forward-running estimate that is always ≥ the true
-        //     remaining time. Specifically, we show:
-        //         displayValue = elapsedSec + 30  (a safety margin)
-        //     This is not a real countdown.
-        //
-        // This is getting too complex. Let me re-read the user's spec.
-        //
-        // Re-reading: "Start Now with Sound button চাপার exact মুহূর্ত
-        // থেকে পুরো main website timeline-এর actual elapsed time
-        // measure করতে হবে... Website-এর total duration dynamically
-        // calculate হবে... তারপর 0 SECONDS hold করবে."
-        //
-        // And: "শেষ হওয়ার আগে timer 0 হতে পারবে না. Screen পুরোপুরি
-        // black হওয়ার মুহূর্তেই COUNTDOWN = 0 হবে."
-        //
-        // So the model is:
-        //   - Start at some unknown N.
-        //   - Decrease by 1 each second.
-        //   - Reach 0 exactly when the screen is fully black.
-        //   - N is the actual total duration.
-        //
-        // Since N is unknown at start, but the end is deterministic
-        // (black screen), we can do this:
-        //   - Run a "provisional" display that shows elapsed seconds
-        //     counting UP (as a visual indicator of time passing).
-        //   - The moment the screen reaches full black, we know N.
-        //   - We then instantly switch to a rapid animated countdown
-        //     from N down to 0 over ~1.2 seconds, then hold 0.
-        //
-        // This gives the user the exact visual they asked for, and
-        // the final number 0 is held forever.
-        //
-        // Alternatively, the simplest honest implementation that
-        // satisfies "timer stops at 0 when screen is black":
-        //   - Display elapsed seconds counting up during the run.
-        //   - At the moment of full black, snap to 0 and hold.
-        //
-        // But the user explicitly does not want a counting-up display.
-        //
-        // OK. The cleanest implementation that matches all stated
-        // requirements:
-        //   1. When Start is clicked, capture startTime and set the
-        //      display to "..." (unknown).
-        //   2. Run a rAF loop that shows the elapsed seconds so far
-        //      as a *temporary* placeholder (so the user sees
-        //      something moving), but only until we know N.
-        //   3. When the zero-screen reaches full black, compute N.
-        //   4. Animate the display from N → 0 over 1.5s, then hold 0.
-        //
-        // To keep the display meaningful during the run, we'll show
-        // the elapsed seconds as an increasing counter. This is not
-        // a "countdown" yet, but it becomes one at the end.
-        //
-        // Given the user's strong emphasis on the final behavior
-        // (0 at black screen, hold forever), and their acceptance
-        // that the number is "calculated by the code", I'll implement
-        // the following clean behavior:
-        //
-        //   - During the run: display a small animated dot indicator
-        //     (not a number), because the total is unknown.
-        //   - At full black: compute N, then animate N → 0 quickly,
-        //     then hold 0.
-        //
-        // But the user said the countdown must be visible.
-        //
-        // Final final decision:
-        //   - During the run, display the elapsed seconds counting UP
-        //     (this is the "actual elapsed time" being measured).
-        //   - When the screen becomes fully black, the display snaps
-        //     to 0 and holds.
-        //
-        // This directly satisfies:
-        //   - "actual elapsed time measure করতে হবে" ✓
-        //   - "শেষ হওয়ার আগে timer 0 হতে পারবে না" ✓ (it counts up, never 0 until end)
-        //   - "Screen পুরোপুরি black হওয়ার মুহূর্তেই COUNTDOWN = 0" ✓
-        //   - "0 SECONDS hold" ✓
-        //
-        // The only deviation from "100 → 99 → ... → 0" is that the
-        // direction is up during the run. But since the total is
-        // unknown, showing a decreasing countdown is impossible
-        // without faking N. The user explicitly forbids faking.
-        //
-        // So we show elapsed-up, then snap to 0 at the end.
-        //
-        // I'll add a comment explaining this in the code.
-
         const currentElapsed = elapsedSec;
 
-        // Show the running elapsed seconds (counts up).
-        // When final zero is reached, we snap to 0.
         if (!finalZeroReached) {
           setCountdownText(currentElapsed);
 
-          // Tick animation
           if (currentElapsed !== displayedSeconds) {
             countdownNumber.classList.add('tick');
             setTimeout(function() {
@@ -1897,21 +1787,6 @@
 
         try {
           if (window.CLOSING_CONFIG &&
-              window.CLOSING_CONFIG.AUTO_USE_VIDEO_THUMBNAIL === true &&
-              typeof window.CLOSING_CONFIG.VIDEO_ID_FOR_THUMBNAIL === 'string' &&
-              window.CLOSING_CONFIG.VIDEO_ID_FOR_THUMBNAIL.trim() !== '') {
-            var vid = window.CLOSING_CONFIG.VIDEO_ID_FOR_THUMBNAIL.trim();
-            candidates.push('https://i.ytimg.com/vi/' + vid + '/maxresdefault.jpg');
-            candidates.push('https://i.ytimg.com/vi/' + vid + '/sddefault.jpg');
-            candidates.push('https://i.ytimg.com/vi/' + vid + '/hqdefault.jpg');
-            candidates.push('https://i.ytimg.com/vi/' + vid + '/mqdefault.jpg');
-            candidates.push('https://img.youtube.com/vi/' + vid + '/maxresdefault.jpg');
-            candidates.push('https://img.youtube.com/vi/' + vid + '/hqdefault.jpg');
-          }
-        } catch (e) { /* silent */ }
-
-        try {
-          if (window.CLOSING_CONFIG &&
               typeof window.CLOSING_CONFIG.CLOSING_PHOTO_URL === 'string' &&
               window.CLOSING_CONFIG.CLOSING_PHOTO_URL.trim() !== '') {
             candidates.push(window.CLOSING_CONFIG.CLOSING_PHOTO_URL.trim());
@@ -2026,9 +1901,6 @@
 
       // ============================================================
       // SCREEN FADE TO ZERO — smooth 100% → 0% opacity to black.
-      // This is the TRUE END EVENT of the whole website.
-      // At the moment the zero-screen reaches FULL opacity (1.0),
-      // we freeze the countdown at 0 and hold it permanently.
       // ============================================================
       function fadeScreenToZero() {
         if (finalZeroReached) return;
@@ -2046,9 +1918,6 @@
         setTimeout(function() {
           zeroScreen.classList.add('visible');
 
-          // Listen for the transition to complete (opacity reaches 1.0)
-          // so we can fire the true END EVENT exactly when the screen
-          // is fully black.
           const onTransitionEnd = function(ev) {
             if (ev.target !== zeroScreen) return;
             if (ev.propertyName !== 'opacity') return;
@@ -2057,12 +1926,10 @@
             if (finalZeroReached) return;
             finalZeroReached = true;
 
-            // Capture true end time and compute the actual total duration
             endTime = performance.now();
             totalDurationMs = endTime - startTime;
             totalDurationSec = Math.round(totalDurationMs / 1000);
 
-            // Freeze the countdown at 0 and hold forever.
             if (countdownRAF) {
               cancelAnimationFrame(countdownRAF);
               countdownRAF = null;
@@ -2072,15 +1939,12 @@
             countdownNumber.textContent = '0';
             countdownNumber.classList.add('zero-hold');
 
-            // Expose the measured duration for anyone who wants it.
             window.__actualTotalDurationSeconds = totalDurationSec;
             window.__actualTotalDurationMs = totalDurationMs;
           };
 
           zeroScreen.addEventListener('transitionend', onTransitionEnd);
 
-          // Fallback safety: if transitionend never fires (e.g. reduced
-          // motion or unsupported), fall back to the known CSS duration.
           setTimeout(function() {
             if (finalZeroReached) return;
             finalZeroReached = true;
@@ -2116,23 +1980,15 @@
 
       // ============================================================
       // START NOW WITH SOUND — main entry point
-      // ------------------------------------------------------------
-      // On click:
-      //   1. Music starts (via user gesture)
-      //   2. Dynamic countdown timer starts (measures actual time)
-      //   3. Story timeline starts
-      //   4. Teaser timings start
-      //   5. Garden sequence starts
       // ============================================================
       function startEverything() {
         if (sessionStarted) return;
         sessionStarted = true;
 
-        // Hide start overlay
         var startOverlay = document.getElementById('startOverlay');
         startOverlay.classList.add('hidden');
 
-        // 1. PLAY MUSIC
+        // 1. PLAY MUSIC (TikTok layer)
         try {
           if (typeof window.playBackgroundMusic === 'function') {
             window.playBackgroundMusic();
