@@ -78,11 +78,14 @@ body::after{background:#4b2bb8;bottom:-18vmax;right:-14vmax;animation-delay:-9s}
 @keyframes sweep{60%,100%{left:140%}}
 #yesBtn{animation:glow 2s ease-in-out infinite}
 @keyframes glow{50%{box-shadow:0 0 0 8px rgba(245,216,168,.14),0 10px 38px rgba(224,104,159,.65)}}
+#snd{position:fixed;top:14px;right:14px;z-index:60;width:42px;height:42px;border-radius:50%;border:1px solid rgba(245,216,168,.45);background:rgba(255,255,255,.1);backdrop-filter:blur(10px);color:#fff;font-size:1.05rem;cursor:pointer;opacity:0;pointer-events:none;transition:.5s}#snd.on{opacity:1;pointer-events:auto}
 </style>
 </head>
 <body>
 <div id="hearts"></div>
 <canvas id="fx"></canvas>
+<audio id="song" src="SaveTik.io_7685267223396486421.mp3" loop preload="auto"></audio>
+<button id="snd" aria-label="Music on/off">🔊</button>
 
 <!-- 1. Entry -->
 <section class="screen active" id="s-name"><div class="card">
@@ -198,10 +201,15 @@ for(let i=0;i<5;i++)setTimeout(()=>{burst(innerWidth*(.15+Math.random()*.7),inne
 burst(innerWidth/2,innerHeight*.6,160,11);if(!raf)loop()}
 const kick=()=>{if(!raf)loop()};
 
+/* music: starts when the name is entered (a click = allowed autoplay) */
+const song=$("song"),snd=$("snd");
+function playSong(){song.volume=0;song.play().then(()=>{snd.classList.add("on");let v=0;const t=setInterval(()=>{v=Math.min(.75,v+.025);song.volume=v;if(v>=.75)clearInterval(t)},120)}).catch(e=>console.warn("Music could not start:",e))}
+snd.onclick=()=>{song.muted=!song.muted;snd.textContent=song.muted?"🔇":"🔊"};
+
 /* 1. name */
 function enter(){const n=$("nameIn").value.trim();
 if(!n){$("nameErr").textContent="Please tell me your name first 🥺";$("nameIn").focus();return}
-visitor=n;$("nameErr").textContent="";show("s-intro");intro()}
+visitor=n;$("nameErr").textContent="";playSong();show("s-intro");intro()}
 $("enterBtn").onclick=enter;
 $("nameIn").addEventListener("keydown",e=>{if(e.key==="Enter")enter()});
 
