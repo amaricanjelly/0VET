@@ -1,1910 +1,252 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>30th Anniversary</title>
-  <style>
-    /* ---------- FONTS ---------- */
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Hind+Siliguri:wght@300;400;500&display=swap');
-
-    /* ============================================================
-       NEW COLOR THEME — PINK ROMANTIC (Cherry Blossom / Soft Pink / Light Pink / Deep Pink)
-       ------------------------------------------------------------
-       Soft, romantic, elegant, dreamy, premium. No heavy blue.
-       ============================================================ */
-    :root {
-      --cb-pink:      #ffd6e7;
-      --soft-pink:    #ffe8f2;
-      --light-pink:   #fff2f8;
-      --deep-pink:    #d47a9e;
-      --dark-pink:    #b0487a;
-      --rose-pink:    #e8a0b8;
-      --white-tone:   #fdfbff;
-      --ink:          #2a1f3d;
-
-      --bg-1: #fdf4fa;
-      --bg-2: #fce8f0;
-      --bg-3: #f9d6e4;
-      --bg-4: #f2b8ce;
-
-      --glow-pink:    rgba(255, 200, 220, 0.65);
-      --text-main:    #3a2a4d;
-      --text-soft:    #5b4a6e;
-      --text-muted:   #8a7a9c;
-      --text-on-dark: #fff5fa;
-    }
-
-    /* ---------- RESET & BASE ---------- */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    html, body {
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background: #fdf4fa;
-      font-family: 'Hind Siliguri', 'Playfair Display', serif;
-      color: var(--text-main);
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-
-    /* ---------- BACKGROUND ---------- */
-    .bg-layer {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      background:
-        radial-gradient(ellipse at 50% 25%,
-          #fff5fa 0%,
-          #fce8f0 30%,
-          #f9d6e4 60%,
-          #f2b8ce 80%,
-          #e8a0b8 100%);
-      overflow: hidden;
-    }
-
-    .bg-glow {
-      position: absolute;
-      width: 130vmax;
-      height: 130vmax;
-      top: -35vmax;
-      left: -15vmax;
-      background: radial-gradient(circle,
-        rgba(255, 220, 235, 0.65) 0%,
-        rgba(255, 200, 220, 0.38) 40%,
-        transparent 70%);
-      border-radius: 50%;
-      animation: glowPulse 22s ease-in-out infinite alternate;
-    }
-
-    @keyframes glowPulse {
-      0% { opacity: 0.65; transform: scale(1); }
-      100% { opacity: 1; transform: scale(1.06); }
-    }
-
-    .bg-layer::after {
-      content: '';
-      position: absolute;
-      width: 90vmax;
-      height: 90vmax;
-      top: -20vmax;
-      right: -25vmax;
-      background: radial-gradient(circle,
-        rgba(255, 180, 210, 0.35) 0%,
-        rgba(255, 180, 210, 0.12) 45%,
-        transparent 70%);
-      border-radius: 50%;
-      pointer-events: none;
-    }
-
-    .petal {
-      position: absolute;
-      width: 10px;
-      height: 10px;
-      background: rgba(255, 200, 220, 0.65);
-      border-radius: 50% 0 50% 50%;
-      transform: rotate(45deg);
-      animation: petalFall linear infinite;
-      pointer-events: none;
-      filter: blur(0.4px);
-      box-shadow: 0 0 8px rgba(255, 190, 215, 0.45);
-    }
-
-    @keyframes petalFall {
-      0% { transform: translateY(-10vh) rotate(0deg) scale(0.8); opacity: 0; }
-      8% { opacity: 0.85; }
-      92% { opacity: 0.5; }
-      100% { transform: translateY(110vh) rotate(360deg) scale(1.05); opacity: 0; }
-    }
-
-    /* ---------- START OVERLAY ---------- */
-    .start-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 100;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background:
-        radial-gradient(ellipse at 50% 40%,
-          #fff5fa 0%,
-          #fce8f0 35%,
-          #f9d6e4 75%,
-          #f2b8ce 100%);
-      gap: 2.5vmin;
-      padding: 4vmin;
-      transition: opacity 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      pointer-events: auto;
-    }
-
-    .start-overlay.hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .start-button {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(1.2rem, 4.5vw, 2.0rem);
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      color: #fff5fa;
-      background: linear-gradient(135deg, #d47a9e 0%, #b0487a 50%, #9a3c6e 100%);
-      border: none;
-      border-radius: 60px;
-      padding: 1.1em 2.8em;
-      cursor: pointer;
-      box-shadow:
-        0 8px 40px rgba(180, 72, 122, 0.45),
-        0 0 80px rgba(255, 190, 220, 0.35),
-        inset 0 1px 0 rgba(255, 255, 255, 0.35);
-      transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                  box-shadow 0.35s ease;
-      outline: none;
-      -webkit-tap-highlight-color: transparent;
-      text-shadow: 0 2px 10px rgba(120, 30, 70, 0.3);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .start-button::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: 60px;
-      background: linear-gradient(135deg, rgba(255,255,255,0.28) 0%, transparent 60%);
-      pointer-events: none;
-    }
-
-    .start-button:hover {
-      transform: scale(1.05);
-      box-shadow:
-        0 12px 55px rgba(180, 72, 122, 0.6),
-        0 0 120px rgba(255, 190, 220, 0.5),
-        inset 0 1px 0 rgba(255, 255, 255, 0.45);
-    }
-
-    .start-button:active {
-      transform: scale(0.97);
-    }
-
-    .start-hint {
-      font-family: 'Hind Siliguri', sans-serif;
-      font-size: clamp(0.8rem, 2.6vw, 1.05rem);
-      font-weight: 300;
-      color: #8a6a7e;
-      letter-spacing: 0.06em;
-      text-align: center;
-      line-height: 1.7;
-      opacity: 0.85;
-    }
-
-    .start-title {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(1.8rem, 6vw, 3.2rem);
-      font-weight: 400;
-      color: #b0487a;
-      text-shadow: 0 0 30px rgba(255, 190, 220, 0.65);
-      letter-spacing: 0.04em;
-      text-align: center;
-      line-height: 1.25;
-    }
-
-    /* ---------- STORY CONTAINER ---------- */
-    .story-container {
-      position: relative;
-      z-index: 10;
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 5vmin;
-    }
-
-    .scene {
-      position: absolute;
-      width: 100%;
-      max-width: 780px;
-      padding: 0 4vmin;
-      opacity: 0;
-      transform: translateY(14px) scale(0.985);
-      transition: opacity 2s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                  transform 2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      text-align: center;
-      pointer-events: none;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5em;
-    }
-
-    .scene.active {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-      pointer-events: auto;
-    }
-
-    .scene.exit {
-      opacity: 0;
-      transform: translateY(-10px) scale(0.98);
-    }
-
-    /* ---------- TYPOGRAPHY ---------- */
-    .title-xl {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(2.2rem, 8vw, 4.4rem);
-      font-weight: 400;
-      letter-spacing: 0.04em;
-      line-height: 1.15;
-      color: #b0487a;
-      text-shadow:
-        0 0 24px rgba(255, 190, 220, 0.65),
-        0 2px 12px rgba(200, 130, 170, 0.22);
-    }
-
-    .title-lg {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(1.6rem, 5.5vw, 3.0rem);
-      font-weight: 400;
-      letter-spacing: 0.03em;
-      line-height: 1.2;
-      color: #a04070;
-      text-shadow: 0 0 22px rgba(255, 190, 220, 0.55);
-    }
-
-    .title-md {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(1.2rem, 4.2vw, 2.2rem);
-      font-weight: 400;
-      letter-spacing: 0.03em;
-      line-height: 1.3;
-      color: #9a3c6e;
-      text-shadow: 0 0 18px rgba(255, 190, 220, 0.45);
-    }
-
-    .name-highlight {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(1.8rem, 7vw, 3.6rem);
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      color: #c8548a;
-      text-shadow:
-        0 0 36px rgba(255, 190, 220, 0.75),
-        0 2px 14px rgba(200, 130, 170, 0.28);
-    }
-
-    .bangla {
-      font-family: 'Hind Siliguri', sans-serif;
-      font-size: clamp(0.95rem, 3.2vw, 1.35rem);
-      font-weight: 300;
-      line-height: 1.75;
-      color: var(--text-main);
-      letter-spacing: 0.01em;
-    }
-
-    .bangla-medium {
-      font-family: 'Hind Siliguri', sans-serif;
-      font-size: clamp(1.0rem, 3.4vw, 1.5rem);
-      font-weight: 400;
-      line-height: 1.8;
-      color: #4a3860;
-    }
-
-    .bangla-large {
-      font-family: 'Hind Siliguri', sans-serif;
-      font-size: clamp(1.15rem, 4vw, 1.8rem);
-      font-weight: 500;
-      line-height: 1.7;
-      color: #3a2a4d;
-    }
-
-    .english {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(0.9rem, 3vw, 1.3rem);
-      font-weight: 400;
-      line-height: 1.6;
-      color: var(--text-soft);
-      letter-spacing: 0.04em;
-    }
-
-    .english-italic {
-      font-family: 'Playfair Display', serif;
-      font-style: italic;
-      font-size: clamp(0.95rem, 3.2vw, 1.4rem);
-      font-weight: 400;
-      line-height: 1.6;
-      color: var(--text-soft);
-      letter-spacing: 0.03em;
-    }
-
-    .small-meta {
-      font-family: 'Hind Siliguri', sans-serif;
-      font-size: clamp(0.75rem, 2.4vw, 1.0rem);
-      font-weight: 300;
-      letter-spacing: 0.14em;
-      color: var(--text-muted);
-      text-transform: uppercase;
-    }
-
-    .divider-dot {
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #f7b8d0, #e8a0b8);
-      opacity: 0.9;
-      margin: 0.2em 0;
-      box-shadow: 0 0 8px rgba(255, 190, 215, 0.65);
-    }
-
-    .divider-line {
-      width: 60px;
-      height: 1px;
-      background: linear-gradient(to right,
-        transparent,
-        rgba(200, 84, 138, 0.55),
-        rgba(232, 160, 184, 0.55),
-        transparent);
-      margin: 0.3em 0;
-    }
-
-    .memory-box {
-      background: linear-gradient(135deg,
-        rgba(255, 220, 235, 0.75) 0%,
-        rgba(255, 240, 248, 0.85) 50%,
-        rgba(249, 214, 228, 0.75) 100%);
-      border: 1px solid rgba(200, 140, 180, 0.35);
-      border-radius: 16px;
-      padding: 1.2em 1.5em;
-      margin: 0.4em 0;
-      backdrop-filter: blur(6px);
-      box-shadow:
-        0 6px 24px rgba(180, 140, 190, 0.18),
-        inset 0 1px 0 rgba(255, 255, 255, 0.75);
-      max-width: 90%;
-    }
-
-    .scene-5-message {
-      max-width: 92%;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      gap: 0.45em;
-    }
-
-    .scene-5-message .bangla {
-      font-size: clamp(0.9rem, 3vw, 1.2rem);
-      line-height: 1.8;
-    }
-
-    /* ---------- FINAL IMAGE SCREEN ---------- */
-    .final-screen {
-      position: fixed;
-      inset: 0;
-      z-index: 20;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background:
-        radial-gradient(ellipse at 50% 40%,
-          #fff5fa 0%,
-          #fce8f0 35%,
-          #f9d6e4 75%,
-          #f2b8ce 100%);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      padding: 4vmin;
-      gap: 2vmin;
-    }
-
-    .final-screen.visible {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .final-image-wrapper {
-      max-width: 90vmin;
-      max-height: 70vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 18px;
-      overflow: hidden;
-      box-shadow:
-        0 0 60px rgba(255, 190, 220, 0.55),
-        0 0 120px rgba(255, 160, 200, 0.32);
-      border: 1px solid rgba(200, 140, 180, 0.38);
-      background: rgba(255, 255, 255, 0.65);
-    }
-
-    .final-image-wrapper img {
-      width: 100%;
-      height: auto;
-      max-height: 70vh;
-      object-fit: contain;
-      display: block;
-      border-radius: 18px;
-    }
-
-    .final-text-block {
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      gap: 0.25em;
-      max-width: 90vw;
-      padding: 0.5em 0;
-    }
-
-    .final-text-block .love-line {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(0.85rem, 2.8vw, 1.15rem);
-      font-weight: 400;
-      line-height: 1.7;
-      color: #5a3a6a;
-      letter-spacing: 0.04em;
-    }
-
-    .final-text-block .love-line:last-child {
-      font-size: clamp(1.0rem, 3.2vw, 1.3rem);
-      color: #b0487a;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      margin-top: 0.15em;
-    }
-
-    .final-subtle {
-      font-family: 'Hind Siliguri', sans-serif;
-      font-size: clamp(0.75rem, 2.4vw, 1.0rem);
-      font-weight: 300;
-      color: var(--text-muted);
-      letter-spacing: 0.06em;
-      margin-top: 1.2em;
-      opacity: 0;
-      animation: fadeInSubtle 4s ease 6s forwards;
-      text-align: center;
-    }
-
-    @keyframes fadeInSubtle {
-      0% { opacity: 0; transform: translateY(6px); }
-      100% { opacity: 0.9; transform: translateY(0); }
-    }
-
-    .signature {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(0.7rem, 2.2vw, 0.95rem);
-      font-style: italic;
-      color: #9a7aa8;
-      letter-spacing: 0.08em;
-      margin-top: 0.6em;
-      opacity: 0;
-      animation: fadeInSubtle 4s ease 9s forwards;
-    }
-
-    /* ---------- NEW GARDEN SECTION ---------- */
-    .garden-screen {
-      position: fixed;
-      inset: 0;
-      z-index: 30;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background:
-        radial-gradient(ellipse at 50% 40%,
-          #fff5fa 0%,
-          #fce8f0 30%,
-          #f9d6e4 70%,
-          #f2b8ce 100%);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      padding: 4vmin;
-      overflow: hidden;
-    }
-
-    .garden-screen.visible {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .garden-intro {
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.6em;
-      max-width: 90vw;
-      padding: 2vmin;
-      transition: opacity 2.5s ease;
-    }
-
-    .garden-intro.hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .garden-title {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(1.5rem, 5vw, 2.6rem);
-      font-weight: 400;
-      letter-spacing: 0.04em;
-      color: #b0487a;
-      text-shadow: 0 0 26px rgba(255, 190, 220, 0.65);
-    }
-
-    .garden-msg {
-      font-family: 'Hind Siliguri', sans-serif;
-      font-size: clamp(0.95rem, 3.2vw, 1.35rem);
-      font-weight: 300;
-      line-height: 1.9;
-      color: var(--text-main);
-      letter-spacing: 0.01em;
-      text-align: center;
-    }
-
-    .garden-flower-stage {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      transition: opacity 1.5s ease;
-      pointer-events: none;
-    }
-
-    .garden-flower-stage.visible {
-      opacity: 1;
-    }
-
-    .flower-img {
-      position: absolute;
-      max-width: 85vmin;
-      max-height: 75vh;
-      width: auto;
-      height: auto;
-      object-fit: contain;
-      border-radius: 14px;
-      box-shadow:
-        0 0 50px rgba(255, 190, 220, 0.65),
-        0 0 100px rgba(255, 160, 200, 0.38);
-      border: 1px solid rgba(200, 140, 180, 0.38);
-      background: rgba(255, 255, 255, 0.65);
-      opacity: 0;
-      transition: opacity 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-
-    .flower-img.show {
-      opacity: 1;
-    }
-
-    .garden-outro {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      gap: 1em;
-      padding: 5vmin;
-      opacity: 0;
-      transition: opacity 3s ease;
-      pointer-events: none;
-    }
-
-    .garden-outro.visible {
-      opacity: 1;
-    }
-
-    .garden-outro .outro-main {
-      font-family: 'Hind Siliguri', sans-serif;
-      font-size: clamp(1.1rem, 3.8vw, 1.7rem);
-      font-weight: 400;
-      line-height: 1.85;
-      color: #3a2a4d;
-      letter-spacing: 0.01em;
-    }
-
-    .garden-outro .outro-sub {
-      font-family: 'Playfair Display', serif;
-      font-style: italic;
-      font-size: clamp(0.9rem, 3vw, 1.3rem);
-      font-weight: 400;
-      line-height: 1.7;
-      color: var(--text-soft);
-      letter-spacing: 0.03em;
-    }
-
-    /* ---------- HIDDEN MUSIC IFRAME / AUDIO ---------- */
-    .music-iframe-hidden {
-      position: fixed !important;
-      left: -9999px !important;
-      top: -9999px !important;
-      width: 1px !important;
-      height: 1px !important;
-      opacity: 0 !important;
-      pointer-events: none !important;
-      border: none !important;
-      z-index: -9999 !important;
-      overflow: hidden !important;
-      visibility: hidden !important;
-      display: block !important;
-    }
-
-    .music-audio-hidden {
-      position: fixed !important;
-      left: -9999px !important;
-      top: -9999px !important;
-      width: 1px !important;
-      height: 1px !important;
-      opacity: 0 !important;
-      pointer-events: none !important;
-      z-index: -9999 !important;
-      visibility: hidden !important;
-    }
-
-    /* ============================================================
-       TEASER TIMELINE — small / medium transition moments
-       ============================================================ */
-    .teaser-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 15;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 1.2s ease;
-    }
-
-    .teaser-overlay.visible {
-      opacity: 1;
-    }
-
-    .teaser-inner {
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.35em;
-      padding: 1.2em 2em;
-      border-radius: 18px;
-      background: linear-gradient(135deg,
-        rgba(255, 240, 248, 0.9) 0%,
-        rgba(255, 220, 235, 0.88) 50%,
-        rgba(249, 214, 228, 0.9) 100%);
-      border: 1px solid rgba(200, 140, 180, 0.38);
-      backdrop-filter: blur(8px);
-      box-shadow:
-        0 10px 40px rgba(180, 140, 190, 0.25),
-        inset 0 1px 0 rgba(255, 255, 255, 0.85);
-      transform: translateY(6px) scale(0.98);
-      transition: transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      max-width: 88vw;
-    }
-
-    .teaser-overlay.visible .teaser-inner {
-      transform: translateY(0) scale(1);
-    }
-
-    .teaser-small .teaser-inner {
-      padding: 0.9em 1.6em;
-    }
-
-    .teaser-medium .teaser-inner {
-      padding: 1.4em 2.2em;
-    }
-
-    .teaser-line {
-      font-family: 'Playfair Display', serif;
-      font-style: italic;
-      font-size: clamp(0.85rem, 2.8vw, 1.2rem);
-      color: #9a3c6e;
-      letter-spacing: 0.05em;
-      line-height: 1.5;
-    }
-
-    .teaser-small .teaser-line {
-      font-size: clamp(0.8rem, 2.5vw, 1.05rem);
-    }
-
-    .teaser-bangla {
-      font-family: 'Hind Siliguri', sans-serif;
-      font-size: clamp(0.85rem, 2.8vw, 1.15rem);
-      font-weight: 300;
-      color: var(--text-main);
-      line-height: 1.7;
-    }
-
-    /* ============================================================
-       FINAL IMAGE — closing photo, cinematic soft display
-       ============================================================ */
-    .closing-screen {
-      position: fixed;
-      inset: 0;
-      z-index: 40;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background:
-        radial-gradient(ellipse at 50% 45%,
-          #fff5fa 0%,
-          #fce8f0 30%,
-          #f9d6e4 70%,
-          #f2b8ce 100%);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      padding: 4vmin;
-      overflow: hidden;
-    }
-
-    .closing-screen.visible {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .closing-photo-frame {
-      position: relative;
-      max-width: 82vmin;
-      max-height: 68vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 20px;
-      overflow: hidden;
-      opacity: 0;
-      transform: scale(1.06);
-      box-shadow:
-        0 0 60px rgba(255, 190, 220, 0.65),
-        0 0 140px rgba(255, 160, 200, 0.42),
-        0 0 200px rgba(255, 200, 220, 0.25);
-      border: 1px solid rgba(200, 140, 180, 0.42);
-      background: rgba(255, 255, 255, 0.65);
-      transition:
-        opacity 3.2s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-        transform 6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-
-    .closing-photo-frame.show {
-      opacity: 1;
-      transform: scale(1);
-    }
-
-    .closing-photo-frame img {
-      width: 100%;
-      height: auto;
-      max-height: 68vh;
-      object-fit: contain;
-      display: block;
-      border-radius: 20px;
-    }
-
-    .closing-caption {
-      margin-top: 2.2vmin;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      gap: 0.3em;
-      opacity: 0;
-      transform: translateY(8px);
-      transition: opacity 2.6s ease 0.8s, transform 2.6s ease 0.8s;
-    }
-
-    .closing-caption.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .closing-caption .cap-main {
-      font-family: 'Playfair Display', serif;
-      font-style: italic;
-      font-size: clamp(0.95rem, 3.2vw, 1.35rem);
-      color: #9a3c6e;
-      letter-spacing: 0.05em;
-      line-height: 1.6;
-    }
-
-    .closing-caption .cap-sub {
-      font-family: 'Hind Siliguri', sans-serif;
-      font-size: clamp(0.8rem, 2.6vw, 1.05rem);
-      font-weight: 300;
-      color: var(--text-muted);
-      letter-spacing: 0.04em;
-      line-height: 1.6;
-    }
-
-    /* ============================================================
-       SCREEN FADE TO ZERO — smooth 100% → 0% opacity to black
-       ============================================================ */
-    .zero-screen {
-      position: fixed;
-      inset: 0;
-      z-index: 60;
-      background: #000000;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 3.5s cubic-bezier(0.4, 0.0, 0.2, 1);
-    }
-
-    .zero-screen.visible {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    /* ---------- RESPONSIVE ---------- */
-    @media (max-width: 480px) {
-      .story-container {
-        padding: 4vmin;
-      }
-      .scene {
-        padding: 0 2vmin;
-      }
-      .memory-box {
-        padding: 0.9em 1.0em;
-      }
-      .final-image-wrapper {
-        max-width: 95vmin;
-        max-height: 55vh;
-      }
-      .final-image-wrapper img {
-        max-height: 55vh;
-      }
-      .flower-img {
-        max-width: 92vmin;
-        max-height: 62vh;
-      }
-      .closing-photo-frame {
-        max-width: 92vmin;
-        max-height: 60vh;
-      }
-      .closing-photo-frame img {
-        max-height: 60vh;
-      }
-      .start-button {
-        padding: 0.95em 2.2em;
-      }
-    }
-
-    @media (min-width: 1200px) {
-      .scene {
-        max-width: 860px;
-      }
-    }
-
-    @media (max-height: 600px) {
-      .final-image-wrapper {
-        max-height: 50vh;
-      }
-      .final-image-wrapper img {
-        max-height: 50vh;
-      }
-      .scene {
-        gap: 0.3em;
-      }
-      .flower-img {
-        max-height: 58vh;
-      }
-      .closing-photo-frame {
-        max-height: 58vh;
-      }
-      .closing-photo-frame img {
-        max-height: 58vh;
-      }
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>For Waisa ❤️</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,500&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+<style>
+:root{--pink:#ff6fa5;--purple:#8e5cf7;--ink:#fff;--glass:rgba(255,255,255,.1);--line:rgba(255,255,255,.22);--green:#4ade80;--red:#f87171}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:Poppins,system-ui,sans-serif;color:var(--ink);background:linear-gradient(135deg,#1b0b2e,#3b1457 45%,#6b1d5c);background-size:200% 200%;animation:bg 18s ease infinite;overflow-x:hidden}
+@keyframes bg{50%{background-position:100% 100%}}
+h1,h2{font-family:'Playfair Display',serif;font-weight:600}
+#hearts{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.heart{position:absolute;bottom:-40px;opacity:0;animation:rise linear forwards}
+@keyframes rise{10%{opacity:.7}100%{transform:translateY(-110vh) rotate(25deg);opacity:0}}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:50}
+.screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:18px;opacity:0;visibility:hidden;transform:translateY(18px);transition:.7s;z-index:1;overflow-y:auto}
+.screen.active{opacity:1;visibility:visible;transform:none}
+.card{width:100%;max-width:520px;margin:auto;padding:34px 28px;text-align:center;background:var(--glass);border:1px solid var(--line);border-radius:26px;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.card h1{font-size:clamp(1.7rem,6vw,2.3rem);margin-bottom:18px;line-height:1.25}
+.card p{line-height:1.7;font-weight:300;color:#f3e6ff}
+.pre{white-space:pre-line;min-height:150px;text-align:left}
+input{width:100%;padding:14px 18px;margin:8px 0 16px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.12);color:#fff;font:inherit;text-align:center;outline:none}
+input::placeholder{color:#d9c3ee}input:focus{border-color:var(--pink);box-shadow:0 0 0 3px rgba(255,111,165,.25)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 28px;border:0;border-radius:50px;font:500 1rem Poppins,sans-serif;color:#fff;cursor:pointer;background:linear-gradient(135deg,var(--pink),var(--purple));box-shadow:0 8px 24px rgba(255,111,165,.35);transition:.25s}
+.btn:hover:not(:disabled){transform:translateY(-2px) scale(1.03)}.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn.ghost{background:var(--glass);border:1px solid var(--line);box-shadow:none}
+.btn.big{padding:16px 38px;font-size:1.15rem}
+.err{color:#ffb3b3;font-size:.9rem;margin-top:10px;min-height:1.2em}
+.row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:22px}
+.hidden{display:none!important}
+/* envelope */
+.env{position:relative;width:240px;height:160px;margin:10px auto 18px;cursor:pointer;background:linear-gradient(135deg,#ffd1e3,#e4c8ff);border-radius:6px 6px 14px 14px;box-shadow:0 14px 36px rgba(0,0,0,.4);transition:.5s}
+.env:hover{transform:scale(1.04)}
+.env::before{content:"";position:absolute;left:0;top:0;border-left:120px solid transparent;border-right:120px solid transparent;border-top:92px solid #ffb3d0;transform-origin:top;transition:.6s;z-index:2}
+.env .seal{position:absolute;left:50%;top:70px;transform:translateX(-50%);font-size:1.6rem;z-index:3;animation:beat 1.4s infinite}
+@keyframes beat{50%{transform:translateX(-50%) scale(1.25)}}
+.env.open{opacity:0;transform:scale(.7) translateY(30px);pointer-events:none;height:0;margin:0}
+.letter{display:none;text-align:left;background:linear-gradient(#fff8fb,#f6ecff);color:#4a2a63;border-radius:16px;padding:26px 24px;box-shadow:inset 0 0 0 1px #f1cfe2;font-family:'Playfair Display',serif;font-style:italic;font-weight:500;line-height:1.85;white-space:pre-line;animation:unfold .8s both}
+.letter.show{display:block}
+@keyframes unfold{from{opacity:0;transform:scaleY(.2) translateY(-30px)}}
+.sub{font-size:.95rem;margin:6px 0 4px;white-space:pre-line}
+/* admin */
+#admin{position:fixed;inset:0;z-index:100;background:rgba(14,5,24,.96);overflow-y:auto;padding:18px;display:none}
+#admin.open{display:block}
+.wrap{max-width:980px;margin:0 auto}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px}
+.stat{background:var(--glass);border:1px solid var(--line);border-radius:16px;padding:16px}
+.stat b{display:block;font-size:1.7rem}.stat span{font-size:.8rem;opacity:.75}
+.tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.tools input,.tools select{flex:1;min-width:140px;margin:0;padding:11px 14px;text-align:left;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.1);color:#fff;font:inherit}
+.tools select option{color:#222}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:16px}
+table{width:100%;border-collapse:collapse;min-width:520px}
+th,td{padding:12px 14px;text-align:left;font-size:.9rem;border-bottom:1px solid rgba(255,255,255,.08)}
+th{background:rgba(255,255,255,.08);font-weight:500}
+.yes{color:var(--green);font-weight:600}.no{color:var(--red);font-weight:600}
+.tools .btn{padding:10px 18px;font-size:.9rem}
+.note{font-size:.75rem;opacity:.6;margin-top:14px}
+</style>
 </head>
 <body>
+<div id="hearts"></div>
+<canvas id="fx"></canvas>
 
-  <!-- HIDDEN BACKGROUND MUSIC CONTAINER -->
-  <div id="music-container" style="position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none;visibility:hidden;z-index:-9999;"></div>
+<!-- 1. Entry -->
+<section class="screen active" id="s-name"><div class="card">
+  <h1>First, tell me your name? 🥺</h1>
+  <input id="nameIn" maxlength="40" placeholder="Your name" autocomplete="off">
+  <button class="btn" id="enterBtn"><i data-lucide="heart"></i> Enter My Heart ❤️</button>
+  <div class="err" id="nameErr"></div>
+</div></section>
 
-  <!-- BACKGROUND MP3 AUDIO ELEMENT (root directory file) -->
-  <audio id="bgMusicAudio"
-         class="music-audio-hidden"
-         src="./Tanveer Evan - Royaa Main _ Tere Pyaar Mein Royaa _ Tu Jo Mila Tha Sapna Laga Tha _ New Lyrics Video.mp3"
-         preload="auto"
-         loop
-         playsinline
-         webkit-playsinline></audio>
+<!-- 2. Intro -->
+<section class="screen" id="s-intro"><div class="card">
+  <p class="pre" id="introTxt" style="text-align:center;font-size:1.05rem"></p>
+  <div class="row"><button class="btn hidden" id="introNext">Continue <i data-lucide="arrow-right"></i></button></div>
+</div></section>
 
-  <!-- START OVERLAY -->
-  <div class="start-overlay" id="startOverlay">
-    <div class="start-title">30 Days of Knowing You</div>
-    <div class="divider-line"></div>
-    <button class="start-button" id="startButton">Start Now with Music</button>
-    <div class="start-hint">Tap to begin our beautiful journey together</div>
+<!-- 3. Letter -->
+<section class="screen" id="s-letter"><div class="card">
+  <p id="envHint" style="margin-bottom:6px">Ekta chhoto letter achhe tomar jonno… 💌</p>
+  <div class="env" id="env"><span class="seal">❤️</span></div>
+  <div class="letter" id="letter">Waisa, jano? Tomake dekhar por theke kichu feelings change hoye geche.
+
+Tomar smile ta onek special.
+Tomar sathe kotha bolle somehow mon ta valo hoye jay.
+
+Maybe eta just ekta normal feeling na...
+
+I think I am starting to like you more than I expected. ❤️</div>
+  <div class="row"><button class="btn hidden" id="letterNext">One more thing… <i data-lucide="arrow-right"></i></button></div>
+</div></section>
+
+<!-- 4. Proposal -->
+<section class="screen" id="s-ask"><div class="card">
+  <h2 style="font-size:1.1rem;color:#ffc4dc;margin-bottom:10px">Something Special For You, Waisa! 💗</h2>
+  <h1>Waisa, Will You Be Mine? 🥺❤️</h1>
+  <p class="sub">I don't want to force anything.
+I just want to know if you feel the same way.</p>
+  <div class="row" id="askBtns">
+    <button class="btn big" id="yesBtn">YES ❤️</button>
+    <button class="btn big ghost" id="noBtn">NO 💔</button>
   </div>
+  <p id="saving" class="hidden" style="margin-top:18px">Saving your answer… 💭</p>
+  <div class="err" id="saveErr"></div>
+  <div class="row hidden" id="retryRow"><button class="btn ghost" id="retryBtn"><i data-lucide="refresh-cw"></i> Try again</button></div>
+</div></section>
 
-  <!-- BACKGROUND -->
-  <div class="bg-layer">
-    <div class="bg-glow"></div>
-    <div id="petals-container"></div>
+<!-- 5. Results -->
+<section class="screen" id="s-yes"><div class="card">
+  <h1>OMG!! Is this really happening? 🥹❤️</h1>
+  <p>Thank you Waisa!<br>You just made my day special.<br><br>Let's make some beautiful memories together! 💗</p>
+</div></section>
+<section class="screen" id="s-no"><div class="card">
+  <h1>It's okay Waisa! 🥺</h1>
+  <p>Tomar decision ke ami respect kori.<br>At least amar feelings ta tomake bolte perechi.<br><br>Stay happy always! ❤️</p>
+</div></section>
+
+<!-- Hidden admin: double-press A. Casual only, NOT secure auth. -->
+<div id="admin"><div class="wrap">
+  <div class="top"><h2 style="font-size:1.6rem">Responses Dashboard</h2>
+    <button class="btn ghost" id="closeAdmin" style="padding:10px 18px"><i data-lucide="x"></i> Close (Esc)</button></div>
+  <div class="stats">
+    <div class="stat"><b id="stTotal">0</b><span>Total Responses</span></div>
+    <div class="stat"><b id="stYes" class="yes">0</b><span>YES Count</span></div>
+    <div class="stat"><b id="stNo" class="no">0</b><span>NO Count</span></div>
+    <div class="stat"><b id="stPct">0%</b><span>YES Percentage</span></div>
   </div>
-
-  <!-- STORY SCENES -->
-  <div class="story-container" id="storyContainer">
-
-    <!-- SCENE 1 — INTRO -->
-    <div class="scene active" id="scene1">
-      <div class="title-xl">30 Days of Knowing You</div>
-      <div class="divider-line"></div>
-      <div class="name-highlight">Ayshuuuu</div>
-      <div class="divider-dot"></div>
-      <div class="bangla">একটা game থেকে শুরু হওয়া পরিচয়ের আজ 30 দিন।</div>
-      <div class="small-meta" style="margin-top:0.6em;">First Meet &bull; 2:47 AM &bull; Free Fire</div>
-    </div>
-
-    <!-- SCENE 2 — FIRST MEETING -->
-    <div class="scene" id="scene2">
-      <div class="title-xl" style="font-size:clamp(2.6rem,9vw,5rem); letter-spacing:0.06em;">2:47 AM</div>
-      <div class="divider-line"></div>
-      <div class="bangla-large">সেই রাত 2:47 মিনিটে,<br>Free Fire-এর chill Map-এ<br>আমাদের প্রথম পরিচয়।</div>
-      <div class="divider-dot"></div>
-      <div class="bangla">শুরুটা ছিল শুধু একটা game...<br>কিন্তু কে জানতো,<br>এই ছোট্ট পরিচয়টা একদিন এতটা special হয়ে যাবে?</div>
-    </div>
-
-    <!-- SCENE 3 — CLOSER -->
-    <div class="scene" id="scene3">
-      <div class="title-md" style="letter-spacing:0.06em;">পরিচয় &rarr; কথা &rarr; Closer &rarr; Special</div>
-      <div class="divider-line"></div>
-      <div class="bangla">প্রথমে তুমি ছিলে শুধু পরিচিত একজন।<br>তারপর কথা বাড়লো,<br>game-এর মধ্যে closeness বাড়লো,<br>আর অজান্তেই তুমি হয়ে গেলে আমার খুব কাছের একজন।</div>
-      <div class="divider-dot"></div>
-      <div class="english-italic">"30 days may sound small...<br>but some people make a short time feel special."</div>
-    </div>
-
-    <!-- SCENE 4 — THE DREAM MEMORY -->
-    <div class="scene" id="scene4">
-      <div class="title-md" style="font-size:clamp(1.1rem,3.8vw,1.9rem); letter-spacing:0.04em;">That First Day...</div>
-      <div class="memory-box">
-        <div class="bangla-medium" style="color:#9a3c6e;">"DREAM কমপ্লিট"</div>
-      </div>
-      <div class="bangla">আমি বলেছিলাম — DREAM কমপ্লিট।</div>
-      <div class="bangla">তুমি বলেছিলে — with wrong person.</div>
-      <div class="divider-dot"></div>
-      <div class="bangla-medium" style="color:#b0487a;">কিন্তু আজ মনে হয়...<br>হয়তো কথাটা ছিল —<br><span style="font-style:italic; color:#9a3c6e;">"with the right person."</span></div>
-      <div class="divider-line"></div>
-      <div class="bangla" style="font-size:clamp(0.85rem,2.8vw,1.1rem); color:#7a6a8c;">কারণ কিছু মানুষকে প্রথম দিন থেকেই একটু অন্যরকম লাগে।</div>
-    </div>
-
-    <!-- SCENE 5 — 30 DAYS MESSAGE -->
-    <div class="scene" id="scene5">
-      <div class="scene-5-message">
-        <div class="title-md" style="font-size:clamp(1.2rem,4.2vw,2.1rem); color:#b0487a;">Happy 30 Days, Ayshuuuu ❤️</div>
-        <div class="divider-line"></div>
-        <div class="bangla">আজ আমাদের পরিচয়ের 30 দিন complete হলো।</div>
-        <div class="bangla">এই 30 দিন হয়তো পৃথিবীর কাছে খুব ছোট একটা সময়,<br>কিন্তু আমার কাছে এই 30 দিনের প্রতিটা মুহূর্তের আলাদা একটা meaning আছে।</div>
-        <div class="bangla">তুমি আমার জীবনে কীভাবে এতটা important হয়ে গেলে,<br>সেটা হয়তো আমি নিজেও ঠিকভাবে explain করতে পারবো না।</div>
-        <div class="bangla">শুধু এটুকু জানি,<br>প্রথম দিনের সেই পরিচয়টা আজ আর শুধু পরিচয় নেই।</div>
-        <div class="bangla-medium" style="color:#b0487a;">তুমি আমার Wife,<br>আমার Future Wife,<br>আমার খুব special একজন মানুষ।</div>
-        <div class="bangla">আজকের এই 30 days শুধু একটা সংখ্যা না...<br>এটা আমাদের story-এর একটা সুন্দর ছোট্ট chapter।</div>
-        <div class="divider-dot"></div>
-        <div class="bangla-medium" style="color:#9a3c6e; font-weight:500;">Happy 30 Days, my Ayshuuuu.</div>
-      </div>
-    </div>
-
+  <div class="tools">
+    <input id="q" placeholder="Search visitor name…">
+    <select id="flt"><option value="ALL">All answers</option><option value="YES">YES only</option><option value="NO">NO only</option></select>
+    <select id="srt"><option value="new">Newest first</option><option value="old">Oldest first</option></select>
+    <button class="btn" id="refresh"><i data-lucide="refresh-cw"></i> Refresh</button>
   </div>
-
-  <!-- FINAL SCREEN -->
-  <div class="final-screen" id="finalScreen">
-    <div class="final-image-wrapper">
-      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='800' viewBox='0 0 600 800'%3E%3Crect width='600' height='800' fill='%23fdf4fa'/%3E%3Ctext x='300' y='380' font-family='Georgia, serif' font-size='18' fill='%23b0487a' text-anchor='middle' opacity='0.75'%3E❤️ Final Image ❤️%3C/text%3E%3Ctext x='300' y='420' font-family='Georgia, serif' font-size='13' fill='%238a7a9c' text-anchor='middle' opacity='0.55'%3E(replace with your image)%3C/text%3E%3C/svg%3E" 
-           alt="Final love image" 
-           id="finalImage">
-    </div>
-
-    <div class="final-text-block">
-      <div class="love-line">I love you</div>
-      <div class="love-line">I love you more</div>
-      <div class="love-line">I love you so much</div>
-      <div class="love-line">I love you very much</div>
-      <div class="love-line">I love you forever and ever</div>
-      <div class="love-line">I love you more than my life</div>
-      <div class="love-line">I love you every hours</div>
-      <div class="love-line">I love you every day</div>
-      <div class="love-line">I love you always</div>
-      <div class="love-line">Only You</div>
-      <div class="love-line">🥺 ❤️ 🫵</div>
-    </div>
-
-    <div class="final-subtle">
-      এটা ending না...<br>এটা শুধু আমাদের গল্পের আরেকটা সুন্দর শুরু।
-    </div>
-    <div class="signature">— Yours, Forever</div>
-  </div>
-
-  <!-- NEW GARDEN SCREEN -->
-  <div class="garden-screen" id="gardenScreen">
-    <div class="garden-intro" id="gardenIntro">
-      <div class="garden-title">Hey my future wife, Ayshuu.</div>
-      <div class="divider-line"></div>
-      <div class="garden-msg">
-        আমার একটা ছোট্ট একটা GARDEN আছে, তুমি কি দেখছো?<br>
-        I think তুমিই জানো...<br>
-        আমার গার্ডেনে এখন এত ফুল আছে, এত ফুল আছে।<br>
-        আমার গার্ডেনে অনেক সুন্দর সুন্দর ফুল আছে...<br>
-        কিন্তু কোনটা রেখে কোন ফুলটা choose করবো,<br>
-        সেটা হয়তো আমিও জানি না।
-      </div>
-    </div>
-
-    <div class="garden-flower-stage" id="gardenFlowerStage">
-      <img class="flower-img" id="flowerImg" src="" alt="garden flower">
-    </div>
-
-    <div class="garden-outro" id="gardenOutro">
-      <div class="outro-main">
-        এটা কোনো ending না...<br>
-        এটা শুধু আমাদের জীবনের একটা নতুন শুরু।
-      </div>
-      <div class="divider-line"></div>
-      <div class="outro-sub">
-        our story is continuing,<br>
-        our life is beginning,<br>
-        and this is only another beautiful chapter.
-      </div>
-    </div>
-  </div>
-
-  <!-- ============================================================
-       TEASER TIMELINE — non-blocking small / medium transition moments
-       ============================================================ -->
-  <div class="teaser-overlay teaser-small" id="teaserSmall">
-    <div class="teaser-inner">
-      <div class="teaser-line">every moment with you feels special...</div>
-      <div class="teaser-bangla">তোমার সাথে প্রতিটা মুহূর্ত আলাদা।</div>
-    </div>
-  </div>
-
-  <div class="teaser-overlay teaser-medium" id="teaserMedium">
-    <div class="teaser-inner">
-      <div class="teaser-line">some people arrive... and quietly become home.</div>
-      <div class="teaser-bangla">কিছু মানুষ আসে... আর চুপচাপ ঘর হয়ে যায়।</div>
-    </div>
-  </div>
-
-  <!-- ============================================================
-       FINAL IMAGE — closing photo, cinematic soft display
-       ============================================================ -->
-  <div class="closing-screen" id="closingScreen">
-    <div class="closing-photo-frame" id="closingPhotoFrame">
-      <img id="closingPhoto" src="" alt="My love">
-    </div>
-    <div class="closing-caption" id="closingCaption">
-      <div class="cap-main">you are my favourite chapter.</div>
-      <div class="cap-sub">তুমি আমার সবচেয়ে প্রিয় অধ্যায়।</div>
-    </div>
-  </div>
-
-  <!-- ============================================================
-       SCREEN FADE TO ZERO — smooth 100% → 0% opacity to black
-       ============================================================ -->
-  <div class="zero-screen" id="zeroScreen"></div>
-
-  <!-- ============================================================
-       CONFIG — easy editing area
-       ============================================================ -->
-  <script>
-    // ============================================================
-    // FINAL IMAGE — configuration
-    // ============================================================
-    window.CLOSING_CONFIG = {
-      AUTO_USE_VIDEO_THUMBNAIL: false,
-      VIDEO_ID_FOR_THUMBNAIL: '',
-      CLOSING_PHOTO_URL: ''
-    };
-
-    // ============================================================
-    // SPECIAL PERSON IMAGE — EXACTLY THE 3RD URL FROM THE LIST
-    // ============================================================
-    window.SPECIAL_PERSON_IMAGE_URL = 'https://img.remit.ee/i/NsoraAO8KvL1';
-
-    // ============================================================
-    // BACKGROUND MUSIC — MP3 FILE IN ROOT DIRECTORY
-    // ------------------------------------------------------------
-    // Exact filename (as provided):
-    //   Tanveer Evan - Royaa Main _ Tere Pyaar Mein Royaa _
-    //   Tu Jo Mila Tha Sapna Laga Tha _ New Lyrics Video.mp3
-    //
-    // Relative path from the current HTML file:
-    //   ./Tanveer Evan - Royaa Main _ Tere Pyaar Mein Royaa _
-    //   Tu Jo Mila Tha Sapna Laga Tha _ New Lyrics Video.mp3
-    // ============================================================
-    window.BACKGROUND_MUSIC_CONFIG = {
-      // Relative path to the MP3 file (root directory)
-      MP3_URL: './Tanveer Evan - Royaa Main _ Tere Pyaar Mein Royaa _ Tu Jo Mila Tha Sapna Laga Tha _ New Lyrics Video.mp3',
-      // Target volume (0.0 – 1.0)
-      TARGET_VOLUME: 0.85,
-      // Whether the track should loop
-      LOOP: true
-    };
-
-    // ============================================================
-    // ROMANTIC SOUND CONFIGURATION
-    // ------------------------------------------------------------
-    // A soft, generated romantic ambient pad that plays underneath
-    // the main music. Uses the Web Audio API so it needs no
-    // external file and never blocks or breaks the page.
-    // ============================================================
-    window.ROMANTIC_SOUND_CONFIG = {
-      ENABLED: true,
-      // Master gain of the romantic pad (0.0 – 1.0)
-      VOLUME: 0.06,
-      // Base chord frequencies (Hz) — a warm romantic progression
-      // F major-ish soft chord: F3, A3, C4, F4
-      CHORD_FREQS: [174.61, 220.00, 261.63, 349.23],
-      // Slow LFO rate (Hz) for gentle swelling
-      LFO_RATE: 0.08,
-      // Fade-in time (seconds)
-      FADE_IN: 4.0,
-      // Fade-out time (seconds)
-      FADE_OUT: 5.0
-    };
-  </script>
-
-  <!-- JAVASCRIPT -->
-  <script>
-    (function() {
-      'use strict';
-
-      // ============================================================
-      // GLOBAL STATE
-      // ============================================================
-      let sessionStarted = false;
-      let storyFinished = false;
-      let timelineFinished = false;
-      let finalZeroReached = false;
-
-      // ============================================================
-      // NON-BLOCKING BACKGROUND MUSIC (MP3 from root directory)
-      // ------------------------------------------------------------
-      // Plays the exact MP3 file located in the root directory:
-      //   ./Tanveer Evan - Royaa Main _ Tere Pyaar Mein Royaa _
-      //   Tu Jo Mila Tha Sapna Laga Tha _ New Lyrics Video.mp3
-      //
-      // Design:
-      //   - Uses a single hidden <audio> element (already in HTML).
-      //   - Does NOT autoplay on page load.
-      //   - Starts playback only when the user clicks the
-      //     "Start Now with Sound" button.
-      //   - Idempotent: repeated calls never restart the track.
-      //   - Errors are caught and ignored so the page never breaks.
-      //   - Loops continuously in the background.
-      // ============================================================
-      (function initBackgroundMusic() {
-        var cfg = window.BACKGROUND_MUSIC_CONFIG || {};
-        var TARGET_VOLUME = (typeof cfg.TARGET_VOLUME === 'number')
-          ? cfg.TARGET_VOLUME : 0.85;
-        var SHOULD_LOOP = cfg.LOOP !== false;
-
-        var audioEl = document.getElementById('bgMusicAudio');
-        if (!audioEl) return;
-
-        // Apply configuration to the existing element
-        try {
-          audioEl.volume = TARGET_VOLUME;
-          audioEl.loop = SHOULD_LOOP;
-        } catch (e) { /* silent */ }
-
-        // State
-        var musicStarted = false;
-        var pendingPlay = false;
-
-        // ---- Request audible playback (idempotent) ----
-        function requestAudiblePlay() {
-          if (musicStarted) return;
-
-          try {
-            audioEl.volume = TARGET_VOLUME;
-            audioEl.loop = SHOULD_LOOP;
-
-            var p = audioEl.play();
-            if (p && typeof p.then === 'function') {
-              p.then(function() {
-                musicStarted = true;
-                pendingPlay = false;
-              }).catch(function() {
-                // Autoplay blocked — will retry on next gesture.
-                pendingPlay = true;
-              });
-            } else {
-              // Older browsers return undefined; assume it worked.
-              musicStarted = true;
-              pendingPlay = false;
-            }
-          } catch (e) {
-            // Playback failed — keep site working normally.
-            pendingPlay = true;
-          }
-        }
-
-        // ---- Public API (preserves original function names) ----
-        window.playBackgroundMusic = function() {
-          requestAudiblePlay();
-        };
-
-        window.fadeOutBackgroundMusic = function(durationMs) {
-          durationMs = (typeof durationMs === 'number' && durationMs > 0)
-            ? durationMs : 4000;
-          var steps = 40;
-          var stepTime = durationMs / steps;
-          var startVol = TARGET_VOLUME;
-          var i = 0;
-
-          function step() {
-            if (i >= steps) {
-              try { audioEl.pause(); } catch (e) {}
-              return;
-            }
-            i++;
-            var v = Math.max(0, startVol * (1 - i / steps));
-            try { audioEl.volume = v; } catch (e) {}
-            setTimeout(step, stepTime);
-          }
-          step();
-        };
-
-        // ---- Safety: if play() failed earlier, retry on first gesture ----
-        var firstGestureAttached = false;
-        function attachFirstGestureListener() {
-          if (firstGestureAttached) return;
-          firstGestureAttached = true;
-
-          var events = ['click', 'touchstart', 'pointerdown', 'keydown'];
-          var onFirst = function() {
-            events.forEach(function(ev) {
-              window.removeEventListener(ev, onFirst, true);
-            });
-            if (!musicStarted) requestAudiblePlay();
-          };
-          events.forEach(function(ev) {
-            window.addEventListener(ev, onFirst, true);
-          });
-        }
-        attachFirstGestureListener();
-      })();
-
-      // ============================================================
-      // ROMANTIC SOUND — generated ambient pad (Web Audio API)
-      // ------------------------------------------------------------
-      // A soft, warm, slowly-swelled chord pad that plays under the
-      // main music. Generated entirely in-browser — no external file.
-      //
-      // Exposes:
-      //   window.playRomanticSound()
-      //   window.fadeOutRomanticSound(durationMs)
-      // ============================================================
-      (function initRomanticSound() {
-        var cfg = window.ROMANTIC_SOUND_CONFIG || {};
-        if (cfg.ENABLED === false) return;
-
-        var VOLUME = (typeof cfg.VOLUME === 'number') ? cfg.VOLUME : 0.06;
-        var FREQS = Array.isArray(cfg.CHORD_FREQS)
-          ? cfg.CHORD_FREQS : [174.61, 220.00, 261.63, 349.23];
-        var LFO_RATE = (typeof cfg.LFO_RATE === 'number') ? cfg.LFO_RATE : 0.08;
-        var FADE_IN = (typeof cfg.FADE_IN === 'number') ? cfg.FADE_IN : 4.0;
-        var FADE_OUT = (typeof cfg.FADE_OUT === 'number') ? cfg.FADE_OUT : 5.0;
-
-        var audioCtx = null;
-        var masterGain = null;
-        var lfo = null;
-        var lfoGain = null;
-        var oscillators = [];
-        var started = false;
-        var stopped = false;
-
-        function getAudioContext() {
-          if (audioCtx) return audioCtx;
-          try {
-            var Ctx = window.AudioContext || window.webkitAudioContext;
-            if (!Ctx) return null;
-            audioCtx = new Ctx();
-          } catch (e) {
-            audioCtx = null;
-          }
-          return audioCtx;
-        }
-
-        function startPad() {
-          if (started || stopped) return;
-          var ctx = getAudioContext();
-          if (!ctx) return;
-
-          try {
-            if (ctx.state === 'suspended' && typeof ctx.resume === 'function') {
-              ctx.resume().catch(function() { /* silent */ });
-            }
-
-            masterGain = ctx.createGain();
-            masterGain.gain.setValueAtTime(0.0001, ctx.currentTime);
-            masterGain.gain.linearRampToValueAtTime(
-              Math.max(0.0001, VOLUME),
-              ctx.currentTime + FADE_IN
-            );
-            masterGain.connect(ctx.destination);
-
-            var filter = ctx.createBiquadFilter();
-            filter.type = 'lowpass';
-            filter.frequency.value = 900;
-            filter.Q.value = 0.4;
-            filter.connect(masterGain);
-
-            lfo = ctx.createOscillator();
-            lfo.type = 'sine';
-            lfo.frequency.value = LFO_RATE;
-            lfoGain = ctx.createGain();
-            lfoGain.gain.value = 0.03;
-            lfo.connect(lfoGain);
-            lfoGain.connect(masterGain.gain);
-            lfo.start();
-
-            for (var i = 0; i < FREQS.length; i++) {
-              var osc = ctx.createOscillator();
-              osc.type = 'sine';
-              osc.frequency.value = FREQS[i];
-              try { osc.detune.value = (i - 1.5) * 4; } catch (e) {}
-
-              var oscGain = ctx.createGain();
-              oscGain.gain.value = 0.25 / FREQS.length;
-              osc.connect(oscGain);
-              oscGain.connect(filter);
-              osc.start();
-              oscillators.push(osc);
-            }
-
-            started = true;
-          } catch (e) { /* silent */ }
-        }
-
-        function stopPad(fadeSeconds) {
-          if (!started || stopped) return;
-          stopped = true;
-          var ctx = getAudioContext();
-          if (!ctx || !masterGain) return;
-
-          try {
-            var now = ctx.currentTime;
-            var currentVal = masterGain.gain.value;
-            masterGain.gain.cancelScheduledValues(now);
-            masterGain.gain.setValueAtTime(currentVal, now);
-            masterGain.gain.linearRampToValueAtTime(0.0001, now + fadeSeconds);
-
-            setTimeout(function() {
-              try {
-                for (var i = 0; i < oscillators.length; i++) {
-                  try { oscillators[i].stop(); } catch (e) {}
-                }
-                if (lfo) { try { lfo.stop(); } catch (e) {} }
-              } catch (e) { /* silent */ }
-            }, Math.ceil(fadeSeconds * 1000) + 100);
-          } catch (e) { /* silent */ }
-        }
-
-        window.playRomanticSound = function() {
-          startPad();
-        };
-
-        window.fadeOutRomanticSound = function(durationMs) {
-          var sec = (typeof durationMs === 'number' && durationMs > 0)
-            ? durationMs / 1000 : FADE_OUT;
-          stopPad(sec);
-        };
-      })();
-
-      // ============================================================
-      // SPECIAL PERSON IMAGE
-      // ============================================================
-      (function initSpecialPersonImage() {
-        var img = document.getElementById('finalImage');
-        if (!img) return;
-
-        var url = window.SPECIAL_PERSON_IMAGE_URL;
-        if (url && typeof url === 'string' && url.trim() !== '') {
-          img.src = url.trim();
-          return;
-        }
-
-        img.src =
-          "data:image/svg+xml," +
-          encodeURIComponent(
-            "<svg xmlns='http://www.w3.org/2000/svg' width='600' height='800' viewBox='0 0 600 800'>" +
-            "<rect width='600' height='800' fill='#fdf4fa'/>" +
-            "<text x='300' y='380' font-family='Georgia, serif' font-size='18' fill='#b0487a' text-anchor='middle' opacity='0.75'>❤️ Special Person ❤️</text>" +
-            "</svg>"
-          );
-      })();
-
-      // ============================================================
-      // PETALS
-      // ============================================================
-      const petalsContainer = document.getElementById('petals-container');
-      const PETAL_COUNT = 16;
-
-      function createPetal() {
-        const petal = document.createElement('div');
-        petal.className = 'petal';
-
-        const size = Math.random() * 7 + 5;
-        petal.style.width = size + 'px';
-        petal.style.height = size + 'px';
-        petal.style.left = Math.random() * 100 + '%';
-        petal.style.animationDuration = (Math.random() * 16 + 22) + 's';
-        petal.style.animationDelay = (Math.random() * 20) + 's';
-        petal.style.opacity = Math.random() * 0.55 + 0.25;
-
-        const hue = Math.random() * 25 + 335;
-        petal.style.background = 'hsla(' + hue + ', 85%, 88%, ' + (Math.random() * 0.35 + 0.25) + ')';
-
-        petalsContainer.appendChild(petal);
-      }
-
-      for (let i = 0; i < PETAL_COUNT; i++) {
-        createPetal();
-      }
-
-      // ============================================================
-      // SCENE TIMING
-      // ============================================================
-      const scenes = [
-        document.getElementById('scene1'),
-        document.getElementById('scene2'),
-        document.getElementById('scene3'),
-        document.getElementById('scene4'),
-        document.getElementById('scene5')
-      ];
-
-      const finalScreen = document.getElementById('finalScreen');
-
-      const durations = [14000, 16000, 16000, 18000, 22000];
-
-      let currentIndex = 0;
-
-      function showScene(index) {
-        scenes.forEach(function(scene, i) {
-          if (i === index) {
-            scene.classList.add('active');
-            scene.classList.remove('exit');
-          } else if (i < index) {
-            scene.classList.remove('active');
-            scene.classList.add('exit');
-          } else {
-            scene.classList.remove('active');
-            scene.classList.remove('exit');
-          }
-        });
-      }
-
-      function nextScene() {
-        if (storyFinished) return;
-
-        if (currentIndex < scenes.length - 1) {
-          currentIndex++;
-          showScene(currentIndex);
-
-          setTimeout(function() {
-            nextScene();
-          }, durations[currentIndex]);
-        } else {
-          storyFinished = true;
-          timelineFinished = true;
-
-          scenes.forEach(function(scene) {
-            scene.classList.remove('active');
-            scene.classList.add('exit');
-          });
-
-          setTimeout(function() {
-            finalScreen.classList.add('visible');
-          }, 2500);
-        }
-      }
-
-      // ============================================================
-      // GARDEN SEQUENCE
-      // ============================================================
-      const gardenScreen = document.getElementById('gardenScreen');
-      const gardenIntro = document.getElementById('gardenIntro');
-      const gardenFlowerStage = document.getElementById('gardenFlowerStage');
-      const gardenOutro = document.getElementById('gardenOutro');
-      const flowerImg = document.getElementById('flowerImg');
-
-      const flowerUrls = [
-        "https://img.remit.ee/i/UnWFIzSeVY59",
-        "https://img.remit.ee/i/cKTJZq5P7GRx",
-        "https://img.remit.ee/i/NsoraAO8KvL1",
-        "https://img.remit.ee/i/BBGVazW4Qd0W",
-        "https://img.remit.ee/i/BnMbKhBMnE11",
-        "https://img.remit.ee/i/BBGVazW4Qd0W",
-        "https://img.remit.ee/i/hYE6m1VQwdFY",
-        "https://img.remit.ee/i/MjM3d2MI2Gdb",
-        "https://img.remit.ee/i/sCsuDkwrstws",
-        "https://img.remit.ee/i/aGh4wTMhdxWF",
-        "https://img.remit.ee/i/vO9ZKzc9T8Ka",
-        "https://img.remit.ee/i/wolgw7QpxcX7",
-        "https://img.remit.ee/i/7TJSAeXLklaE",
-        "https://img.remit.ee/i/SKlNRKFp7gwk",
-        "https://img.remit.ee/i/f1W9VvTKoOXR",
-        "https://img.remit.ee/i/fSOYwd4JNjiK",
-        "https://img.remit.ee/i/vSWPCjvXeva8",
-        "https://img.remit.ee/i/PdjdRQHhOEl4",
-        "https://img.remit.ee/i/5LeJyxGn2SG8",
-        "https://img.remit.ee/i/KcOZQmw0ZHZA",
-        "https://img.remit.ee/i/KcOZQmw0ZHZA",
-        "https://img.remit.ee/i/AVZ5AO1SOS2x",
-        "https://img.remit.ee/i/BBGVazW4Qd0W",
-        "https://img.remit.ee/i/7do8FgW83TkQ",
-        "https://img.remit.ee/i/XDX3DiNWD6M6",
-        "https://img.remit.ee/i/VIjKBgcSdMki"
-      ];
-
-      const preloadedImages = [];
-      flowerUrls.forEach(function(url) {
-        const img = new Image();
-        img.src = url;
-        preloadedImages.push(img);
-      });
-
-      let gardenStarted = false;
-
-      function startGardenSequence() {
-        if (gardenStarted) return;
-        gardenStarted = true;
-
-        gardenScreen.classList.add('visible');
-
-        setTimeout(function() {
-          gardenIntro.classList.add('hidden');
-
-          setTimeout(function() {
-            gardenFlowerStage.classList.add('visible');
-
-            setTimeout(function() {
-              playFlowers(0);
-            }, 1500);
-          }, 1500);
-        }, 12000);
-      }
-
-      function playFlowers(index) {
-        if (index >= flowerUrls.length) {
-          gardenFlowerStage.classList.remove('visible');
-
-          setTimeout(function() {
-            gardenOutro.classList.add('visible');
-          }, 1800);
-
-          setTimeout(function() {
-            beginClosingSequence();
-          }, 1800 + 9000);
-          return;
-        }
-
-        flowerImg.src = flowerUrls[index];
-        flowerImg.classList.add('show');
-
-        setTimeout(function() {
-          flowerImg.classList.remove('show');
-
-          setTimeout(function() {
-            playFlowers(index + 1);
-          }, 900);
-        }, 500);
-      }
-
-      // ============================================================
-      // TEASER TIMELINE
-      // ============================================================
-      const teaserSmall = document.getElementById('teaserSmall');
-      const teaserMedium = document.getElementById('teaserMedium');
-
-      function showTeaser(el, visibleMs) {
-        if (!el) return;
-        el.classList.add('visible');
-        setTimeout(function() {
-          el.classList.remove('visible');
-        }, visibleMs);
-      }
-
-      // ============================================================
-      // FINAL IMAGE — closing photo, cinematic soft display
-      // ============================================================
-      const closingScreen = document.getElementById('closingScreen');
-      const closingPhotoFrame = document.getElementById('closingPhotoFrame');
-      const closingPhoto = document.getElementById('closingPhoto');
-      const closingCaption = document.getElementById('closingCaption');
-
-      const CLOSING_PLACEHOLDER =
-        "data:image/svg+xml," +
-        encodeURIComponent(
-          "<svg xmlns='http://www.w3.org/2000/svg' width='900' height='1200' viewBox='0 0 900 1200'>" +
-          "<defs>" +
-          "<radialGradient id='g' cx='50%' cy='40%' r='70%'>" +
-          "<stop offset='0%' stop-color='#fdf4fa'/>" +
-          "<stop offset='50%' stop-color='#fce8f0'/>" +
-          "<stop offset='100%' stop-color='#f9d6e4'/>" +
-          "</radialGradient>" +
-          "</defs>" +
-          "<rect width='900' height='1200' fill='url(#g)'/>" +
-          "<text x='450' y='580' font-family='Georgia, serif' font-size='26' fill='#b0487a' text-anchor='middle' opacity='0.75'>❤️ Your Photo ❤️</text>" +
-          "<text x='450' y='625' font-family='Georgia, serif' font-size='15' fill='#8a7a9c' text-anchor='middle' opacity='0.55'>set CLOSING_PHOTO_URL or use setClosingPhoto()</text>" +
-          "</svg>"
-        );
-
-      function buildClosingImageCandidates() {
-        var candidates = [];
-
-        try {
-          if (window.CLOSING_CONFIG &&
-              typeof window.CLOSING_CONFIG.CLOSING_PHOTO_URL === 'string' &&
-              window.CLOSING_CONFIG.CLOSING_PHOTO_URL.trim() !== '') {
-            candidates.push(window.CLOSING_CONFIG.CLOSING_PHOTO_URL.trim());
-          }
-        } catch (e) { /* silent */ }
-
-        if (window.__closingPhotoSrc && typeof window.__closingPhotoSrc === 'string') {
-          candidates.push(window.__closingPhotoSrc);
-        }
-
-        candidates.push(CLOSING_PLACEHOLDER);
-
-        return candidates;
-      }
-
-      function resolveClosingImageAsync(onResolved) {
-        var candidates = buildClosingImageCandidates();
-        var index = 0;
-
-        function tryNext() {
-          if (index >= candidates.length) {
-            try { onResolved(CLOSING_PLACEHOLDER); } catch (e) { /* silent */ }
-            return;
-          }
-          var url = candidates[index++];
-
-          if (url.indexOf('data:') === 0) {
-            try { onResolved(url); } catch (e) { /* silent */ }
-            return;
-          }
-
-          var probe = new Image();
-          probe.decoding = 'async';
-          var settled = false;
-
-          var done = function(ok) {
-            if (settled) return;
-            settled = true;
-            probe.onload = null;
-            probe.onerror = null;
-            if (ok) {
-              try { onResolved(url); } catch (e) { /* silent */ }
-            } else {
-              tryNext();
-            }
-          };
-
-          probe.onload = function() {
-            if (probe.naturalWidth && probe.naturalWidth > 10) {
-              done(true);
-            } else {
-              done(false);
-            }
-          };
-          probe.onerror = function() { done(false); };
-
-          setTimeout(function() { done(false); }, 4000);
-
-          try {
-            probe.src = url;
-          } catch (e) {
-            done(false);
-          }
-        }
-
-        tryNext();
-      }
-
-      window.setClosingPhoto = function(fileOrUrl) {
-        try {
-          if (typeof fileOrUrl === 'string' && fileOrUrl.trim() !== '') {
-            window.__closingPhotoSrc = fileOrUrl.trim();
-            closingPhoto.src = window.__closingPhotoSrc;
-            return true;
-          }
-          if (fileOrUrl && typeof fileOrUrl === 'object' &&
-              typeof URL !== 'undefined' && URL.createObjectURL) {
-            var objUrl = URL.createObjectURL(fileOrUrl);
-            window.__closingPhotoSrc = objUrl;
-            closingPhoto.src = objUrl;
-            return true;
-          }
-        } catch (e) { /* silent */ }
-        return false;
-      };
-
-      closingPhoto.src = CLOSING_PLACEHOLDER;
-
-      resolveClosingImageAsync(function(resolvedSrc) {
-        if (window.__closingPhotoSrc && typeof window.__closingPhotoSrc === 'string') {
-          return;
-        }
-        try {
-          closingPhoto.src = resolvedSrc;
-        } catch (e) { /* silent */ }
-      });
-
-      // ============================================================
-      // CLOSING ANIMATION
-      // ============================================================
-      function showClosingScreen() {
-        closingScreen.classList.add('visible');
-
-        setTimeout(function() {
-          closingPhotoFrame.classList.add('show');
-        }, 300);
-
-        setTimeout(function() {
-          closingCaption.classList.add('show');
-        }, 1400);
-      }
-
-      // ============================================================
-      // SCREEN FADE TO ZERO — smooth 100% → 0% opacity to black.
-      // ============================================================
-      function fadeScreenToZero() {
-        if (finalZeroReached) return;
-
-        // Fade out BOTH audio layers — main MP3 + romantic pad.
-        try {
-          if (typeof window.fadeOutBackgroundMusic === 'function') {
-            window.fadeOutBackgroundMusic(3800);
-          }
-        } catch (e) { /* silent */ }
-
-        try {
-          if (typeof window.fadeOutRomanticSound === 'function') {
-            window.fadeOutRomanticSound(4200);
-          }
-        } catch (e) { /* silent */ }
-
-        try {
-          closingScreen.classList.remove('visible');
-        } catch (e) { /* silent */ }
-
-        setTimeout(function() {
-          zeroScreen.classList.add('visible');
-
-          const onTransitionEnd = function(ev) {
-            if (ev.target !== zeroScreen) return;
-            if (ev.propertyName !== 'opacity') return;
-            zeroScreen.removeEventListener('transitionend', onTransitionEnd);
-
-            if (finalZeroReached) return;
-            finalZeroReached = true;
-          };
-
-          zeroScreen.addEventListener('transitionend', onTransitionEnd);
-
-          setTimeout(function() {
-            if (finalZeroReached) return;
-            finalZeroReached = true;
-          }, 5000);
-        }, 600);
-      }
-
-      // ============================================================
-      // FINAL TIMELINE LOGIC
-      // ============================================================
-      function beginClosingSequence() {
-        showClosingScreen();
-
-        setTimeout(function() {
-          fadeScreenToZero();
-        }, 9000);
-      }
-
-      window.beginClosingSequence = beginClosingSequence;
-
-      // ============================================================
-      // START NOW WITH SOUND — main entry point
-      // ------------------------------------------------------------
-      // On click:
-      //   1. Start the background MP3 (user gesture satisfies
-      //      browser autoplay policy).
-      //   2. Start the romantic ambient pad (optional layer).
-      //   3. Start the story timeline.
-      //   4. Start teaser timings.
-      //   5. Start garden sequence.
-      // ============================================================
-      function startEverything() {
-        if (sessionStarted) return;
-        sessionStarted = true;
-
-        var startOverlay = document.getElementById('startOverlay');
-        startOverlay.classList.add('hidden');
-
-        // 1. PLAY BACKGROUND MP3 (user gesture makes this audible)
-        try {
-          if (typeof window.playBackgroundMusic === 'function') {
-            window.playBackgroundMusic();
-          }
-        } catch (e) { /* silent */ }
-
-        // 2. PLAY ROMANTIC AMBIENT PAD (generated, non-blocking)
-        try {
-          if (typeof window.playRomanticSound === 'function') {
-            window.playRomanticSound();
-          }
-        } catch (e) { /* silent */ }
-
-        // 3. START STORY TIMELINE
-        setTimeout(function() {
-          nextScene();
-        }, durations[0]);
-
-        // 4. START TEASER TIMINGS
-        const totalStoryTime = durations.reduce(function(a, b) { return a + b; }, 0);
-        const finalScreenDelay = 2500;
-        const finalScreenHold = 30000;
-        const gardenStartDelay = totalStoryTime + finalScreenDelay + finalScreenHold;
-
-        setTimeout(function() {
-          showTeaser(teaserSmall, 5000);
-        }, durations[0] + 4000);
-
-        setTimeout(function() {
-          showTeaser(teaserMedium, 7000);
-        }, durations[0] + durations[1] + durations[2] + durations[3] + 5000);
-
-        // 5. START GARDEN SEQUENCE
-        setTimeout(function() {
-          startGardenSequence();
-        }, gardenStartDelay);
-      }
-
-      // ============================================================
-      // BIND START BUTTON
-      // ============================================================
-      var startButton = document.getElementById('startButton');
-      if (startButton) {
-        startButton.addEventListener('click', function(e) {
-          e.preventDefault();
-          startEverything();
-        }, { once: true });
-      }
-
-    })();
-  </script>
-
+  <div class="tw"><table><thead><tr><th>Visitor Name</th><th>Crush Name</th><th>Answer</th><th>Date</th><th>Time</th></tr></thead><tbody id="rows"></tbody></table></div>
+  <p class="err" id="admErr"></p>
+  <p class="note">Casual hidden panel, not secure authentication. For production use Firebase Authentication and strict Realtime Database security rules.</p>
+</div></div>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
+import {getDatabase,ref,push,onValue,get} from "https://www.gstatic.com/firebasejs/13.1.0/firebase-database.js";
+
+const firebaseConfig={apiKey:"AIzaSyBPOxLeM17VKjx37WWK8pYVJoEVIP68qao",authDomain:"hedar-app.firebaseapp.com",databaseURL:"https://hedar-app-default-rtdb.firebaseio.com",projectId:"hedar-app",storageBucket:"hedar-app.firebasestorage.app",messagingSenderId:"846963972873",appId:"1:846963972873:web:7be71f344c854aad2691d8"};
+const db=getDatabase(initializeApp(firebaseConfig));
+const respRef=ref(db,"proposalResponses");
+const $=id=>document.getElementById(id);
+try{window.lucide&&lucide.createIcons()}catch(e){}
+
+let visitor="",saving=false,saved=false,pending=null;
+
+/* screens */
+function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));$(id).classList.add("active")}
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+async function type(el,text,speed=38){el.textContent="";for(const ch of text){el.textContent+=ch;await sleep(speed)}}
+
+/* floating hearts */
+const HS=["❤️","💗","💖","💕","🌸"];
+setInterval(()=>{const h=document.createElement("span");h.className="heart";h.textContent=HS[Math.random()*HS.length|0];
+h.style.left=Math.random()*100+"%";h.style.fontSize=12+Math.random()*20+"px";h.style.animationDuration=7+Math.random()*6+"s";
+$("hearts").appendChild(h);setTimeout(()=>h.remove(),13000)},800);
+
+/* confetti + fireworks */
+const cv=$("fx"),cx=cv.getContext("2d");let ps=[],raf=0;
+const fit=()=>{cv.width=innerWidth;cv.height=innerHeight};fit();addEventListener("resize",fit);
+const COL=["#ff6fa5","#8e5cf7","#ffd1e3","#fff","#ffc857","#6ee7b7"];
+function burst(x,y,n,spread=7){for(let i=0;i<n;i++){const a=Math.random()*6.28,v=Math.random()*spread+2;
+ps.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-2,g:.14,s:3+Math.random()*5,c:COL[Math.random()*COL.length|0],l:90+Math.random()*60})}}
+function loop(){cx.clearRect(0,0,cv.width,cv.height);ps=ps.filter(p=>p.l>0);
+for(const p of ps){p.x+=p.vx;p.y+=p.vy;p.vy+=p.g;p.vx*=.99;p.l--;cx.globalAlpha=Math.min(1,p.l/40);cx.fillStyle=p.c;cx.fillRect(p.x,p.y,p.s,p.s*.6)}
+raf=ps.length?requestAnimationFrame(loop):0;if(!raf)cx.clearRect(0,0,cv.width,cv.height)}
+function celebrate(){
+for(let i=0;i<5;i++)setTimeout(()=>{burst(innerWidth*(.15+Math.random()*.7),innerHeight*(.15+Math.random()*.4),70)},i*350);
+burst(innerWidth/2,innerHeight*.6,160,11);if(!raf)loop()}
+const kick=()=>{if(!raf)loop()};
+
+/* 1. name */
+function enter(){const n=$("nameIn").value.trim();
+if(!n){$("nameErr").textContent="Please tell me your name first 🥺";$("nameIn").focus();return}
+visitor=n;$("nameErr").textContent="";show("s-intro");intro()}
+$("enterBtn").onclick=enter;
+$("nameIn").addEventListener("keydown",e=>{if(e.key==="Enter")enter()});
+
+/* 2. intro */
+async function intro(){await sleep(700);
+await type($("introTxt"),`Hey ${visitor}! ❤️\n\nActually, tomar jonno ekta special kotha chilo...\n\nI don't know how to explain this feeling, but someone has become really special to me.`);
+$("introNext").classList.remove("hidden")}
+$("introNext").onclick=()=>show("s-letter");
+
+/* 3. letter */
+$("env").onclick=()=>{$("env").classList.add("open");$("envHint").classList.add("hidden");
+setTimeout(()=>{$("letter").classList.add("show");setTimeout(()=>$("letterNext").classList.remove("hidden"),1200)},450)};
+$("letterNext").onclick=()=>show("s-ask");
+
+/* 4. proposal + Firebase */
+function answer(a){if(saving||saved)return;pending=a;save()}
+async function save(){
+if(saving||saved||!pending)return;saving=true;
+$("saveErr").textContent="";$("retryRow").classList.add("hidden");$("saving").classList.remove("hidden");
+$("yesBtn").disabled=$("noBtn").disabled=true;
+const now=new Date(),p=n=>String(n).padStart(2,"0");
+const rec={visitorName:visitor,crushName:"Waisa",answer:pending,timestamp:now.getTime(),
+date:`${now.getFullYear()}-${p(now.getMonth()+1)}-${p(now.getDate())}`,time:`${p(now.getHours())}:${p(now.getMinutes())}:${p(now.getSeconds())}`};
+try{
+await push(respRef,rec);saved=true;$("saving").classList.add("hidden");
+if(pending==="YES"){show("s-yes");celebrate()}else show("s-no");
+}catch(e){
+console.error(e);$("saving").classList.add("hidden");
+$("saveErr").textContent="Couldn't save your answer ("+(e.code||e.message||"network error")+"). Please check your connection and try again.";
+$("retryRow").classList.remove("hidden");
+}finally{saving=false}}
+$("yesBtn").onclick=()=>answer("YES");
+$("noBtn").onclick=()=>answer("NO");
+$("retryBtn").onclick=()=>{$("yesBtn").disabled=$("noBtn").disabled=false;save()};
+
+/* 5. admin */
+let rows=[],unsub=null;
+function toList(snap){const o=snap.val()||{};return Object.entries(o).map(([id,v])=>({id,...v}))}
+function render(){
+const q=$("q").value.trim().toLowerCase(),f=$("flt").value,asc=$("srt").value==="old";
+const yes=rows.filter(r=>r.answer==="YES").length,tot=rows.length;
+$("stTotal").textContent=tot;$("stYes").textContent=yes;$("stNo").textContent=tot-yes;
+$("stPct").textContent=(tot?Math.round(yes/tot*1000)/10:0)+"%";
+const list=rows.filter(r=>(f==="ALL"||r.answer===f)&&(!q||String(r.visitorName||"").toLowerCase().includes(q)))
+.sort((a,b)=>asc?a.timestamp-b.timestamp:b.timestamp-a.timestamp);
+const tb=$("rows");tb.textContent="";
+if(!list.length){const tr=tb.insertRow(),td=tr.insertCell();td.colSpan=5;td.textContent=tot?"No matching responses.":"No responses yet.";return}
+for(const r of list){const tr=tb.insertRow();
+[r.visitorName,r.crushName,r.answer,r.date,r.time].forEach((v,i)=>{const td=tr.insertCell();td.textContent=v??"";
+if(i===2)td.className=v==="YES"?"yes":"no"})}}
+function openAdmin(){$("admin").classList.add("open");
+if(!unsub)unsub=onValue(respRef,s=>{rows=toList(s);$("admErr").textContent="";render()},
+e=>{$("admErr").textContent="Could not load responses: "+(e.code||e.message)})}
+function closeAdmin(){$("admin").classList.remove("open")}
+$("closeAdmin").onclick=closeAdmin;
+["q","flt","srt"].forEach(id=>$(id).addEventListener("input",render));
+$("refresh").onclick=async()=>{try{rows=toList(await get(respRef));$("admErr").textContent="";render()}catch(e){$("admErr").textContent="Refresh failed: "+(e.code||e.message)}};
+
+let lastA=0;
+addEventListener("keydown",e=>{
+if(e.key==="Escape"){closeAdmin();return}
+const t=e.target,typing=t&&(t.tagName==="INPUT"||t.tagName==="TEXTAREA"||t.tagName==="SELECT"||t.isContentEditable);
+if(typing||e.repeat||e.ctrlKey||e.metaKey||e.altKey||e.key.toLowerCase()!=="a")return;
+const n=Date.now();if(n-lastA<450){lastA=0;$("admin").classList.contains("open")?0:openAdmin()}else lastA=n});
+</script>
 </body>
 </html>
