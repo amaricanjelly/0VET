@@ -38,8 +38,8 @@ input::placeholder{color:#d9c3ee}input:focus{border-color:var(--pink);box-shadow
 .env::before{content:"";position:absolute;left:0;top:0;border-left:120px solid transparent;border-right:120px solid transparent;border-top:92px solid #ffb3d0;transform-origin:top;transition:.6s;z-index:2}
 .env .seal{position:absolute;left:50%;top:70px;transform:translateX(-50%);font-size:1.6rem;z-index:3;animation:beat 1.4s infinite}
 @keyframes beat{50%{transform:translateX(-50%) scale(1.25)}}
-.env.open{opacity:0;transform:scale(.7) translateY(30px);pointer-events:none;height:0;margin:0}
-.letter{display:none;text-align:left;background:linear-gradient(#fff8fb,#f6ecff);color:#4a2a63;border-radius:16px;padding:26px 24px;box-shadow:inset 0 0 0 1px #f1cfe2;font-family:'Playfair Display',serif;font-style:italic;font-weight:500;line-height:1.85;white-space:pre-line;animation:unfold .8s both}
+.env.open{pointer-events:none}.env.open::before{transform:perspective(600px) rotateX(180deg);z-index:0}.env.gone{opacity:0;height:0;margin:0}
+.letter{display:none;text-align:left;background:#fffaf5;color:#3d3340;border-radius:16px;padding:26px 24px;border:1px solid #f3dccf;font-family:Poppins,sans-serif;font-size:1.02rem;font-weight:400;line-height:1.9;box-shadow:0 12px 30px rgba(0,0,0,.25);animation:unfold .9s cubic-bezier(.22,1,.36,1) both}.ln{display:block;opacity:0;animation:lnIn .8s forwards}@keyframes lnIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .letter.show{display:block}
 @keyframes unfold{from{opacity:0;transform:scaleY(.2) translateY(-30px)}}
 .sub{font-size:.95rem;margin:6px 0 4px;white-space:pre-line}
@@ -61,6 +61,23 @@ th{background:rgba(255,255,255,.08);font-weight:500}
 .yes{color:var(--green);font-weight:600}.no{color:var(--red);font-weight:600}
 .tools .btn{padding:10px 18px;font-size:.9rem}
 .note{font-size:.75rem;opacity:.6;margin-top:14px}
+
+body::before,body::after{content:"";position:fixed;width:46vmax;height:46vmax;border-radius:50%;filter:blur(90px);opacity:.35;z-index:0;pointer-events:none;animation:orb 22s ease-in-out infinite alternate}
+body::before{background:#ff4f9a;top:-15vmax;left:-12vmax}
+body::after{background:#7c4dff;bottom:-18vmax;right:-14vmax;animation-delay:-9s}
+@keyframes orb{to{transform:translate(8vmax,6vmax) scale(1.15)}}
+.screen{transform:translateY(24px) scale(.97);filter:blur(10px);transition:opacity .9s cubic-bezier(.22,1,.36,1),transform .9s cubic-bezier(.22,1,.36,1),filter .9s,visibility .9s}
+.screen.active{transform:none;filter:none}
+.card{position:relative;animation:float 7s ease-in-out infinite}
+.card::before{content:"";position:absolute;inset:-1px;border-radius:27px;padding:1px;background:linear-gradient(135deg,rgba(255,255,255,.7),transparent 40%,rgba(255,111,165,.6));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+@keyframes float{50%{transform:translateY(-8px)}}
+.card h1{background:linear-gradient(90deg,#fff,#ffc4dc,#d9c2ff,#fff);background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 6s linear infinite}
+@keyframes shine{to{background-position:200% center}}
+.btn{position:relative;overflow:hidden}
+.btn::after{content:"";position:absolute;top:0;left:-80%;width:50%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.5),transparent);transform:skewX(-20deg);animation:sweep 3.5s infinite}
+@keyframes sweep{60%,100%{left:140%}}
+#yesBtn{animation:glow 2s ease-in-out infinite}
+@keyframes glow{50%{box-shadow:0 0 0 8px rgba(255,111,165,.15),0 10px 36px rgba(255,111,165,.7)}}
 </style>
 </head>
 <body>
@@ -85,14 +102,16 @@ th{background:rgba(255,255,255,.08);font-weight:500}
 <section class="screen" id="s-letter"><div class="card">
   <p id="envHint" style="margin-bottom:6px">Ekta chhoto letter achhe tomar jonno… 💌</p>
   <div class="env" id="env"><span class="seal">❤️</span></div>
-  <div class="letter" id="letter">Waisa, jano? Tomake dekhar por theke kichu feelings change hoye geche.
+  <div class="letter" id="letter">Hey Waisa 🙂
 
-Tomar smile ta onek special.
-Tomar sathe kotha bolle somehow mon ta valo hoye jay.
+Ekta chhoto kotha bolte chacchilam.
 
-Maybe eta just ekta normal feeling na...
+Tomar sathe kotha bolte valo lage,
+ar tomar smile ta nice. 😊
 
-I think I am starting to like you more than I expected. ❤️</div>
+Tai bhablam, simple vabei jiggesh kori...
+
+Tumi ki amar sathe special kichu try korte chao?</div>
   <div class="row"><button class="btn hidden" id="letterNext">One more thing… <i data-lucide="arrow-right"></i></button></div>
 </div></section>
 
@@ -188,13 +207,15 @@ $("nameIn").addEventListener("keydown",e=>{if(e.key==="Enter")enter()});
 
 /* 2. intro */
 async function intro(){await sleep(700);
-await type($("introTxt"),`Hey ${visitor}! ❤️\n\nActually, tomar jonno ekta special kotha chilo...\n\nI don't know how to explain this feeling, but someone has become really special to me.`);
+await type($("introTxt"),`Hey ${visitor}! 👋\n\nTomar jonno ekta chhoto surprise ache...\n\nJust ekta simple kotha, easy vabei bolbo 🙂`);
 $("introNext").classList.remove("hidden")}
 $("introNext").onclick=()=>show("s-letter");
 
 /* 3. letter */
-$("env").onclick=()=>{$("env").classList.add("open");$("envHint").classList.add("hidden");
-setTimeout(()=>{$("letter").classList.add("show");setTimeout(()=>$("letterNext").classList.remove("hidden"),1200)},450)};
+const L=$("letter");L.innerHTML=L.textContent.split("\n").map((t,i)=>`<span class="ln" style="animation-delay:${i*.4}s">${t||"&nbsp;"}</span>`).join("");
+$("env").onclick=e=>{const v=$("env");if(v.classList.contains("open"))return;v.classList.add("open");burst(e.clientX,e.clientY,45,5);kick();
+setTimeout(()=>{v.classList.add("gone");$("envHint").classList.add("hidden")},800);
+setTimeout(()=>{$("letter").classList.add("show");setTimeout(()=>$("letterNext").classList.remove("hidden"),2600)},1250)};
 $("letterNext").onclick=()=>show("s-ask");
 
 /* 4. proposal + Firebase */
